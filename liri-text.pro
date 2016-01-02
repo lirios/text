@@ -4,7 +4,8 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += \
-    src/main.cpp
+    src/main.cpp \
+    src/fileprocessor.cpp
 
 RESOURCES += \
     src/qml.qrc
@@ -14,3 +15,6 @@ QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
+
+HEADERS += \
+    src/fileprocessor.h

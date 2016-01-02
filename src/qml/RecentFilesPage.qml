@@ -32,7 +32,7 @@ Page {
                     acceptedButtons: Qt.LeftButton
 
                     onClicked: {
-                        pageStack.push(Qt.resolvedUrl("EditPage.qml"))
+                        pageStack.push(Qt.resolvedUrl("EditPage.qml"), {filename: "/home/andrew/New Document.txt"})
                     }
                 }
             }
