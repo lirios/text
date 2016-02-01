@@ -7,30 +7,30 @@ Page {
     id: page
     property string filename
 
-    actionBar.title: filename
+    actionBar.title: document.documentTitle
     actions: [
         Action {
             iconName: "content/save"
             name: qsTr("Save")
             onTriggered: {
-                fp.fileContent = mainArea.text
+                document.saveAs(filename)
             }
         }
     ]
-
-    FileProcessor {
-        id: fp
-        fileName: filename
-        //Component.onCompleted: {
-        //    fp.open(filename)
-        //    mainArea.text = fp.readAll()
-        //}
-    }
 
     Controls.TextArea {
         id: mainArea
         anchors.fill: parent
         focus: true
-        text: fp.fileContent
+        text: document.text
+    }
+
+    DocumentManager {
+        id: document
+        target: mainArea
+        Component.onCompleted: {
+            console.log(filename);
+            document.fileUrl = filename
+        }
     }
 }
