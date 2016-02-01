@@ -20,11 +20,29 @@
 import QtQuick 2.4
 import Material 0.1
 import QtQuick.Controls 1.4 as Controls
+import QtQuick.Dialogs 1.2
 
 Page {
     id: page
 
     actionBar.title: qsTr("Recent Files")
+    actions: [
+        Action {
+            id: open
+            iconName: "file/folder_open"
+            name: qsTr("Open")
+            onTriggered: openFileDialog.open()
+        }
+    ]
+
+    FileDialog {
+        id: openFileDialog
+        title: qsTr("Choose a file to open")
+        onAccepted: {
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { filename: openFileDialog.fileUrl })
+        }
+    }
+
     GridView {
         id: recentFilesView
 
