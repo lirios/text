@@ -18,9 +18,9 @@
  */
 
 import QtQuick 2.4
-import Material 0.1
+import Material 0.2
 import QtQuick.Controls 1.4 as Controls
-import text.processing 1.0
+import io.github.liri.project 1.0
 
 Page {
     id: page
@@ -44,7 +44,7 @@ Page {
         text: document.text
     }
 
-    DocumentManager {
+    DocumentHandler {
         id: document
         target: mainArea
         Component.onCompleted: {

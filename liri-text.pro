@@ -1,11 +1,13 @@
 TEMPLATE = app
 
 QT += qml quick
+QT += KCoreAddons
 CONFIG += c++11
 
 SOURCES += \
     src/main.cpp \
-    src/documentmanager.cpp
+    src/sessionmanager.cpp \
+    src/documenthandler.cpp
 
 RESOURCES += \
     src/qml.qrc
@@ -17,4 +19,5 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    src/documentmanager.h
+    src/sessionmanager.h \
+    src/documenthandler.h

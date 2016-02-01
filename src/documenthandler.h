@@ -17,15 +17,15 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DOCUMENTMANAGER_H
-#define DOCUMENTMANAGER_H
+#ifndef DOCUMENTHANDLER_H
+#define DOCUMENTHANDLER_H
 
 #include <QObject>
 #include <QQuickTextDocument>
 #include <QTextCodec>
 #include <QFile>
 
-class DocumentManager : public QObject
+class DocumentHandler : public QObject
 {
 	Q_OBJECT
     Q_PROPERTY(QQuickItem *target READ target WRITE setTarget NOTIFY targetChanged)
@@ -34,8 +34,8 @@ class DocumentManager : public QObject
     Q_PROPERTY(QString documentTitle READ documentTitle WRITE setDocumentTitle NOTIFY documentTitleChanged)
 
 public:
-    DocumentManager();
-    ~DocumentManager();
+    DocumentHandler();
+    ~DocumentHandler();
 
     inline QQuickItem *target() { return m_target; }
     void setTarget(QQuickItem *target);
@@ -67,4 +67,4 @@ private:
     QString m_documentTitle;
 };
 
-#endif // DOCUMENTMANAGER_H
+#endif // DOCUMENTHANDLER_H

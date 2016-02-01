@@ -21,12 +21,13 @@
 #include <QQmlApplicationEngine>
 #include <QQuickView>
 #include <QDebug>
-#include "documentmanager.h"
+
+#include "documenthandler.h"
 
 int main(int argc, char *argv[])
 {
 	QGuiApplication app(argc, argv);
-    qmlRegisterType<DocumentManager>("text.processing", 1, 0, "DocumentManager");
+    qmlRegisterType<DocumentHandler>("io.github.liri.project", 1, 0, "DocumentHandler");
 
 	QQmlApplicationEngine engine;
 	engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));

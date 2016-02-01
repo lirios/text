@@ -17,19 +17,19 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "documentmanager.h"
+#include "documenthandler.h"
 
 #include <QTextDocument>
 #include <QFileInfo>
 #include <QDebug>
 
-DocumentManager::DocumentManager() :
+DocumentHandler::DocumentHandler() :
     m_target(0),
     m_document(0) { }
 
-DocumentManager::~DocumentManager() { }
+DocumentHandler::~DocumentHandler() { }
 
-void DocumentManager::setTarget(QQuickItem *target) {
+void DocumentHandler::setTarget(QQuickItem *target) {
     m_document = nullptr;
     m_target = target;
     if(!m_target)
@@ -44,7 +44,7 @@ void DocumentManager::setTarget(QQuickItem *target) {
     emit targetChanged();
 }
 
-void DocumentManager::setFileUrl(QUrl fileUrl) {
+void DocumentHandler::setFileUrl(QUrl fileUrl) {
     if(fileUrl != m_fileUrl) {
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
@@ -70,21 +70,21 @@ void DocumentManager::setFileUrl(QUrl fileUrl) {
     }
 }
 
-void DocumentManager::setDocumentTitle(QString title) {
+void DocumentHandler::setDocumentTitle(QString title) {
     if(title != m_documentTitle) {
         m_documentTitle = title;
         emit documentTitleChanged();
     }
 }
 
-void DocumentManager::setText(QString text) {
+void DocumentHandler::setText(QString text) {
     if(text != m_text) {
         m_text = text;
         emit textChanged();
     }
 }
 
-void DocumentManager::saveAs(QUrl filename) {
+void DocumentHandler::saveAs(QUrl filename) {
     QString localPath = filename.toLocalFile();
     QFile f(localPath);
     if(!f.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
