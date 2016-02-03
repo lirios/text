@@ -20,11 +20,11 @@
 import QtQuick 2.4
 import Material 0.2
 import QtQuick.Controls 1.4 as Controls
-import io.github.liri.project 1.0
+import me.liriproject.texteditor 1.0
 
 Page {
     id: page
-    property string filename
+    property string documentUrl
 
     actionBar.title: document.documentTitle
     actions: [
@@ -32,24 +32,34 @@ Page {
             iconName: "content/save"
             name: qsTr("Save")
             onTriggered: {
-                document.saveAs(filename)
+                document.saveAs(documentUrl)
             }
         }
     ]
+
+    Component.onCompleted: {
+        history.touchFile(document.documentTitle, documentUrl)
+    }
 
     Controls.TextArea {
         id: mainArea
         anchors.fill: parent
         focus: true
+        font.family: "Roboto"
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: document.text
+
+        MouseArea {
+            anchors.fill: parent
+
+            cursorShape: Qt.IBeamCursor //  Doesn't work for some reason
+            acceptedButtons: Qt.NoButton
+        }
     }
 
     DocumentHandler {
         id: document
         target: mainArea
-        Component.onCompleted: {
-            console.log(filename);
-            document.fileUrl = filename
-        }
+        fileUrl: documentUrl
     }
 }

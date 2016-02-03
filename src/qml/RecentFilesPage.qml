@@ -39,7 +39,7 @@ Page {
         id: openFileDialog
         title: qsTr("Choose a file to open")
         onAccepted: {
-            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { filename: openFileDialog.fileUrl })
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: openFileDialog.fileUrl })
         }
     }
 
@@ -47,7 +47,7 @@ Page {
         id: recentFilesView
 
         anchors.fill: parent
-        model: 1
+        model: history
         delegate: Item {
             width: recentFilesView.width / 2
             height: width
@@ -63,24 +63,20 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottomMargin: Units.dp(14)
 
-                    text: "New Document.txt"
+                    text: name
                     font.pixelSize: Units.dp(24)
                 }
-
-//                Icon {
-//                    id: plusIcon
-//                    anchors.centerIn: parent
-//                    size: parent.width * 2/3
-//                    name: "content/add"
-//                }
 
                 Ink {
                     id: animation
                     anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onClicked: {
-                        pageStack.push(Qt.resolvedUrl("EditPage.qml"), {filename: "file://home/andrew/New Document.txt"})
+                        if(mouse.button == Qt.LeftButton)
+                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
+                        else
+                            history.removeRows(0, 1)
                     }
                 }
             }

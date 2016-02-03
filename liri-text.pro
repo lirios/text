@@ -6,8 +6,8 @@ CONFIG += c++11
 
 SOURCES += \
     src/main.cpp \
-    src/sessionmanager.cpp \
-    src/documenthandler.cpp
+    src/documenthandler.cpp \
+    src/historymanager.cpp
 
 RESOURCES += \
     src/qml.qrc
@@ -19,5 +19,5 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    src/sessionmanager.h \
-    src/documenthandler.h
+    src/documenthandler.h \
+    src/historymanager.h

@@ -19,17 +19,26 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QQuickView>
+#include <QSettings>
 #include <QDebug>
 
 #include "documenthandler.h"
+#include "historymanager.h"
 
 int main(int argc, char *argv[])
 {
-	QGuiApplication app(argc, argv);
-    qmlRegisterType<DocumentHandler>("io.github.liri.project", 1, 0, "DocumentHandler");
+    QCoreApplication::setOrganizationName("liri-project");
+    QCoreApplication::setOrganizationDomain("liriproject.me");
+    QCoreApplication::setApplicationName("liri-text-editor");
+
+    QGuiApplication app(argc, argv);
+    qmlRegisterType<DocumentHandler>("me.liriproject.texteditor", 1, 0, "DocumentHandler");
 
 	QQmlApplicationEngine engine;
+    HistoryManager *history = new HistoryManager();
+    engine.rootContext()->setContextProperty("history", history);
 	engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
 	return app.exec();
