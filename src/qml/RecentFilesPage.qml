@@ -47,6 +47,9 @@ Page {
         id: recentFilesView
 
         anchors.fill: parent
+        cellWidth: width / 2
+        cellHeight: cellWidth
+
         model: history
         delegate: Item {
             width: recentFilesView.width / 2

@@ -109,6 +109,7 @@ bool HistoryManager::removeRows(int row, int count, const QModelIndex &parent) {
         foreach (QString key, history->childKeys()) {
             history->remove(key);
         }
+        history->endGroup();
     }
     emit endRemoveRows();
     qDebug() << "Entry removed, new count:" << rowCount();
