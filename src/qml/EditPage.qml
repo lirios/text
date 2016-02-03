@@ -20,7 +20,7 @@
 import QtQuick 2.4
 import Material 0.2
 import QtQuick.Controls 1.4 as Controls
-import me.liriproject.texteditor 1.0
+import me.liriproject.text 1.0
 
 Page {
     id: page

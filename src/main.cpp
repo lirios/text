@@ -31,10 +31,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("liri-project");
     QCoreApplication::setOrganizationDomain("liriproject.me");
-    QCoreApplication::setApplicationName("liri-text-editor");
+    QCoreApplication::setApplicationName("liri-text");
 
     QGuiApplication app(argc, argv);
-    qmlRegisterType<DocumentHandler>("me.liriproject.texteditor", 1, 0, "DocumentHandler");
+    qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
 
 	QQmlApplicationEngine engine;
     HistoryManager *history = new HistoryManager();
