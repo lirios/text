@@ -34,7 +34,6 @@ Flickable {
     GridView {
         id: fileGrid
 
-        y: Units.dp(8)
         width: ~~((parent.width - 2*margins + spacing) / (cardSize+spacing)) * (cardSize+spacing)
         anchors.horizontalCenter: parent.horizontalCenter
         height: childrenRect.height

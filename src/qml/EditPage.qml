@@ -20,30 +20,62 @@
 import QtQuick 2.5
 import Material 0.2
 import QtQuick.Controls 1.4 as Controls
+import QtQuick.Dialogs 1.2
 import me.liriproject.text 1.0
 
 Page {
     id: page
     property url documentUrl
+    property bool anonymous: false
 
-    actionBar.title: document.documentTitle
+    function save() {
+        if(anonymous)
+            saveAs()
+        else
+            document.saveAs(documentUrl)
+    }
+
+    function saveAs() {
+        saveAsDialog.open()
+    }
+
+    actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
     actions: [
         Action {
             iconName: "content/save"
             name: qsTr("Save")
             onTriggered: {
-                document.saveAs(documentUrl)
+                save()
             }
         }
     ]
 
-    Shortcut {
-        sequence: "Ctrl+S"
-        onActivated: document.saveAs(documentUrl)
+    Component.onCompleted: {
+        if(!anonymous)
+            history.touchFile(document.documentTitle, documentUrl)
     }
 
-    Component.onCompleted: {
-        history.touchFile(document.documentTitle, documentUrl)
+    FileDialog {
+        id: saveAsDialog
+        title: qsTr("Choose a location to save")
+        selectExisting: false
+
+        onAccepted: {
+            document.saveAs(saveAsDialog.fileUrl)
+            documentUrl = saveAsDialog.fileUrl
+            anonymous = false
+            history.touchFile(document.documentTitle, documentUrl)
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: save()
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Shift+S"
+        onActivated: saveAs()
     }
 
     Controls.TextArea {

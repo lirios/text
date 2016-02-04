@@ -56,7 +56,7 @@ void DocumentHandler::setFileUrl(QUrl fileUrl) {
                 QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
                 setText(codec->toUnicode(data));
                 if(m_document)
-                    m_document->setModified();
+                    m_document->setModified(false);
                 if(m_fileUrl.isEmpty())
                     m_documentTitle = "New Document.txt";
                 else
