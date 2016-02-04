@@ -33,7 +33,9 @@ public:
     enum HistoryRoles {
         NameRole = Qt::UserRole + 1,
         FileUrlRole,
-        LastViewTimeRole
+        HumanReadableUrlRole,
+        LastViewTimeRole,
+        PreviewRole
     };
 
     HistoryManager();
@@ -49,7 +51,7 @@ public:
 signals:
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl);
+    void touchFile(QString name, QUrl fileUrl, QStringList someStrings);
 
 protected:
     QHash<int, QByteArray> roleNames() const;

@@ -26,7 +26,8 @@ Flickable {
     property alias model: fileGrid.model
     property int margins: Units.dp(24)
     property int spacing: Units.dp(16)
-    property int cardSize: Units.gu(5)
+    property int cardWidth: Units.gu(5)
+    property int cardHeight: Units.gu(4)
 
     anchors.fill: parent
     contentHeight: fileGrid.height
@@ -34,11 +35,11 @@ Flickable {
     GridView {
         id: fileGrid
 
-        width: ~~((parent.width - 2*margins + spacing) / (cardSize+spacing)) * (cardSize+spacing)
+        width: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing)) * (cardWidth+spacing)
         anchors.horizontalCenter: parent.horizontalCenter
         height: childrenRect.height
-        cellWidth: cardSize + spacing
-        cellHeight: cardSize + spacing
+        cellWidth: cardWidth + spacing
+        cellHeight: cardHeight + spacing
 
         delegate: Item {
             width: fileGrid.cellWidth
@@ -49,14 +50,46 @@ Flickable {
                 anchors.fill: parent
                 anchors.margins: spacing / 2
 
+                Text {
+                    anchors.fill: parent
+                    anchors.margins: Units.dp(8)
+                    font.family: "Roboto"
+                    text: previewText
+                }
+
+                Rectangle {
+                    id: nameBackground
+                    color: "black"
+                    opacity: 0.5
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+                    height: Units.dp(72)
+                }
+
                 Label {
                     id: docName
-                    anchors.bottom: parent.bottom
+
+                    anchors.top: nameBackground.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottomMargin: Units.dp(16)
+                    anchors.topMargin: Units.dp(8)
 
                     text: name
-                    font.pixelSize: Units.dp(24)
+                    color: "white"
+                    font.pixelSize: Units.dp(20)
+                    font.weight: Font.Medium
+                }
+
+                Label {
+                    id: docUrl
+
+                    anchors.top: docName.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: Units.dp(4)
+
+                    text: humanReadableUrl
+                    color: "white"
+                    font.pixelSize: Units.dp(16)
+                    font.weight: Font.Normal
                 }
 
                 Ink {

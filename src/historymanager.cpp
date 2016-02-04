@@ -27,6 +27,7 @@ const int MAX_HISTORY_SIZE = 24;
 const QString NAME_KEY = "name";
 const QString URL_KEY = "fileUrl";
 const QString LAST_VIEW_KEY = "lastViewTime";
+const QString PREVIEW_KEY = "previewStrings";
 
 HistoryManager::HistoryManager() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/history.ini";
@@ -55,9 +56,20 @@ QVariant HistoryManager::data(const QModelIndex &index, int role) const {
         history->endGroup();
         return val;
     }
+    if(role == HumanReadableUrlRole) {
+        QVariant val = history->value(URL_KEY).toUrl().path();
+        history->endGroup();
+        return val;
+    }
     if(role == LastViewTimeRole) {
         QVariant val = history->value(LAST_VIEW_KEY);
         history->endGroup();
+        return val;
+    }
+    if(role == PreviewRole) {
+        QVariant val = history->value(PREVIEW_KEY);
+        history->endGroup();
+        qDebug() << val;
         return val;
     }
 
@@ -88,6 +100,12 @@ bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, in
         emit dataChanged(index, index, {role});
         return true;
     }
+    if(role == PreviewRole) {
+        history->setValue(PREVIEW_KEY, value);
+        history->endGroup();
+        emit dataChanged(index, index, {role});
+        return true;
+    }
 
     history->endGroup();
     return false;
@@ -106,6 +124,7 @@ bool HistoryManager::removeFile(QUrl fileUrl) {
         history->setValue(QString::number(i - 1) + "/" + NAME_KEY, history->value(QString::number(i) + "/" + NAME_KEY));
         history->setValue(QString::number(i - 1) + "/" + URL_KEY, history->value(QString::number(i) + "/" + URL_KEY));
         history->setValue(QString::number(i - 1) + "/" + LAST_VIEW_KEY, history->value(QString::number(i) + "/" + LAST_VIEW_KEY));
+        history->setValue(QString::number(i - 1) + "/" + PREVIEW_KEY, history->value(QString::number(i) + "/" + PREVIEW_KEY));
     }
     for(int i = rowCount() - 1; i < rowCount(); i++) {
         history->beginGroup(QString::number(i));
@@ -124,7 +143,7 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
 }
 
-void HistoryManager::touchFile(QString name, QUrl fileUrl) {
+void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrings) {
     for(int i = 0; i < rowCount(); i++) {
         if(data(createIndex(i, 0), FileUrlRole).toUrl() == fileUrl) {
             setData(createIndex(i, 0), QDateTime::currentDateTime(), LastViewTimeRole);
@@ -149,6 +168,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl) {
     history->setValue(NAME_KEY, name);
     history->setValue(URL_KEY, fileUrl);
     history->setValue(LAST_VIEW_KEY, QDateTime::currentDateTime());
+    history->setValue(PREVIEW_KEY, someStrings);
     history->endGroup();
     emit endInsertRows();
 }
@@ -156,6 +176,8 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl) {
 QHash<int, QByteArray> HistoryManager::roleNames() const {
     return QHash<int, QByteArray>({ {NameRole, "name"},
                                     {FileUrlRole, "fileUrl"},
-                                    {LastViewTimeRole, "lastViewTime"}
+                                    {HumanReadableUrlRole, "humanReadableUrl"},
+                                    {LastViewTimeRole, "lastViewTime"},
+                                    {PreviewRole, "previewText"}
                                   });
 }

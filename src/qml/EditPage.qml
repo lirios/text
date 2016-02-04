@@ -52,7 +52,7 @@ Page {
 
     Component.onCompleted: {
         if(!anonymous)
-            history.touchFile(document.documentTitle, documentUrl)
+            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
     }
 
     FileDialog {
@@ -64,7 +64,7 @@ Page {
             document.saveAs(saveAsDialog.fileUrl)
             documentUrl = saveAsDialog.fileUrl
             anonymous = false
-            history.touchFile(document.documentTitle, documentUrl)
+            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 100)])
         }
     }
 
