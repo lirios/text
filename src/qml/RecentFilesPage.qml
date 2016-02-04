@@ -42,51 +42,22 @@ Page {
         }
     }
 
-    GridView {
+    FileGridView {
         id: recentFilesView
-
-        anchors.fill: parent
-        cellWidth: width / 2
-        cellHeight: cellWidth
-
         model: sortedHistory
-        delegate: Item {
-            width: recentFilesView.width / 2
-            height: width
-
-            Card {
-                id: newFile
-                anchors.fill: parent
-                anchors.margins: Units.dp(14)
-
-                Label {
-                    id: docName
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottomMargin: Units.dp(14)
-
-                    text: name
-                    font.pixelSize: Units.dp(24)
-                }
-
-                Ink {
-                    id: animation
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                    onClicked: {
-                        if(mouse.button == Qt.LeftButton)
-                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
-                        else
-                            // Rightclicking deletes item for debugging
-                            history.removeFile(fileUrl)
-                    }
-                }
-            }
-        }
     }
 
     Scrollbar {
         flickableItem: recentFilesView
+    }
+
+    ActionButton {
+        id: otherButton
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: Units.dp(24)
+
+        iconName: "content/add"
     }
 }

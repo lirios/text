@@ -26,9 +26,13 @@ ApplicationWindow {
     visible: true
     title: qsTr("Liri Text")
 
+    minimumWidth: Units.gu(6)
+    minimumHeight: Units.gu(3)
+
     initialPage: RecentFilesPage { }
 
     theme {
-        primaryColor: "deepPurple"
+        primaryColor: "cyan"
+        accentColor: "purple"
     }
 }
