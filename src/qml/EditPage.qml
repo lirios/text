@@ -17,14 +17,14 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.4
+import QtQuick 2.5
 import Material 0.2
 import QtQuick.Controls 1.4 as Controls
 import me.liriproject.text 1.0
 
 Page {
     id: page
-    property string documentUrl
+    property url documentUrl
 
     actionBar.title: document.documentTitle
     actions: [
@@ -37,6 +37,11 @@ Page {
         }
     ]
 
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: document.saveAs(documentUrl)
+    }
+
     Component.onCompleted: {
         history.touchFile(document.documentTitle, documentUrl)
     }
@@ -48,13 +53,6 @@ Page {
         font.family: "Roboto"
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: document.text
-
-        MouseArea {
-            anchors.fill: parent
-
-            cursorShape: Qt.IBeamCursor //  Doesn't work for some reason
-            acceptedButtons: Qt.NoButton
-        }
     }
 
     DocumentHandler {
