@@ -98,7 +98,7 @@ bool HistoryManager::removeRows(int row, int count, const QModelIndex &parent) {
     if(row < 0 || row + count > rowCount())
         return false;
 
-    emit beginRemoveRows(QModelIndex(), row, row + count);
+    emit beginRemoveRows(QModelIndex(), row, row + count - 1);
     for(int i = row + count; i < rowCount(); i++) {
         history->setValue(QString::number(i - count) + "/" + NAME_KEY, history->value(QString::number(i) + "/" + NAME_KEY));
         history->setValue(QString::number(i - count) + "/" + URL_KEY, history->value(QString::number(i) + "/" + URL_KEY));
