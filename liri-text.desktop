@@ -1,11 +1,10 @@
 [Desktop Entry]
-Version=1.0
 Name=Liri Text
-Comment=Material text editor
-Keywords=text;editor;
+Comment=Material Design text editor
 Exec=/home/andrew/liri-text
-Icon=system-file-manager
-Terminal=False
+Terminal=false
 Type=Application
-Categories=Papyros;Qt;Utility;TextEditor;
+Categories=Qt;Utility;TextEditor;
+Keywords=Text;Editor;
+Icon=accessories-text-editor
 #OnlyShowIn=Papyros
