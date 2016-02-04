@@ -21,7 +21,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickView>
-#include <QSettings>
+#include <QSortFilterProxyModel>
 #include <QDebug>
 
 #include "documenthandler.h"
@@ -38,8 +38,13 @@ int main(int argc, char *argv[])
 
 	QQmlApplicationEngine engine;
     HistoryManager *history = new HistoryManager();
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();
+    proxyModel->setSourceModel(history);
+    proxyModel->setSortRole(HistoryManager::LastViewTimeRole);
+    proxyModel->sort(0, Qt::DescendingOrder);
     engine.rootContext()->setContextProperty("history", history);
-	engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    engine.rootContext()->setContextProperty("sortedHistory", proxyModel);
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
 	return app.exec();
 }

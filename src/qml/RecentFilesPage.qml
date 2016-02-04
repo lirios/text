@@ -49,7 +49,7 @@ Page {
         cellWidth: width / 2
         cellHeight: cellWidth
 
-        model: history
+        model: sortedHistory
         delegate: Item {
             width: recentFilesView.width / 2
             height: width
@@ -79,7 +79,7 @@ Page {
                             pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
                         else
                             // Rightclicking deletes item for debugging
-                            history.removeRows(index, 1)
+                            history.removeFile(fileUrl)
                     }
                 }
             }

@@ -93,18 +93,21 @@ bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, in
     return false;
 }
 
-bool HistoryManager::removeRows(int row, int count, const QModelIndex &parent) {
-    Q_UNUSED(parent)
-    if(row < 0 || row + count > rowCount())
-        return false;
-
-    emit beginRemoveRows(QModelIndex(), row, row + count - 1);
-    for(int i = row + count; i < rowCount(); i++) {
-        history->setValue(QString::number(i - count) + "/" + NAME_KEY, history->value(QString::number(i) + "/" + NAME_KEY));
-        history->setValue(QString::number(i - count) + "/" + URL_KEY, history->value(QString::number(i) + "/" + URL_KEY));
-        history->setValue(QString::number(i - count) + "/" + LAST_VIEW_KEY, history->value(QString::number(i) + "/" + LAST_VIEW_KEY));
+bool HistoryManager::removeFile(QUrl fileUrl) {
+    int row;
+    for(row = 0; row < rowCount(); row++) {
+        if(data(index(row), FileUrlRole) == fileUrl)
+            break;
+        if(row == rowCount() - 1)
+            return false;
     }
-    for(int i = rowCount() - count; i < rowCount(); i++) {
+    emit beginRemoveRows(QModelIndex(), row, row);
+    for(int i = row + 1; i < rowCount(); i++) {
+        history->setValue(QString::number(i - 1) + "/" + NAME_KEY, history->value(QString::number(i) + "/" + NAME_KEY));
+        history->setValue(QString::number(i - 1) + "/" + URL_KEY, history->value(QString::number(i) + "/" + URL_KEY));
+        history->setValue(QString::number(i - 1) + "/" + LAST_VIEW_KEY, history->value(QString::number(i) + "/" + LAST_VIEW_KEY));
+    }
+    for(int i = rowCount() - 1; i < rowCount(); i++) {
         history->beginGroup(QString::number(i));
         foreach (QString key, history->childKeys()) {
             history->remove(key);
