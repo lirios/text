@@ -64,7 +64,7 @@ Page {
             document.saveAs(saveAsDialog.fileUrl)
             documentUrl = saveAsDialog.fileUrl
             anonymous = false
-            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 100)])
+            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
         }
     }
 
@@ -83,6 +83,8 @@ Page {
         anchors.fill: parent
         focus: true
         font.family: "Roboto"
+        font.pixelSize: Units.dp(18)
+        font.weight: Font.Normal
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: document.text
     }

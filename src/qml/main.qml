@@ -32,7 +32,7 @@ ApplicationWindow {
     initialPage: RecentFilesPage { }
 
     theme {
-        primaryColor: "cyan"
-        accentColor: "purple"
+        primaryColor: "purple"
+        accentColor: "deepOrange"
     }
 }

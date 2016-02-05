@@ -18,6 +18,7 @@
  */
 
 import QtQuick 2.5
+import QtGraphicalEffects 1.0
 import Material 0.2
 
 Flickable {
@@ -25,7 +26,7 @@ Flickable {
 
     property alias model: fileGrid.model
     property int margins: Units.dp(24)
-    property int spacing: Units.dp(16)
+    property int spacing: Units.dp(8)
     property int cardWidth: Units.gu(5)
     property int cardHeight: Units.gu(4)
 
@@ -50,17 +51,41 @@ Flickable {
                 anchors.fill: parent
                 anchors.margins: spacing / 2
 
-                Text {
-                    anchors.fill: parent
-                    anchors.margins: Units.dp(8)
-                    font.family: "Roboto"
-                    text: previewText
+                Rectangle {
+                    color: "white"
+                    clip: true
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: nameBackground.top
+
+                    Text {
+                        id: filePreview
+                        anchors.fill: parent
+                        anchors.margins: Units.dp(8)
+                        anchors.rightMargin: Units.dp(4)
+                        clip: true
+                        font.family: "Roboto"
+                        font.pixelSize: Units.dp(13)
+                        font.weight: Font.Medium
+                        text: previewText
+                    }
+
+                    LinearGradient {
+                        anchors.fill: parent
+                        start: Qt.point(parent.width - Units.dp(28), 0)
+                        end: Qt.point(filePreview.width + filePreview.x, 0)
+                        gradient: Gradient {
+                            GradientStop {position: 0.0; color: "transparent"}
+                            GradientStop {position: 1.0; color: "white"}
+                        }
+                    }
                 }
 
                 Rectangle {
                     id: nameBackground
                     color: "black"
-                    opacity: 0.5
+                    opacity: 0.7
                     anchors.bottom: parent.bottom
                     width: parent.width
                     height: Units.dp(72)
