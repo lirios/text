@@ -45,36 +45,22 @@ QVariant HistoryManager::data(const QModelIndex &index, int role) const {
     if(index.row() < 0 || index.row() >= rowCount())
         return QVariant();
 
+    QVariant val = QVariant();
     history->beginGroup(QString::number(index.row()));
-    if(role == NameRole) {
-        QVariant val = history->value(NAME_KEY);
-        history->endGroup();
-        return val;
-    }
-    if(role == FileUrlRole) {
-        QVariant val = history->value(URL_KEY);
-        history->endGroup();
-        return val;
-    }
-    if(role == HumanReadableUrlRole) {
-        QVariant val = history->value(URL_KEY).toUrl().path();
-        history->endGroup();
-        return val;
-    }
-    if(role == LastViewTimeRole) {
-        QVariant val = history->value(LAST_VIEW_KEY);
-        history->endGroup();
-        return val;
-    }
-    if(role == PreviewRole) {
-        QVariant val = history->value(PREVIEW_KEY);
-        history->endGroup();
-        qDebug() << val;
-        return val;
-    }
+
+    if(role == NameRole)
+        val = history->value(NAME_KEY);
+    if(role == FileUrlRole)
+        val = history->value(URL_KEY);
+    if(role == HumanReadableUrlRole)
+        val = history->value(URL_KEY).toUrl().path();
+    if(role == LastViewTimeRole)
+        val = history->value(LAST_VIEW_KEY);
+    if(role == PreviewRole)
+        val = history->value(PREVIEW_KEY);
 
     history->endGroup();
-    return QVariant();
+    return val;
 }
 
 bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, int role) {
@@ -145,8 +131,8 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
 
 void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrings) {
     for(int i = 0; i < rowCount(); i++) {
-        if(data(createIndex(i, 0), FileUrlRole).toUrl() == fileUrl) {
-            setData(createIndex(i, 0), QDateTime::currentDateTime(), LastViewTimeRole);
+        if(data(index(i), FileUrlRole).toUrl() == fileUrl) {
+            setData(index(i), QDateTime::currentDateTime(), LastViewTimeRole);
             return;
         }
     }
@@ -154,13 +140,13 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrin
         int oldest = 0;
         QDateTime oldestDT = QDateTime::currentDateTime();
         for(int i = 1; i < rowCount(); i++) {
-            QDateTime dt = data(createIndex(i, 0), LastViewTimeRole).toDateTime();
+            QDateTime dt = data(index(i), LastViewTimeRole).toDateTime();
             if(dt < oldestDT) {
                 oldestDT = dt;
                 oldest = i;
             }
         }
-        removeRow(oldest);
+        removeFile(data(index(oldest), FileUrlRole).toUrl());
     }
 
     emit beginInsertRows(QModelIndex(), rowCount(), rowCount());
