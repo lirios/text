@@ -27,15 +27,16 @@ Flickable {
     property alias model: fileGrid.model
     property int margins: Units.dp(24)
     property int spacing: Units.dp(8)
-    property int cardWidth: Units.gu(5)
-    property int cardHeight: Units.gu(4)
+    property int cardWidth: Units.dp(320)
+    property int cardHeight: Units.dp(256)
 
     anchors.fill: parent
-    contentHeight: fileGrid.height
+    contentHeight: fileGrid.height + spacing
 
     GridView {
         id: fileGrid
 
+        y: spacing/2
         width: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing)) * (cardWidth+spacing)
         anchors.horizontalCenter: parent.horizontalCenter
         height: childrenRect.height
