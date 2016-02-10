@@ -24,10 +24,11 @@
 #include <QQuickTextDocument>
 #include <QTextCodec>
 #include <QFile>
+#include <QFileSystemWatcher>
 
 class DocumentHandler : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
     Q_PROPERTY(QQuickItem *target READ target WRITE setTarget NOTIFY targetChanged)
     Q_PROPERTY(QUrl fileUrl READ fileUrl WRITE setFileUrl NOTIFY fileUrlChanged)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
@@ -54,6 +55,7 @@ signals:
     void fileUrlChanged();
     void textChanged();
     void documentTitleChanged();
+    void fileChangedOnDisk();
 
 public slots:
     void saveAs(QUrl filename);
@@ -61,6 +63,7 @@ public slots:
 private:
     QQuickItem *m_target;
     QTextDocument *m_document;
+    QFileSystemWatcher *m_watcher;
 
     QUrl m_fileUrl;
     QString m_text;

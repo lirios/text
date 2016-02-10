@@ -85,7 +85,7 @@ Page {
 
         anchors.horizontalCenter: newFile.horizontalCenter
         anchors.bottom: newFile.top
-        anchors.bottomMargin: Units.dp(8)
+        anchors.bottomMargin: Units.dp(16)
 
         //visible: addFile.state == "exposed"
         backgroundColor: "white"

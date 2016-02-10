@@ -25,7 +25,11 @@
 
 DocumentHandler::DocumentHandler() :
     m_target(0),
-    m_document(0) { }
+    m_document(0) {
+
+    m_watcher = new QFileSystemWatcher(this);
+    connect(m_watcher, SIGNAL(fileChanged(QString)), this, SIGNAL(fileChangedOnDisk()));
+}
 
 DocumentHandler::~DocumentHandler() { }
 
@@ -46,6 +50,11 @@ void DocumentHandler::setTarget(QQuickItem *target) {
 
 void DocumentHandler::setFileUrl(QUrl fileUrl) {
     if(fileUrl != m_fileUrl) {
+        if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
+            m_watcher->removePath(m_fileUrl.toLocalFile());
+        m_watcher->addPath(fileUrl.toLocalFile());
+        qDebug() << "really?" << m_watcher->files();
+        qDebug() << m_watcher->directories();
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
         qDebug() << m_fileUrl << filename;
@@ -62,8 +71,8 @@ void DocumentHandler::setFileUrl(QUrl fileUrl) {
                 else
                     m_documentTitle = QFileInfo(filename).fileName();
 
-                //emit textChanged();
                 emit documentTitleChanged();
+
             }
         }
         emit fileUrlChanged();

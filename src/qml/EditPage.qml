@@ -93,5 +93,9 @@ Page {
         id: document
         target: mainArea
         fileUrl: documentUrl
+
+        onFileChangedOnDisk: {
+            console.log("File changed on disk")
+        }
     }
 }
