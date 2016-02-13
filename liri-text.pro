@@ -1,6 +1,7 @@
 TEMPLATE = app
 
 QT += qml quick
+QT += KCoreAddons
 CONFIG += c++11
 
 SOURCES += \
