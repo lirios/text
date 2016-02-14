@@ -95,6 +95,9 @@ Page {
         title: qsTr("Reload file content?")
         text: qsTr("The file was changed from outside. Do you wish to reload its content?")
 
+        positiveButtonText: qsTr("RELOAD")
+        negativeButtonText: qsTr("IGNORE")
+
         onAccepted: document.reloadText()
     }
 

@@ -94,16 +94,24 @@ void DocumentHandler::setText(QString text) {
 }
 
 void DocumentHandler::saveAs(QUrl filename) {
+    // Stop monitoring file while saving
+    if(m_watcher->contains(m_fileUrl.toLocalFile()))
+        m_watcher->removeFile(m_fileUrl.toLocalFile());
+
     QString localPath = filename.toLocalFile();
     QFile f(localPath);
     if(!f.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
-        //emit error(tr("Cannot save: ") + f.errorString());
+        //emit error();
         return;
     }
     f.write(m_document->toPlainText().toLocal8Bit());
     f.close();
     qDebug() << "saved to" << localPath;
     setFileUrl(QUrl::fromLocalFile(localPath));
+
+    // Restart file watcher back after saving completes
+    if(!m_watcher->contains(m_fileUrl.toLocalFile()))
+        m_watcher->addFile(m_fileUrl.toLocalFile());
 }
 
 void DocumentHandler::reloadText() {
