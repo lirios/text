@@ -105,3 +105,15 @@ void DocumentHandler::saveAs(QUrl filename) {
     qDebug() << "saved to" << localPath;
     setFileUrl(QUrl::fromLocalFile(localPath));
 }
+
+void DocumentHandler::reloadText() {
+    QString filename = m_fileUrl.toLocalFile();
+    if(QFile::exists(filename)) {
+        QFile file(filename);
+        if(file.open(QFile::ReadOnly)) {
+            QByteArray data = file.readAll();
+            QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
+            setText(codec->toUnicode(data));
+        }
+    }
+}

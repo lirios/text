@@ -59,6 +59,7 @@ signals:
 
 public slots:
     void saveAs(QUrl filename);
+    void reloadText();
 
 private:
     QQuickItem *m_target;

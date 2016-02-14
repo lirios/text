@@ -20,7 +20,7 @@
 import QtQuick 2.5
 import Material 0.2
 import QtQuick.Controls 1.4 as Controls
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 1.2 as Dialogs
 import me.liriproject.text 1.0
 
 Page {
@@ -55,7 +55,7 @@ Page {
             history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
     }
 
-    FileDialog {
+    Dialogs.FileDialog {
         id: saveAsDialog
         title: qsTr("Choose a location to save")
         selectExisting: false
@@ -89,13 +89,23 @@ Page {
         text: document.text
     }
 
+    Dialog {
+        id: askForReloadDialog
+
+        title: qsTr("Reload file content?")
+        text: qsTr("The file was changed from outside. Do you wish to reload its content?")
+
+        onAccepted: document.reloadText()
+    }
+
     DocumentHandler {
         id: document
         target: mainArea
         fileUrl: documentUrl
 
         onFileChangedOnDisk: {
-            console.log("File changed on disk")
+            console.log("file changed on disk")
+            askForReloadDialog.show()
         }
     }
 }
