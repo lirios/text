@@ -19,6 +19,7 @@
 
 import QtQuick 2.5
 import Material 0.2
+import Material.ListItems 0.1 as ListItems
 import QtQuick.Controls 1.4 as Controls
 import QtQuick.Dialogs 1.2 as Dialogs
 import me.liriproject.text 1.0
@@ -27,6 +28,12 @@ Page {
     id: page
     property url documentUrl
     property bool anonymous: false
+    property list<Action> optionList: [
+        Action {
+            name: qsTr("Save As")
+            onTriggered: saveAs()
+        }
+    ]
 
     function save() {
         if(anonymous)
@@ -47,12 +54,41 @@ Page {
             onTriggered: {
                 save()
             }
+        },
+
+        Action {
+            id: moreActions
+            iconName: "navigation/more_vert"
+            name: qsTr("Options")
+            onTriggered: {
+                options.open(actionBar, Units.dp(-16), Units.dp(8))
+            }
         }
     ]
 
     Component.onCompleted: {
         if(!anonymous)
             history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
+    }
+
+    Dropdown {
+        id: options
+        width: Units.dp(200)
+        height: optionsView.height + Units.dp(16)
+        ListView {
+            id: optionsView
+            y: Units.dp(8)
+            width: parent.width
+            height: childrenRect.height
+            model: optionList
+            delegate: ListItems.Standard {
+                text: modelData.name
+                onClicked: {
+                    modelData.trigger()
+                    options.close()
+                }
+            }
+        }
     }
 
     Dialogs.FileDialog {
@@ -81,6 +117,7 @@ Page {
     Controls.TextArea {
         id: mainArea
         anchors.fill: parent
+        textMargin: Units.dp(16)
         focus: true
         font.family: "Roboto"
         font.pixelSize: Units.dp(18)
