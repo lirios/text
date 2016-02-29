@@ -25,14 +25,14 @@ Page {
     id: page
 
     actionBar.title: qsTr("Recent Files")
-//    actions: [
-//        Action {
-//            id: open
-//            iconName: "file/folder_open"
-//            name: qsTr("Open")
-//            onTriggered: openFileDialog.open()
-//        }
-//    ]
+    actions: [
+        Action {
+            id: openFile
+            iconName: "file/folder_open"
+            name: qsTr("Open")
+            onTriggered: openFileDialog.open()
+        }
+    ]
 
     FileDialog {
         id: openFileDialog
@@ -47,20 +47,8 @@ Page {
         model: sortedHistory
     }
 
-    Scrollbar {
-        flickableItem: recentFilesView
-    }
-
     ActionButton {
         id: newFile
-
-        states: State {
-            name: "exposed"
-            PropertyChanges {
-                target: newFile
-                rotation: -45
-            }
-        }
 
         onClicked: pageStack.push(Qt.resolvedUrl("EditPage.qml"), { anonymous: true })
 
@@ -69,28 +57,9 @@ Page {
         anchors.margins: Units.dp(24)
 
         iconName: "content/create"
-
-        transitions: Transition {
-            NumberAnimation {
-                target: newFile
-                property: "rotation"
-                duration: 200
-                easing.type: Easing.InOutQuad
-            }
-        }
     }
 
-    ActionButton {
-        id: openFile
-
-        anchors.horizontalCenter: newFile.horizontalCenter
-        anchors.bottom: newFile.top
-        anchors.bottomMargin: Units.dp(16)
-
-        //visible: addFile.state == "exposed"
-        backgroundColor: "white"
-        iconName: "file/folder_open"
-
-        onClicked: openFileDialog.open()
+    Scrollbar {
+        flickableItem: recentFilesView
     }
 }
