@@ -44,17 +44,20 @@ Page {
     actionBar.maxActionCount: 2
     actions: [
         Action {
+            id: saveAction
             iconName: "content/save"
             name: qsTr("Save")
             onTriggered: save()
         },
 
         Action {
+            id: saveAsAction
             name: qsTr("Save As")
             onTriggered: saveAs()
         },
 
         Action {
+            id: closeAction
             name: qsTr("Close")
             onTriggered: page.backAction.trigger()
         }
@@ -80,12 +83,17 @@ Page {
 
     Shortcut {
         sequence: "Ctrl+S"
-        onActivated: save()
+        onActivated: saveAction.trigger()
     }
 
     Shortcut {
         sequence: "Ctrl+Shift+S"
-        onActivated: saveAs()
+        onActivated: saveAsAction.trigger()
+    }
+
+    Shortcut {
+        sequence: "Ctrl+W"
+        onActivated: closeAction.trigger()
     }
 
     Controls.TextArea {
