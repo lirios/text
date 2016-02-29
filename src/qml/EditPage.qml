@@ -28,12 +28,6 @@ Page {
     id: page
     property url documentUrl
     property bool anonymous: false
-    property list<Action> optionList: [
-        Action {
-            name: qsTr("Save As")
-            onTriggered: saveAs()
-        }
-    ]
 
     function save() {
         if(anonymous)
@@ -47,48 +41,28 @@ Page {
     }
 
     actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
+    actionBar.maxActionCount: 2
     actions: [
         Action {
             iconName: "content/save"
             name: qsTr("Save")
-            onTriggered: {
-                save()
-            }
+            onTriggered: save()
         },
 
         Action {
-            id: moreActions
-            iconName: "navigation/more_vert"
-            name: qsTr("Options")
-            onTriggered: {
-                options.open(actionBar, Units.dp(-16), Units.dp(8))
-            }
+            name: qsTr("Save As")
+            onTriggered: saveAs()
+        },
+
+        Action {
+            name: qsTr("Close")
+            onTriggered: page.backAction.trigger()
         }
     ]
 
     Component.onCompleted: {
         if(!anonymous)
             history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
-    }
-
-    Dropdown {
-        id: options
-        width: Units.dp(200)
-        height: optionsView.height + Units.dp(16)
-        ListView {
-            id: optionsView
-            y: Units.dp(8)
-            width: parent.width
-            height: childrenRect.height
-            model: optionList
-            delegate: ListItems.Standard {
-                text: modelData.name
-                onClicked: {
-                    modelData.trigger()
-                    options.close()
-                }
-            }
-        }
     }
 
     Dialogs.FileDialog {
