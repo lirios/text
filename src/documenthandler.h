@@ -33,6 +33,7 @@ class DocumentHandler : public QObject
     Q_PROPERTY(QUrl fileUrl READ fileUrl WRITE setFileUrl NOTIFY fileUrlChanged)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
     Q_PROPERTY(QString documentTitle READ documentTitle WRITE setDocumentTitle NOTIFY documentTitleChanged)
+    Q_PROPERTY(bool modified READ modified NOTIFY modifiedChanged)
 
 public:
     DocumentHandler();
@@ -50,12 +51,15 @@ public:
     inline QString documentTitle() { return m_documentTitle; }
     void setDocumentTitle(QString title);
 
+    inline bool modified() { return m_document->isModified(); }
+
 signals:
     void targetChanged();
     void fileUrlChanged();
     void textChanged();
     void documentTitleChanged();
     void fileChangedOnDisk();
+    void modifiedChanged();
 
 public slots:
     void saveAs(QUrl filename);

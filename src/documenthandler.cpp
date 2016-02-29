@@ -44,8 +44,10 @@ void DocumentHandler::setTarget(QQuickItem *target) {
     QVariant doc = m_target->property("textDocument");
     if(doc.canConvert<QQuickTextDocument*>()) {
         QQuickTextDocument *qqdoc = doc.value<QQuickTextDocument*>();
-        if(qqdoc)
+        if(qqdoc) {
             m_document = qqdoc->textDocument();
+            connect(m_document, SIGNAL(modificationChanged(bool)), this, SIGNAL(modifiedChanged()));
+        }
     }
     emit targetChanged();
 }

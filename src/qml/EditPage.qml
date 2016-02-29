@@ -40,6 +40,11 @@ Page {
         saveAsDialog.open()
     }
 
+    Component.onCompleted: {
+        if(!anonymous)
+            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
+    }
+
     actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
     actionBar.maxActionCount: 2
     actions: [
@@ -63,9 +68,26 @@ Page {
         }
     ]
 
-    Component.onCompleted: {
-        if(!anonymous)
-            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
+    onGoBack: {
+        if(document.modified) {
+            event.accepted = true
+            exitDialog.show()
+        }
+    }
+
+    ThreeButtonDialog {
+        id: exitDialog
+        title: qsTr("Save changes before closing?")
+        text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+
+        onAccepted: {
+            saveAction.trigger()
+            page.forcePop()
+        }
+
+        onRejected: {
+            page.forcePop()
+        }
     }
 
     Dialogs.FileDialog {
@@ -129,5 +151,7 @@ Page {
             console.log("file changed on disk")
             askForReloadDialog.show()
         }
+
+        onModifiedChanged: console.log(modified)
     }
 }
