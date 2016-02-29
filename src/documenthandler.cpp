@@ -111,6 +111,8 @@ void DocumentHandler::saveAs(QUrl filename) {
     qDebug() << "saved to" << localPath;
     setFileUrl(QUrl::fromLocalFile(localPath));
 
+    m_document->setModified(false);
+
     // Restart file watcher back after saving completes
     if(!m_watcher->contains(m_fileUrl.toLocalFile()))
         m_watcher->addFile(m_fileUrl.toLocalFile());
