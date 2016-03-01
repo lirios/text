@@ -26,8 +26,10 @@ import me.liriproject.text 1.0
 
 Page {
     id: page
+
     property url documentUrl
     property bool anonymous: false
+    property alias document: document
 
     function save() {
         if(anonymous)
@@ -71,7 +73,39 @@ Page {
     onGoBack: {
         if(document.modified) {
             event.accepted = true
-            exitDialog.show()
+            var dialog = exitDialog
+            dialog.accepted.connect(function() {
+                saveAction.trigger()
+                page.forcePop()
+            })
+            dialog.rejected.connect(function() {
+                page.forcePop()
+            })
+            dialog.show()
+        }
+    }
+
+    Connections {
+        property bool forceClose: false
+
+        target: app
+        onClosing: {
+            if(!forceClose) {
+                if(page.document.modified) {
+                    close.accepted = false
+                    var dialog = exitDialog
+                    dialog.accepted.connect(function() {
+                        saveAction.trigger()
+                        forceClose = true
+                        app.close()
+                    })
+                    dialog.rejected.connect(function() {
+                        forceClose = true
+                        app.close()
+                    })
+                    dialog.show()
+                }
+            }
         }
     }
 
@@ -79,15 +113,6 @@ Page {
         id: exitDialog
         title: qsTr("Save changes before closing?")
         text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
-
-        onAccepted: {
-            saveAction.trigger()
-            page.forcePop()
-        }
-
-        onRejected: {
-            page.forcePop()
-        }
     }
 
     Dialogs.FileDialog {
