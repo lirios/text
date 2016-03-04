@@ -33,7 +33,6 @@ public:
     enum HistoryRoles {
         NameRole = Qt::UserRole + 1,
         FileUrlRole,
-        HumanReadableUrlRole,
         LastViewTimeRole,
         PreviewRole
     };
@@ -46,6 +45,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role);
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
+    Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length);
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 signals:

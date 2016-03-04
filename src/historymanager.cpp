@@ -52,8 +52,6 @@ QVariant HistoryManager::data(const QModelIndex &index, int role) const {
         val = history->value(NAME_KEY);
     if(role == FileUrlRole)
         val = history->value(URL_KEY);
-    if(role == HumanReadableUrlRole)
-        val = history->value(URL_KEY).toUrl().path();
     if(role == LastViewTimeRole)
         val = history->value(LAST_VIEW_KEY);
     if(role == PreviewRole)
@@ -124,6 +122,22 @@ bool HistoryManager::removeFile(QUrl fileUrl) {
     return true;
 }
 
+QString HistoryManager::prettifyPath(QUrl fileUrl, int length) {
+    if(length < 6)
+        return "";
+
+    QString path = fileUrl.path();
+    if(path.length() <= length)
+        return path;
+    int startLen = path.indexOf('/');
+    if(startLen > 0)
+        startLen++;
+    if(startLen > length - 6)
+        startLen = length - 6;
+    int endLen = length - startLen - 3;
+    return path.left(startLen) + "..." + path.right(endLen);
+}
+
 Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     Q_UNUSED(index)
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
@@ -162,7 +176,6 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrin
 QHash<int, QByteArray> HistoryManager::roleNames() const {
     return QHash<int, QByteArray>({ {NameRole, "name"},
                                     {FileUrlRole, "fileUrl"},
-                                    {HumanReadableUrlRole, "humanReadableUrl"},
                                     {LastViewTimeRole, "lastViewTime"},
                                     {PreviewRole, "previewText"}
                                   });

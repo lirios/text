@@ -108,11 +108,13 @@ Flickable {
                 Label {
                     id: docUrl
 
+                    property int symbolCount: (parent.width - Units.dp(16)) / Units.dp(8)
+
                     anchors.top: docName.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: Units.dp(4)
 
-                    text: humanReadableUrl
+                    text: history.prettifyPath(fileUrl, symbolCount)
                     color: "white"
                     font.pixelSize: Units.dp(16)
                     font.weight: Font.Normal
