@@ -176,7 +176,5 @@ Page {
             console.log("file changed on disk")
             askForReloadDialog.show()
         }
-
-        onModifiedChanged: console.log(modified)
     }
 }

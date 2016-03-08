@@ -96,13 +96,18 @@ Flickable {
                     id: docName
 
                     anchors.top: nameBackground.top
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     anchors.topMargin: Units.dp(8)
+                    anchors.leftMargin: Units.dp(16)
+                    anchors.rightMargin: Units.dp(16)
 
                     text: name
                     color: "white"
                     font.pixelSize: Units.dp(20)
                     font.weight: Font.Medium
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideRight
                 }
 
                 Label {
@@ -111,13 +116,18 @@ Flickable {
                     property int symbolCount: (parent.width - Units.dp(16)) / Units.dp(8)
 
                     anchors.top: docName.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     anchors.topMargin: Units.dp(4)
+                    anchors.leftMargin: Units.dp(16)
+                    anchors.rightMargin: Units.dp(16)
 
-                    text: history.prettifyPath(fileUrl, symbolCount)
+                    text: history.prettifyPath(fileUrl)
                     color: "white"
                     font.pixelSize: Units.dp(16)
                     font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideMiddle
                 }
 
                 Ink {

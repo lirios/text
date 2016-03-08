@@ -138,6 +138,10 @@ QString HistoryManager::prettifyPath(QUrl fileUrl, int length) {
     return path.left(startLen) + "..." + path.right(endLen);
 }
 
+QString HistoryManager::prettifyPath(QUrl fileUrl) {
+    return fileUrl.path();
+}
+
 Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     Q_UNUSED(index)
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};

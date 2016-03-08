@@ -46,6 +46,7 @@ public:
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
     Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length);
+    Q_INVOKABLE QString prettifyPath(QUrl fileUrl);
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 signals:
