@@ -31,68 +31,63 @@ const QString PREVIEW_KEY = "previewStrings";
 
 HistoryManager::HistoryManager() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/history.ini";
-    history = new QSettings(path, QSettings::IniFormat);
+    historyStorage = new QSettings(path, QSettings::IniFormat);
+    loadHistory();
 }
 
 HistoryManager::~HistoryManager() { }
 
 int HistoryManager::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)
-    return history->childGroups().count();
+    return history.length();
 }
 
 QVariant HistoryManager::data(const QModelIndex &index, int role) const {
     if(index.row() < 0 || index.row() >= rowCount())
         return QVariant();
 
-    QVariant val = QVariant();
-    history->beginGroup(QString::number(index.row()));
-
     if(role == NameRole)
-        val = history->value(NAME_KEY);
+        return history[index.row()].name;
     if(role == FileUrlRole)
-        val = history->value(URL_KEY);
+        return history[index.row()].url;
     if(role == LastViewTimeRole)
-        val = history->value(LAST_VIEW_KEY);
+        return history[index.row()].viewTime;
     if(role == PreviewRole)
-        val = history->value(PREVIEW_KEY);
+        return history[index.row()].preview;
 
-    history->endGroup();
-    return val;
+    return QVariant();
 }
 
 bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, int role) {
     if(index.row() < 0 || index.row() >= rowCount())
         return false;
 
-    history->beginGroup(QString::number(index.row()));
     if(role == NameRole) {
-        history->setValue(NAME_KEY, value);
-        history->endGroup();
-        emit dataChanged(index, index, {role});
-        return true;
-    }
-    if(role == FileUrlRole) {
-        history->setValue(URL_KEY, value);
-        history->endGroup();
-        emit dataChanged(index, index, {role});
-        return true;
-    }
-    if(role == LastViewTimeRole) {
-        history->setValue(LAST_VIEW_KEY, value);
-        history->endGroup();
-        emit dataChanged(index, index, {role});
-        return true;
-    }
-    if(role == PreviewRole) {
-        history->setValue(PREVIEW_KEY, value);
-        history->endGroup();
-        emit dataChanged(index, index, {role});
-        return true;
+        history[index.row()].name = value.toString();
+    } else if(role == FileUrlRole) {
+        history[index.row()].url = value.toUrl();
+    } else if(role == LastViewTimeRole) {
+        history[index.row()].viewTime = value.toDateTime();
+    } else if(role == PreviewRole) {
+        history[index.row()].preview = value.toStringList();
+    } else {
+        return false;
     }
 
-    history->endGroup();
-    return false;
+    saveHistory();
+    emit dataChanged(index, index, {role});
+    return true;
+}
+
+bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
+    Q_UNUSED(parent)
+    if(row < 0 || row >= rowCount())
+        return false;
+    emit beginRemoveRows(QModelIndex(), row, row);
+    history.removeAt(row);
+    saveHistory();
+    emit endRemoveRows();
+    return true;
 }
 
 bool HistoryManager::removeFile(QUrl fileUrl) {
@@ -103,21 +98,7 @@ bool HistoryManager::removeFile(QUrl fileUrl) {
         if(row == rowCount() - 1)
             return false;
     }
-    emit beginRemoveRows(QModelIndex(), row, row);
-    for(int i = row + 1; i < rowCount(); i++) {
-        history->setValue(QString::number(i - 1) + "/" + NAME_KEY, history->value(QString::number(i) + "/" + NAME_KEY));
-        history->setValue(QString::number(i - 1) + "/" + URL_KEY, history->value(QString::number(i) + "/" + URL_KEY));
-        history->setValue(QString::number(i - 1) + "/" + LAST_VIEW_KEY, history->value(QString::number(i) + "/" + LAST_VIEW_KEY));
-        history->setValue(QString::number(i - 1) + "/" + PREVIEW_KEY, history->value(QString::number(i) + "/" + PREVIEW_KEY));
-    }
-    for(int i = rowCount() - 1; i < rowCount(); i++) {
-        history->beginGroup(QString::number(i));
-        foreach (QString key, history->childKeys()) {
-            history->remove(key);
-        }
-        history->endGroup();
-    }
-    emit endRemoveRows();
+    removeRow(row);
     qDebug() << "Entry removed, new count:" << rowCount();
     return true;
 }
@@ -164,16 +145,17 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrin
                 oldest = i;
             }
         }
-        removeFile(data(index(oldest), FileUrlRole).toUrl());
+        removeRow(oldest);
     }
 
     emit beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    history->beginGroup(QString::number(rowCount()));
-    history->setValue(NAME_KEY, name);
-    history->setValue(URL_KEY, fileUrl);
-    history->setValue(LAST_VIEW_KEY, QDateTime::currentDateTime());
-    history->setValue(PREVIEW_KEY, someStrings);
-    history->endGroup();
+    FileData file;
+    file.name = name;
+    file.url = fileUrl;
+    file.viewTime = QDateTime::currentDateTime();
+    file.preview = someStrings;
+    history.append(file);
+    saveHistory();
     emit endInsertRows();
 }
 
@@ -183,4 +165,31 @@ QHash<int, QByteArray> HistoryManager::roleNames() const {
                                     {LastViewTimeRole, "lastViewTime"},
                                     {PreviewRole, "previewText"}
                                   });
+}
+
+void HistoryManager::loadHistory() {
+    history = QList<FileData>();
+    int size = historyStorage->beginReadArray("recentFiles");
+    for(int i = 0; i < size; i++) {
+        historyStorage->setArrayIndex(i);
+        FileData file;
+        file.name = historyStorage->value(NAME_KEY).toString();
+        file.url = historyStorage->value(URL_KEY).toUrl();
+        file.viewTime = historyStorage->value(LAST_VIEW_KEY).toDateTime();
+        file.preview = historyStorage->value(PREVIEW_KEY).toStringList();
+        history.append(file);
+    }
+    historyStorage->endArray();
+}
+
+void HistoryManager::saveHistory() {
+    historyStorage->beginWriteArray("recentFiles", history.length());
+    for(int i = 0; i < history.length(); i++) {
+        historyStorage->setArrayIndex(i);
+        historyStorage->setValue(NAME_KEY, history[i].name);
+        historyStorage->setValue(URL_KEY, history[i].url);
+        historyStorage->setValue(LAST_VIEW_KEY, history[i].viewTime);
+        historyStorage->setValue(PREVIEW_KEY, history[i].preview);
+    }
+    historyStorage->endArray();
 }

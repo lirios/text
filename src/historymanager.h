@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QSettings>
 #include <QUrl>
+#include <QDateTime>
 
 class HistoryManager : public QAbstractListModel
 {
@@ -43,6 +44,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
+    bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
     Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length);
@@ -58,7 +60,18 @@ protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    QSettings *history;
+    QSettings *historyStorage;
+
+    struct FileData {
+        QString name;
+        QUrl url;
+        QDateTime viewTime;
+        QStringList preview;
+    };
+    QList<FileData> history;
+
+    void loadHistory();
+    void saveHistory();
 };
 
 #endif // HISTORYMANAGER_H
