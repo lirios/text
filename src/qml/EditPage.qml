@@ -143,18 +143,6 @@ Page {
         onActivated: closeAction.trigger()
     }
 
-    Controls.TextArea {
-        id: mainArea
-        anchors.fill: parent
-        textMargin: Units.dp(16)
-        focus: true
-        font.family: "Roboto"
-        font.pixelSize: Units.dp(18)
-        font.weight: Font.Normal
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        text: document.text
-    }
-
     Dialog {
         id: askForReloadDialog
 
@@ -164,7 +152,25 @@ Page {
         positiveButtonText: qsTr("RELOAD")
         negativeButtonText: qsTr("IGNORE")
 
-        onAccepted: document.reloadText()
+        onAccepted: {
+            var cp = mainArea.cursorPosition
+            document.reloadText()
+            mainArea.forceActiveFocus()
+            mainArea.cursorPosition = cp
+        }
+    }
+
+    Controls.TextArea {
+        id: mainArea
+
+        anchors.fill: parent
+        textMargin: Units.dp(16)
+        focus: true
+        font.family: "Roboto"
+        font.pixelSize: Units.dp(18)
+        font.weight: Font.Normal
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        text: document.text
     }
 
     DocumentHandler {
