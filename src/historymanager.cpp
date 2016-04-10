@@ -133,7 +133,7 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
 }
 
-void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList someStrings) {
+void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList previewLines) {
     int fileIndex;
     for(fileIndex = 0; fileIndex < rowCount(); fileIndex++) {
         if(data(index(fileIndex), FileUrlRole).toUrl() == fileUrl) {
@@ -157,7 +157,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
     file.name = name;
     file.url = fileUrl;
     file.viewTime = QDateTime::currentDateTime();
-    file.preview = someStrings;
+    file.preview = previewLines;
     file.cursorPosition = cursorPosition;
     if(fileIndex >= rowCount()) {
         emit beginInsertRows(QModelIndex(), rowCount(), rowCount());

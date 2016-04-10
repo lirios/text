@@ -55,7 +55,7 @@ public:
 signals:
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList someStrings);
+    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList previewLines);
 
 protected:
     QHash<int, QByteArray> roleNames() const;

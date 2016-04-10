@@ -35,8 +35,10 @@ Page {
     function save() {
         if(anonymous)
             saveAs()
-        else
+        else {
             document.saveAs(documentUrl)
+            touchFileOnCursorPosition()
+        }
     }
 
     function saveAs() {
@@ -53,20 +55,24 @@ Page {
             start -= end - lines.length + 1
             if(start < 0)
                 start = 0
-            end = lines.length
+            end = lines.length - 1
         }
         var res = []
-        for(var i = start; i < end; i++) {
+        for(var i = start; i <= end; i++) {
             res.push(lines[i])
         }
         return res
     }
 
+    function touchFileOnCursorPosition() {
+        history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
+                          getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 9))
+    }
+
     Component.onCompleted: {
         mainArea.cursorPosition = cursorPos
         if(!anonymous) {
-            history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
-                              getTextAroundLine(mainArea.text.slice(mainArea.cursorPosition, mainArea.cursorPosition).split('\n').length - 1, 9))
+            touchFileOnCursorPosition()
         }
     }
 
@@ -105,6 +111,8 @@ Page {
                 page.forcePop()
             })
             dialog.show()
+        } else {
+            touchFileOnCursorPosition()
         }
     }
 
@@ -127,6 +135,8 @@ Page {
                         app.close()
                     })
                     dialog.show()
+                } else {
+                    touchFileOnCursorPosition()
                 }
             }
         }
@@ -148,8 +158,7 @@ Page {
             document.saveAs(saveAsDialog.fileUrl)
             documentUrl = saveAsDialog.fileUrl
             anonymous = false
-            history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
-                              getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 9))
+            touchFileOnCursorPosition()
         }
     }
 
