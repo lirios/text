@@ -136,8 +136,8 @@ Flickable {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onClicked: {
-                        if(mouse.button == Qt.LeftButton)
-                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
+                        if(mouse.button === Qt.LeftButton)
+                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
                         else
                             // Rightclicking deletes item for debugging
                             history.removeFile(fileUrl)

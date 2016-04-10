@@ -30,6 +30,7 @@ Page {
     property url documentUrl
     property bool anonymous: false
     property alias document: document
+    property int cursorPos: 0
 
     function save() {
         if(anonymous)
@@ -62,8 +63,10 @@ Page {
     }
 
     Component.onCompleted: {
+        mainArea.cursorPosition = cursorPos
         if(!anonymous) {
-            history.touchFile(document.documentTitle, documentUrl, getTextAroundLine(0, 9))
+            history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
+                              getTextAroundLine(mainArea.text.slice(mainArea.cursorPosition, mainArea.cursorPosition).split('\n').length - 1, 9))
         }
     }
 
@@ -145,7 +148,7 @@ Page {
             document.saveAs(saveAsDialog.fileUrl)
             documentUrl = saveAsDialog.fileUrl
             anonymous = false
-            history.touchFile(document.documentTitle, documentUrl,
+            history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
                               getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 9))
         }
     }

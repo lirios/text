@@ -28,6 +28,7 @@ const QString NAME_KEY = "name";
 const QString URL_KEY = "fileUrl";
 const QString LAST_VIEW_KEY = "lastViewTime";
 const QString PREVIEW_KEY = "previewStrings";
+const QString CURSOR_POSITION_KEY = "cursorPosition";
 
 HistoryManager::HistoryManager() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/history.ini";
@@ -54,6 +55,8 @@ QVariant HistoryManager::data(const QModelIndex &index, int role) const {
         return history[index.row()].viewTime;
     if(role == PreviewRole)
         return history[index.row()].preview;
+    if(role == CursorPositionRole)
+        return history[index.row()].cursorPosition;
 
     return QVariant();
 }
@@ -70,6 +73,8 @@ bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, in
         history[index.row()].viewTime = value.toDateTime();
     } else if(role == PreviewRole) {
         history[index.row()].preview = value.toStringList();
+    } else if(role == CursorPositionRole) {
+        history[index.row()].cursorPosition = value.toInt();
     } else {
         return false;
     }
@@ -128,14 +133,14 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
 }
 
-void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrings) {
-    for(int i = 0; i < rowCount(); i++) {
-        if(data(index(i), FileUrlRole).toUrl() == fileUrl) {
-            setData(index(i), QDateTime::currentDateTime(), LastViewTimeRole);
-            return;
+void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList someStrings) {
+    int fileIndex;
+    for(fileIndex = 0; fileIndex < rowCount(); fileIndex++) {
+        if(data(index(fileIndex), FileUrlRole).toUrl() == fileUrl) {
+            break;
         }
     }
-    if(rowCount() >= MAX_HISTORY_SIZE) {
+    if(fileIndex >= MAX_HISTORY_SIZE) {
         int oldest = 0;
         QDateTime oldestDT = QDateTime::currentDateTime();
         for(int i = 1; i < rowCount(); i++) {
@@ -148,22 +153,30 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, QStringList someStrin
         removeRow(oldest);
     }
 
-    emit beginInsertRows(QModelIndex(), rowCount(), rowCount());
     FileData file;
     file.name = name;
     file.url = fileUrl;
     file.viewTime = QDateTime::currentDateTime();
     file.preview = someStrings;
-    history.append(file);
-    saveHistory();
-    emit endInsertRows();
+    file.cursorPosition = cursorPosition;
+    if(fileIndex >= rowCount()) {
+        emit beginInsertRows(QModelIndex(), rowCount(), rowCount());
+        history.append(file);
+        saveHistory();
+        emit endInsertRows();
+    } else {
+        history[fileIndex] = file;
+        saveHistory();
+        emit dataChanged(index(fileIndex), index(fileIndex), {NameRole, FileUrlRole, LastViewTimeRole, PreviewRole, CursorPositionRole});
+    }
 }
 
 QHash<int, QByteArray> HistoryManager::roleNames() const {
     return QHash<int, QByteArray>({ {NameRole, "name"},
                                     {FileUrlRole, "fileUrl"},
                                     {LastViewTimeRole, "lastViewTime"},
-                                    {PreviewRole, "previewText"}
+                                    {PreviewRole, "previewText"},
+                                    {CursorPositionRole, "cursorPosition"}
                                   });
 }
 
@@ -177,6 +190,7 @@ void HistoryManager::loadHistory() {
         file.url = historyStorage->value(URL_KEY).toUrl();
         file.viewTime = historyStorage->value(LAST_VIEW_KEY).toDateTime();
         file.preview = historyStorage->value(PREVIEW_KEY).toStringList();
+        file.cursorPosition = historyStorage->value(CURSOR_POSITION_KEY).toInt();
         history.append(file);
     }
     historyStorage->endArray();
@@ -190,6 +204,7 @@ void HistoryManager::saveHistory() {
         historyStorage->setValue(URL_KEY, history[i].url);
         historyStorage->setValue(LAST_VIEW_KEY, history[i].viewTime);
         historyStorage->setValue(PREVIEW_KEY, history[i].preview);
+        historyStorage->setValue(CURSOR_POSITION_KEY, history[i].cursorPosition);
     }
     historyStorage->endArray();
 }

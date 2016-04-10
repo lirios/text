@@ -35,7 +35,8 @@ public:
         NameRole = Qt::UserRole + 1,
         FileUrlRole,
         LastViewTimeRole,
-        PreviewRole
+        PreviewRole,
+        CursorPositionRole
     };
 
     HistoryManager();
@@ -54,7 +55,7 @@ public:
 signals:
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, QStringList someStrings);
+    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList someStrings);
 
 protected:
     QHash<int, QByteArray> roleNames() const;
@@ -67,6 +68,7 @@ private:
         QUrl url;
         QDateTime viewTime;
         QStringList preview;
+        int cursorPosition;
     };
     QList<FileData> history;
 
