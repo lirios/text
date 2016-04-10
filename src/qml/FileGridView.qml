@@ -69,7 +69,7 @@ Flickable {
                         font.family: "Roboto"
                         font.pixelSize: Units.dp(13)
                         font.weight: Font.Medium
-                        text: previewText
+                        text: previewText.join("\n")
                     }
 
                     LinearGradient {

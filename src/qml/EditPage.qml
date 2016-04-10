@@ -42,9 +42,29 @@ Page {
         saveAsDialog.open()
     }
 
+    function getTextAroundLine(lineNum, height) {
+        var lines = mainArea.text.split('\n')
+        var start = lineNum - Math.floor(height/2)
+        if(start < 0)
+            start = 0
+        var end = start + height - 1
+        if(end >= lines.length) {
+            start -= end - lines.length + 1
+            if(start < 0)
+                start = 0
+            end = lines.length
+        }
+        var res = []
+        for(var i = start; i < end; i++) {
+            res.push(lines[i])
+        }
+        return res
+    }
+
     Component.onCompleted: {
-        if(!anonymous)
-            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
+        if(!anonymous) {
+            history.touchFile(document.documentTitle, documentUrl, getTextAroundLine(0, 9))
+        }
     }
 
     actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
@@ -117,6 +137,7 @@ Page {
 
     Dialogs.FileDialog {
         id: saveAsDialog
+
         title: qsTr("Choose a location to save")
         selectExisting: false
 
@@ -124,7 +145,8 @@ Page {
             document.saveAs(saveAsDialog.fileUrl)
             documentUrl = saveAsDialog.fileUrl
             anonymous = false
-            history.touchFile(document.documentTitle, documentUrl, [mainArea.getText(0, 500)])
+            history.touchFile(document.documentTitle, documentUrl,
+                              getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 9))
         }
     }
 
