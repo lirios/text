@@ -35,4 +35,17 @@ ApplicationWindow {
         primaryColor: "purple"
         accentColor: "deepOrange"
     }
+
+    Component.onCompleted: {
+        console.log("app completed")
+        if(givenPath) {
+            var cp = 0
+            if(history.getFileInfo(givenPath))
+                cp = history.getFileInfo(givenPath).cursorPosition
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: givenPath, cursorPos: cp })
+        }
+        if(newDoc) {
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { anonymous: true })
+        }
+    }
 }

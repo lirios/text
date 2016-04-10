@@ -48,8 +48,9 @@ public:
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length);
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl);
+    Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length) const;
+    Q_INVOKABLE QString prettifyPath(QUrl fileUrl) const;
+    Q_INVOKABLE QVariantMap getFileInfo(QUrl fileUrl) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 signals:

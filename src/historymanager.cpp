@@ -108,7 +108,7 @@ bool HistoryManager::removeFile(QUrl fileUrl) {
     return true;
 }
 
-QString HistoryManager::prettifyPath(QUrl fileUrl, int length) {
+QString HistoryManager::prettifyPath(QUrl fileUrl, int length) const {
     if(length < 6)
         return "";
 
@@ -124,8 +124,26 @@ QString HistoryManager::prettifyPath(QUrl fileUrl, int length) {
     return path.left(startLen) + "..." + path.right(endLen);
 }
 
-QString HistoryManager::prettifyPath(QUrl fileUrl) {
+QString HistoryManager::prettifyPath(QUrl fileUrl) const {
     return fileUrl.path();
+}
+
+QVariantMap HistoryManager::getFileInfo(QUrl fileUrl) const {
+    for(int row = 0; row < rowCount(); row++) {
+        if(data(index(row), FileUrlRole).toUrl() == fileUrl) {
+            QHash<int,QByteArray> names = roleNames();
+            QHashIterator<int, QByteArray> i(names);
+            QVariantMap res;
+            while (i.hasNext()) {
+                i.next();
+                QModelIndex idx = index(row, 0);
+                QVariant data = idx.data(i.key());
+                res[i.value()] = data;
+            }
+            return res;
+        }
+    }
+    return QVariantMap();
 }
 
 Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {

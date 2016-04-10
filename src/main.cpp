@@ -22,6 +22,7 @@
 #include <QQmlContext>
 #include <QQuickView>
 #include <QSortFilterProxyModel>
+#include <QCommandLineParser>
 #include <QDebug>
 
 #include "documenthandler.h"
@@ -29,11 +30,22 @@
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication app(argc, argv);
     QCoreApplication::setOrganizationName("liri-project");
     QCoreApplication::setOrganizationDomain("liriproject.me");
     QCoreApplication::setApplicationName("liri-text");
 
-    QGuiApplication app(argc, argv);
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Material Designed text editor");
+    parser.addHelpOption();
+    QCommandLineOption newFileOption("new-document", QGuiApplication::translate("command line", "Start the editor with a new document."));
+    parser.addOption(newFileOption);
+    parser.addPositionalArgument("[file]", QGuiApplication::translate("command line", "Path to a file to open for editing."));
+
+    parser.process(app);
+    QStringList args = parser.positionalArguments();
+    bool nf = parser.isSet(newFileOption);
+
     qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
 
 	QQmlApplicationEngine engine;
@@ -44,6 +56,13 @@ int main(int argc, char *argv[])
     proxyModel->sort(0, Qt::DescendingOrder);
     engine.rootContext()->setContextProperty("history", history);
     engine.rootContext()->setContextProperty("sortedHistory", proxyModel);
+
+    engine.rootContext()->setContextProperty("newDoc", nf);
+    if(args.length() > 0)
+        engine.rootContext()->setContextProperty("givenPath", QUrl::fromLocalFile(args[0]));
+    else
+        engine.rootContext()->setContextProperty("givenPath", nullptr);
+
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
 	return app.exec();

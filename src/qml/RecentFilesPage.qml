@@ -34,6 +34,10 @@ Page {
         }
     ]
 
+    Component.onCompleted: {
+        console.log("start page completed")
+    }
+
     FileDialog {
         id: openFileDialog
         title: qsTr("Choose a file to open")
