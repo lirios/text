@@ -18,7 +18,8 @@
  */
 
 import QtQuick 2.5
-import Material 0.2
+import Material 0.3
+import Material.Extras 0.1
 import Material.ListItems 0.1 as ListItems
 import QtQuick.Controls 1.4 as Controls
 import QtQuick.Dialogs 1.2 as Dialogs
@@ -215,6 +216,10 @@ Page {
         onFileChangedOnDisk: {
             console.log("file changed on disk")
             askForReloadDialog.show()
+        }
+
+        onError: {
+            app.showError(qsTr("File operation error"), description)
         }
     }
 }

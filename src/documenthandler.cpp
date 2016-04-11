@@ -60,23 +60,22 @@ void DocumentHandler::setFileUrl(QUrl fileUrl) {
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
         qDebug() << m_fileUrl << filename;
-        if(QFile::exists(filename)) {
-            QFile file(filename);
-            if(file.open(QFile::ReadOnly)) {
-                QByteArray data = file.readAll();
-                QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
-                setText(codec->toUnicode(data));
-                if(m_document)
-                    m_document->setModified(false);
-                if(m_fileUrl.isEmpty())
-                    m_documentTitle = "New Document.txt";
-                else
-                    m_documentTitle = QFileInfo(filename).fileName();
-
-                emit documentTitleChanged();
-
-            }
+        QFile file(filename);
+        if(!file.open(QFile::ReadOnly)) {
+            emit error(file.errorString());
+            return;
         }
+        QByteArray data = file.readAll();
+        QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
+        setText(codec->toUnicode(data));
+        if(m_document)
+            m_document->setModified(false);
+        if(m_fileUrl.isEmpty())
+            m_documentTitle = "New Document.txt";
+        else
+            m_documentTitle = QFileInfo(filename).fileName();
+
+        emit documentTitleChanged();
         emit fileUrlChanged();
     }
 }
@@ -103,15 +102,16 @@ void DocumentHandler::saveAs(QUrl filename) {
     QString localPath = filename.toLocalFile();
     QFile f(localPath);
     if(!f.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
-        //emit error();
-        return;
-    }
-    f.write(m_document->toPlainText().toLocal8Bit());
-    f.close();
-    qDebug() << "saved to" << localPath;
-    setFileUrl(QUrl::fromLocalFile(localPath));
+        emit error(f.errorString());
+    } else {
+        if(f.write(m_document->toPlainText().toLocal8Bit()) == -1)
+            emit error(f.errorString());
+        f.close();
+        qDebug() << "saved to" << localPath;
+        setFileUrl(QUrl::fromLocalFile(localPath));
 
-    m_document->setModified(false);
+        m_document->setModified(false);
+    }
 
     // Restart file watcher back after saving completes
     if(!m_watcher->contains(m_fileUrl.toLocalFile()))
@@ -122,10 +122,12 @@ void DocumentHandler::reloadText() {
     QString filename = m_fileUrl.toLocalFile();
     if(QFile::exists(filename)) {
         QFile file(filename);
-        if(file.open(QFile::ReadOnly)) {
-            QByteArray data = file.readAll();
-            QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
-            setText(codec->toUnicode(data));
+        if(!file.open(QFile::ReadOnly)) {
+            emit error(file.errorString());
+            return;
         }
+        QByteArray data = file.readAll();
+        QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
+        setText(codec->toUnicode(data));
     }
 }

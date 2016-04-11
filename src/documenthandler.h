@@ -60,6 +60,7 @@ signals:
     void documentTitleChanged();
     void fileChangedOnDisk();
     void modifiedChanged();
+    void error(QString description);
 
 public slots:
     void saveAs(QUrl filename);
