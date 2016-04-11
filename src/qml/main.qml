@@ -26,8 +26,8 @@ ApplicationWindow {
     visible: true
     title: qsTr("Liri Text")
 
-    minimumWidth: Units.dp(384)
-    minimumHeight: Units.dp(256)
+    minimumWidth: dp(384)
+    minimumHeight: dp(256)
 
     initialPage: RecentFilesPage { }
 

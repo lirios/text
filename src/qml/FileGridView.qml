@@ -25,10 +25,10 @@ Flickable {
     id: rootFlickable
 
     property alias model: fileGrid.model
-    property int margins: Units.dp(24)
-    property int spacing: Units.dp(8)
-    property int cardWidth: Units.dp(320)
-    property int cardHeight: Units.dp(256)
+    property int margins: dp(24)
+    property int spacing: dp(8)
+    property int cardWidth: dp(320)
+    property int cardHeight: dp(256)
 
     anchors.fill: parent
     contentHeight: fileGrid.height + spacing
@@ -63,18 +63,18 @@ Flickable {
                     Text {
                         id: filePreview
                         anchors.fill: parent
-                        anchors.margins: Units.dp(8)
-                        anchors.rightMargin: Units.dp(4)
+                        anchors.margins: dp(8)
+                        anchors.rightMargin: dp(4)
                         clip: true
                         font.family: "Roboto"
-                        font.pixelSize: Units.dp(13)
+                        font.pixelSize: dp(13)
                         font.weight: Font.Medium
                         text: previewText.join("\n")
                     }
 
                     LinearGradient {
                         anchors.fill: parent
-                        start: Qt.point(parent.width - Units.dp(28), 0)
+                        start: Qt.point(parent.width - dp(28), 0)
                         end: Qt.point(filePreview.width + filePreview.x, 0)
                         gradient: Gradient {
                             GradientStop {position: 0.0; color: "transparent"}
@@ -89,7 +89,7 @@ Flickable {
                     opacity: 0.7
                     anchors.bottom: parent.bottom
                     width: parent.width
-                    height: Units.dp(72)
+                    height: dp(72)
                 }
 
                 Label {
@@ -98,13 +98,13 @@ Flickable {
                     anchors.top: nameBackground.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: Units.dp(8)
-                    anchors.leftMargin: Units.dp(16)
-                    anchors.rightMargin: Units.dp(16)
+                    anchors.topMargin: dp(8)
+                    anchors.leftMargin: dp(16)
+                    anchors.rightMargin: dp(16)
 
                     text: name
                     color: "white"
-                    font.pixelSize: Units.dp(20)
+                    font.pixelSize: dp(20)
                     font.weight: Font.Medium
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
@@ -113,18 +113,18 @@ Flickable {
                 Label {
                     id: docUrl
 
-                    property int symbolCount: (parent.width - Units.dp(16)) / Units.dp(8)
+                    property int symbolCount: (parent.width - dp(16)) / dp(8)
 
                     anchors.top: docName.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: Units.dp(4)
-                    anchors.leftMargin: Units.dp(16)
-                    anchors.rightMargin: Units.dp(16)
+                    anchors.topMargin: dp(4)
+                    anchors.leftMargin: dp(16)
+                    anchors.rightMargin: dp(16)
 
                     text: history.prettifyPath(fileUrl)
                     color: "white"
-                    font.pixelSize: Units.dp(16)
+                    font.pixelSize: dp(16)
                     font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideMiddle

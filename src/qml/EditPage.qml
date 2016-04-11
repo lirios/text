@@ -198,10 +198,10 @@ Page {
         id: mainArea
 
         anchors.fill: parent
-        textMargin: Units.dp(16)
+        textMargin: dp(16)
         focus: true
         font.family: "Roboto"
-        font.pixelSize: Units.dp(18)
+        font.pixelSize: dp(18)
         font.weight: Font.Normal
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: document.text

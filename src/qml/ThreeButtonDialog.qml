@@ -41,14 +41,14 @@ PopupBase {
     width: Math.max(minimumWidth,
                     content.contentWidth + 2 * contentMargins)
 
-    height: Math.min(parent.height - Units.dp(64),
+    height: Math.min(parent.height - dp(64),
                      headerView.height +
                      content.contentHeight +
                      (floatingActions ? 0 : buttonContainer.height))
 
-    property int contentMargins: Units.dp(24)
+    property int contentMargins: dp(24)
 
-    property int minimumWidth: Device.isMobile ? Units.dp(280) : Units.dp(300)
+    property int minimumWidth: Device.isMobile ? dp(280) : dp(300)
 
     property alias title: titleLabel.text
     property alias text: textLabel.text
@@ -126,7 +126,7 @@ PopupBase {
 
         anchors.fill: parent
         elevation: 5
-        radius: Units.dp(2)
+        radius: dp(2)
         backgroundColor: "white"
 
         MouseArea {
@@ -176,7 +176,7 @@ PopupBase {
                 }
 
                 width: content.width - 2 * contentMargins
-                spacing: Units.dp(8)
+                spacing: dp(8)
             }
         }
 
@@ -241,7 +241,7 @@ PopupBase {
 
             Item {
                 width: parent.width
-                height: Units.dp(20)
+                height: dp(20)
                 visible: titleLabel.visible
             }
 
@@ -271,7 +271,7 @@ PopupBase {
                 left: parent.left
             }
 
-            height: hasActions ? Units.dp(52) : Units.dp(2)
+            height: hasActions ? dp(52) : dp(2)
 
             View {
                 id: buttonView
@@ -299,7 +299,7 @@ PopupBase {
                     anchors {
                         verticalCenter: parent.verticalCenter
                         right: negativeButton.visible ? negativeButton.left : parent.right
-                        rightMargin: Units.dp(8)
+                        rightMargin: dp(8)
                     }
 
                     onClicked: {
@@ -319,7 +319,7 @@ PopupBase {
                     anchors {
                         verticalCenter: parent.verticalCenter
                         right: positiveButton.visible ? positiveButton.left : parent.right
-                        rightMargin: Units.dp(8)
+                        rightMargin: dp(8)
                     }
 
                     onClicked: {
@@ -338,7 +338,7 @@ PopupBase {
 
                     anchors {
                         verticalCenter: parent.verticalCenter
-                        rightMargin: Units.dp(8)
+                        rightMargin: dp(8)
                         right: parent.right
                     }
 

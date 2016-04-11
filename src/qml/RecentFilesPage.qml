@@ -58,7 +58,7 @@ Page {
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: Units.dp(24)
+        anchors.margins: dp(24)
 
         iconName: "content/create"
     }

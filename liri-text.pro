@@ -10,7 +10,8 @@ SOURCES += \
     src/historymanager.cpp
 
 RESOURCES += \
-    src/qml.qrc
+    src/qml.qrc \
+    icons/icons.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -21,3 +22,6 @@ include(deployment.pri)
 HEADERS += \
     src/documenthandler.h \
     src/historymanager.h
+
+DISTFILES += \
+    icons.yml
