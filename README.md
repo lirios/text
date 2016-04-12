@@ -1,9 +1,9 @@
 # Liri Text
-This is Liri Text, crossplatform text editor made in accordance with Material Design.
+This is Liri Text, crossplatform text editor made in accordance with Material Design.  
 For now it only provides very basic functionality, but will evolve into a very powerfull tool with a lot of advanced features some time...
 
 ## Installation
-We'll be providing prebuild binaries soon, but currently you can only try Liri Text by building it from source
+We'll be providing prebuilt binaries soon, but currently you can only try Liri Text by building it from source
 
 ### Install dependencies
 - [Qt 5.5 or higher](http://qt.io)
