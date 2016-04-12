@@ -66,6 +66,8 @@ void DocumentHandler::setFileUrl(QUrl fileUrl) {
             return;
         }
         QByteArray data = file.readAll();
+        if(file.error() != QFileDevice::NoError)
+            emit error(file.errorString());
         QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
         setText(codec->toUnicode(data));
         if(m_document)
@@ -100,13 +102,13 @@ void DocumentHandler::saveAs(QUrl filename) {
         m_watcher->removeFile(m_fileUrl.toLocalFile());
 
     QString localPath = filename.toLocalFile();
-    QFile f(localPath);
-    if(!f.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
-        emit error(f.errorString());
+    QFile file(localPath);
+    if(!file.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
+        emit error(file.errorString());
     } else {
-        if(f.write(m_document->toPlainText().toLocal8Bit()) == -1)
-            emit error(f.errorString());
-        f.close();
+        if(file.write(m_document->toPlainText().toLocal8Bit()) == -1)
+            emit error(file.errorString());
+        file.close();
         qDebug() << "saved to" << localPath;
         setFileUrl(QUrl::fromLocalFile(localPath));
 
@@ -127,6 +129,8 @@ void DocumentHandler::reloadText() {
             return;
         }
         QByteArray data = file.readAll();
+        if(file.error() != QFileDevice::NoError)
+            emit error(file.errorString());
         QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
         setText(codec->toUnicode(data));
     }
