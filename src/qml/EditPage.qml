@@ -32,12 +32,19 @@ Page {
     property alias document: document
     property int cursorPos: 0
 
+    signal ioSuccess
+    signal ioFailure
+
     function save() {
         if(anonymous)
             saveAs()
         else {
-            document.saveAs(documentUrl)
-            touchFileOnCursorPosition()
+            if(document.saveAs(documentUrl)) {
+                ioSuccess()
+                touchFileOnCursorPosition()
+            } else {
+                ioFailure()
+            }
         }
     }
 
@@ -70,9 +77,13 @@ Page {
     }
 
     Component.onCompleted: {
-        mainArea.cursorPosition = cursorPos
-        if(!anonymous) {
-            touchFileOnCursorPosition()
+        console.log("edit page completed")
+
+        if(document.setFileUrl(documentUrl)) {
+            mainArea.cursorPosition = cursorPos
+            if(!anonymous) {
+                touchFileOnCursorPosition()
+            }
         }
     }
 
@@ -100,17 +111,41 @@ Page {
     ]
 
     onGoBack: {
-        if(document.modified) {
+        function forcedClose() {
+            page.forcePop()
+        }
+
+        function onAccepted() {
+            ioSuccess.connect(forcedClose)
+            ioFailure.connect(function disc() {
+                ioSuccess.disconnect(forcedClose)
+                ioFailure.disconnect(disc)
+            })
+            saveAction.trigger()
+        }
+
+        function onRejected() {
+            forcedClose()
+        }
+
+        function onClosed() {
+            disconnectAll()
+        }
+
+        function disconnectAll() {
+            exitDialog.accepted.disconnect(onAccepted)
+            exitDialog.rejected.disconnect(onRejected)
+            exitDialog.closed.disconnect(onClosed)
+        }
+
+        if(page.document.modified) {
             event.accepted = true
-            var dialog = exitDialog
-            dialog.accepted.connect(function() {
-                saveAction.trigger()
-                page.forcePop()
-            })
-            dialog.rejected.connect(function() {
-                page.forcePop()
-            })
-            dialog.show()
+            if(exitDialog.showing)
+                exitDialog.close()
+            exitDialog.accepted.connect(onAccepted)
+            exitDialog.rejected.connect(onRejected)
+            exitDialog.closed.connect(onClosed)
+            exitDialog.show()
         } else {
             touchFileOnCursorPosition()
         }
@@ -122,19 +157,42 @@ Page {
         target: app
         onClosing: {
             if(!forceClose) {
+                function forcedClose() {
+                    forceClose = true
+                    app.close()
+                }
+
+                function onAccepted() {
+                    ioSuccess.connect(forcedClose)
+                    ioFailure.connect(function disc() {
+                        ioSuccess.disconnect(forcedClose)
+                        ioFailure.disconnect(disc)
+                    })
+                    saveAction.trigger()
+                }
+
+                function onRejected() {
+                    forcedClose()
+                }
+
+                function onClosed() {
+                    disconnectAll()
+                }
+
+                function disconnectAll() {
+                    exitDialog.accepted.disconnect(onAccepted)
+                    exitDialog.rejected.disconnect(onRejected)
+                    exitDialog.closed.disconnect(onClosed)
+                }
+
                 if(page.document.modified) {
                     close.accepted = false
-                    var dialog = exitDialog
-                    dialog.accepted.connect(function() {
-                        saveAction.trigger()
-                        forceClose = true
-                        app.close()
-                    })
-                    dialog.rejected.connect(function() {
-                        forceClose = true
-                        app.close()
-                    })
-                    dialog.show()
+                    if(exitDialog.showing)
+                        exitDialog.close()
+                    exitDialog.accepted.connect(onAccepted)
+                    exitDialog.rejected.connect(onRejected)
+                    exitDialog.closed.connect(onClosed)
+                    exitDialog.show()
                 } else {
                     touchFileOnCursorPosition()
                 }
@@ -155,10 +213,14 @@ Page {
         selectExisting: false
 
         onAccepted: {
-            document.saveAs(saveAsDialog.fileUrl)
-            documentUrl = saveAsDialog.fileUrl
-            anonymous = false
-            touchFileOnCursorPosition()
+            if(document.saveAs(saveAsDialog.fileUrl)) {
+                ioSuccess()
+                documentUrl = saveAsDialog.fileUrl
+                anonymous = false
+                touchFileOnCursorPosition()
+            } else {
+                ioFailure()
+            }
         }
     }
 
@@ -188,7 +250,10 @@ Page {
 
         onAccepted: {
             var cp = mainArea.cursorPosition
-            document.reloadText()
+            if(document.reloadText())
+                ioSuccess()
+            else
+                ioFailure()
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
         }
@@ -210,7 +275,6 @@ Page {
     DocumentHandler {
         id: document
         target: mainArea
-        fileUrl: documentUrl
 
         onFileChangedOnDisk: {
             console.log("file changed on disk")

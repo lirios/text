@@ -288,6 +288,7 @@ PopupBase {
                     right: parent.right
                     left: parent.left
                 }
+
                 Button {
                     id: cancelButton
 
@@ -303,8 +304,8 @@ PopupBase {
                     }
 
                     onClicked: {
-                        close();
                         canceled();
+                        close();
                     }
                 }
 
@@ -323,8 +324,8 @@ PopupBase {
                     }
 
                     onClicked: {
-                        close();
                         rejected();
+                        close();
                     }
                 }
 
@@ -343,8 +344,8 @@ PopupBase {
                     }
 
                     onClicked: {
-                        close()
                         accepted();
+                        close();
                     }
                 }
             }

@@ -43,7 +43,7 @@ public:
     void setTarget(QQuickItem *target);
 
     inline QUrl fileUrl() { return m_fileUrl; }
-    bool setFileUrl(QUrl fileUrl);
+    Q_INVOKABLE bool setFileUrl(QUrl fileUrl);
 
     inline QString text() { return m_text; }
     void setText(QString text);
