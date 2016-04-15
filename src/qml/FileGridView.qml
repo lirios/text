@@ -18,8 +18,8 @@
  */
 
 import QtQuick 2.5
-import QtGraphicalEffects 1.0
 import Material 0.3
+import QtGraphicalEffects 1.0
 
 Flickable {
     id: rootFlickable
