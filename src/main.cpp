@@ -23,6 +23,7 @@
 #include <QQuickView>
 #include <QSortFilterProxyModel>
 #include <QCommandLineParser>
+#include <QFontDatabase>
 #include <QDebug>
 
 #include "documenthandler.h"
@@ -38,9 +39,9 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.setApplicationDescription("Material Designed text editor");
     parser.addHelpOption();
-    QCommandLineOption newFileOption("new-document", QGuiApplication::translate("command line", "Start the editor with a new document."));
+    QCommandLineOption newFileOption("new-document", app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
-    parser.addPositionalArgument("[file]", QGuiApplication::translate("command line", "Path to a file to open for editing."));
+    parser.addPositionalArgument("[file]", app.translate("main", "Path to a file to open for editing."));
 
     parser.process(app);
     QStringList args = parser.positionalArguments();
@@ -63,6 +64,8 @@ int main(int argc, char *argv[])
     else
         engine.rootContext()->setContextProperty("givenPath", nullptr);
 
+    // Temporary solution untill we have font configuration
+    engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
 	return app.exec();

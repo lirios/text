@@ -69,6 +69,7 @@ Flickable {
                         font.family: "Roboto"
                         font.pixelSize: dp(13)
                         font.weight: Font.Medium
+                        textFormat: Text.PlainText
                         text: previewText.join("\n")
                     }
 
