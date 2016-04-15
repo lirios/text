@@ -43,7 +43,7 @@ public:
     void setTarget(QQuickItem *target);
 
     inline QUrl fileUrl() { return m_fileUrl; }
-    void setFileUrl(QUrl fileUrl);
+    bool setFileUrl(QUrl fileUrl);
 
     inline QString text() { return m_text; }
     void setText(QString text);
@@ -63,8 +63,8 @@ signals:
     void error(QString description);
 
 public slots:
-    void saveAs(QUrl filename);
-    void reloadText();
+    bool saveAs(QUrl filename);
+    bool reloadText();
 
 private:
     QQuickItem *m_target;
