@@ -19,7 +19,7 @@
 
 import QtQuick 2.5
 import QtGraphicalEffects 1.0
-import Material 0.2
+import Material 0.3
 
 Flickable {
     id: rootFlickable
@@ -28,7 +28,7 @@ Flickable {
     property int margins: dp(24)
     property int spacing: dp(8)
     property int cardWidth: dp(320)
-    property int cardHeight: dp(256)
+    property int cardHeight: dp(224)
 
     anchors.fill: parent
     contentHeight: fileGrid.height + spacing
