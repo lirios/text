@@ -8,12 +8,6 @@ We'll be providing prebuilt binaries soon, but currently you can only try Liri T
 ### Install dependencies
 - [Qt 5.5 or higher](http://qt.io)
 - [qml-material](https://github.com/papyros/qml-material)
-- KCoreAddons:
-
-Arch Linux
-```
-# pacman -S kcoreaddons
-```
 
 ### Build and run Liri Text
 ```

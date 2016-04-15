@@ -24,7 +24,7 @@
 #include <QQuickTextDocument>
 #include <QTextCodec>
 #include <QFile>
-#include <KDirWatch>
+#include <QFileSystemWatcher>
 
 class DocumentHandler : public QObject
 {
@@ -66,10 +66,13 @@ public slots:
     bool saveAs(QUrl filename);
     bool reloadText();
 
+private slots:
+    void fileChanged(QString file);
+
 private:
     QQuickItem *m_target;
     QTextDocument *m_document;
-    KDirWatch *m_watcher;
+    QFileSystemWatcher *m_watcher;
 
     QUrl m_fileUrl;
     QString m_text;

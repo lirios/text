@@ -27,10 +27,8 @@ DocumentHandler::DocumentHandler() :
     m_target(0),
     m_document(0) {
 
-    m_watcher = new KDirWatch(this);
-    connect(m_watcher, SIGNAL(dirty(QString)), this, SIGNAL(fileChangedOnDisk()));
-    connect(m_watcher, SIGNAL(created(QString)), this, SIGNAL(fileChangedOnDisk()));
-    connect(m_watcher, SIGNAL(deleted(QString)), this, SIGNAL(fileChangedOnDisk()));
+    m_watcher = new QFileSystemWatcher(this);
+    connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
 }
 
 DocumentHandler::~DocumentHandler() { }
@@ -54,9 +52,9 @@ void DocumentHandler::setTarget(QQuickItem *target) {
 
 bool DocumentHandler::setFileUrl(QUrl fileUrl) {
     if(fileUrl != m_fileUrl) {
-        if(m_watcher->contains(m_fileUrl.toLocalFile()))
-            m_watcher->removeFile(m_fileUrl.toLocalFile());
-        m_watcher->addFile(fileUrl.toLocalFile());
+        if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
+            m_watcher->removePath(m_fileUrl.toLocalFile());
+        m_watcher->addPath(fileUrl.toLocalFile());
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
         qDebug() << m_fileUrl << filename;
@@ -102,8 +100,8 @@ void DocumentHandler::setText(QString text) {
 
 bool DocumentHandler::saveAs(QUrl filename) {
     // Stop monitoring file while saving
-    if(m_watcher->contains(m_fileUrl.toLocalFile()))
-        m_watcher->removeFile(m_fileUrl.toLocalFile());
+    if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
+        m_watcher->removePath(m_fileUrl.toLocalFile());
 
     bool success = true;
     QString localPath = filename.toLocalFile();
@@ -124,30 +122,34 @@ bool DocumentHandler::saveAs(QUrl filename) {
     }
 
     // Restart file watcher back after saving completes
-    if(!m_watcher->contains(m_fileUrl.toLocalFile()))
-        m_watcher->addFile(m_fileUrl.toLocalFile());
+    if(!m_watcher->files().contains(m_fileUrl.toLocalFile()))
+        m_watcher->addPath(m_fileUrl.toLocalFile());
 
     return success;
 }
 
 bool DocumentHandler::reloadText() {
     QString filename = m_fileUrl.toLocalFile();
-    if(QFile::exists(filename)) {
-        QFile file(filename);
-        if(!file.open(QFile::ReadOnly)) {
-            emit error(file.errorString());
-            return false;
-        }
-        QByteArray data = file.readAll();
-        QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
-        setText(codec->toUnicode(data));
-        if(file.error() == QFileDevice::NoError) {
-            file.close();
-            return true;
-        } else {
-            emit error(file.errorString());
-            file.close();
-            return false;
-        }
+    QFile file(filename);
+    if(!file.open(QFile::ReadOnly)) {
+        emit error(file.errorString());
+        return false;
     }
+    QByteArray data = file.readAll();
+    QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
+    setText(codec->toUnicode(data));
+    if(file.error() == QFileDevice::NoError) {
+        file.close();
+        return true;
+    } else {
+        emit error(file.errorString());
+        file.close();
+        return false;
+    }
+}
+
+void DocumentHandler::fileChanged(QString file) {
+    emit fileChangedOnDisk();
+    if(!m_watcher->files().contains(file))
+        m_watcher->addPath(file);
 }
