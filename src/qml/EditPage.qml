@@ -283,7 +283,15 @@ Page {
         }
 
         onError: {
-            app.showError(qsTr("File operation error"), description)
+            //app.showError(qsTr("File operation error"), description)
+            errDiag.text = description
+            errDiag.show()
         }
+    }
+
+    Dialog {
+        id: errDiag
+        title: qsTr("File operation error")
+        negativeButton.visible: false
     }
 }
