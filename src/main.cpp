@@ -21,6 +21,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickView>
+#include <QTranslator>
+#include <QLibraryInfo>
 #include <QSortFilterProxyModel>
 #include <QCommandLineParser>
 #include <QFontDatabase>
@@ -32,10 +34,23 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("liri-project");
-    QCoreApplication::setOrganizationDomain("liriproject.me");
-    QCoreApplication::setApplicationName("liri-text");
 
+    // Set app info
+    app.setOrganizationName("liri-project");
+    app.setOrganizationDomain("liriproject.me");
+    app.setApplicationName("liri-text");
+
+    // Load Translations
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+
+    QTranslator translator;
+    if(translator.load(":/translations/" + QLocale::system().name()))
+        app.installTranslator(&translator);
+
+    // Parse command line options
     QCommandLineParser parser;
     parser.setApplicationDescription("Material Designed text editor");
     parser.addHelpOption();
@@ -47,6 +62,7 @@ int main(int argc, char *argv[])
     QStringList args = parser.positionalArguments();
     bool nf = parser.isSet(newFileOption);
 
+    // Register types and singletons
     qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
 
 	QQmlApplicationEngine engine;
@@ -64,9 +80,10 @@ int main(int argc, char *argv[])
     else
         engine.rootContext()->setContextProperty("givenPath", nullptr);
 
-    // Temporary solution untill we have font configuration
+    // Temporary solution untill we have font customization
     engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
+    // Start with main.qml
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 	return app.exec();
 }

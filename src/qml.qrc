@@ -5,5 +5,6 @@
         <file>qml/EditPage.qml</file>
         <file>qml/FileGridView.qml</file>
         <file>qml/ThreeButtonDialog.qml</file>
+        <file>translations/ru_RU.qm</file>
     </qresource>
 </RCC>

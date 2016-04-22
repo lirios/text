@@ -204,6 +204,10 @@ Page {
         id: exitDialog
         title: qsTr("Save changes before closing?")
         text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+
+        positiveButtonText: qsTr("YES")
+        negativeButtonText: qsTr("NO")
+        cancelButtonText: qsTr("CANCEL")
     }
 
     Dialogs.FileDialog {
@@ -292,6 +296,8 @@ Page {
     Dialog {
         id: errDiag
         title: qsTr("File operation error")
+
+        positiveButtonText: qsTr("OK")
         negativeButton.visible: false
     }
 }

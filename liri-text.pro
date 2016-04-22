@@ -22,5 +22,13 @@ HEADERS += \
     src/documenthandler.h \
     src/historymanager.h
 
+TRANSLATIONS = \
+    src/translations/ru_RU.ts
+
+lupdate_only{
+    SOURCES = \
+        src/qml/*
+}
+
 DISTFILES += \
     icons.yml
