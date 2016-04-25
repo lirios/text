@@ -73,7 +73,7 @@ Page {
 
     function touchFileOnCursorPosition() {
         history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
-                          getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 9))
+                          getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 7))
     }
 
     Component.onCompleted: {

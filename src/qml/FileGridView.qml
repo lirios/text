@@ -27,8 +27,8 @@ Flickable {
     property alias model: fileGrid.model
     property int margins: dp(24)
     property int spacing: dp(8)
-    property int cardWidth: dp(320)
-    property int cardHeight: dp(224)
+    property int cardWidth: dp(240)
+    property int cardHeight: dp(194)
 
     anchors.fill: parent
     contentHeight: fileGrid.height + spacing
@@ -137,11 +137,12 @@ Flickable {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onClicked: {
-                        if(mouse.button === Qt.LeftButton)
+                        if(mouse.button === Qt.LeftButton) {
                             pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
-                        else
+                        } else {
                             // Rightclicking deletes item for debugging
-                            history.removeFile(fileUrl)
+                            //history.removeFile(fileUrl)
+                        }
                     }
                 }
             }
