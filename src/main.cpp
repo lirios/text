@@ -28,6 +28,7 @@
 #include <QFontDatabase>
 #include <QDebug>
 
+#include "material/src/plugin.h"
 #include "documenthandler.h"
 #include "historymanager.h"
 
@@ -65,7 +66,13 @@ int main(int argc, char *argv[])
     // Register types and singletons
     qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
 
-	QQmlApplicationEngine engine;
+    QQmlApplicationEngine engine;
+
+    // Material for QtQuick
+    MaterialPlugin material;
+    material.registerTypes("Material");
+    engine.addImportPath("qrc:/");
+
     HistoryManager *history = new HistoryManager();
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();
     proxyModel->setSourceModel(history);

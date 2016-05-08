@@ -12,6 +12,8 @@ RESOURCES += \
     src/qml.qrc \
     icons/icons.qrc
 
+include(material/material.pri)
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
