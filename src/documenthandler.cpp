@@ -25,7 +25,8 @@
 
 DocumentHandler::DocumentHandler() :
     m_target(0),
-    m_document(0) {
+    m_document(0),
+    m_highlighter(0) {
 
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
@@ -45,6 +46,9 @@ void DocumentHandler::setTarget(QQuickItem *target) {
         if(qqdoc) {
             m_document = qqdoc->textDocument();
             connect(m_document, SIGNAL(modificationChanged(bool)), this, SIGNAL(modifiedChanged()));
+            if(m_highlighter != nullptr)
+                delete m_highlighter;
+            m_highlighter = new MaterialSyntaxHighlighter(m_document);
         }
     }
     emit targetChanged();

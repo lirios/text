@@ -26,6 +26,8 @@
 #include <QFile>
 #include <QFileSystemWatcher>
 
+#include "materialsyntaxhighlighter.h"
+
 class DocumentHandler : public QObject
 {
     Q_OBJECT
@@ -72,6 +74,7 @@ private slots:
 private:
     QQuickItem *m_target;
     QTextDocument *m_document;
+    MaterialSyntaxHighlighter *m_highlighter;
     QFileSystemWatcher *m_watcher;
 
     QUrl m_fileUrl;

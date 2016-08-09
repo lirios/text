@@ -6,7 +6,8 @@ CONFIG += c++11
 SOURCES += \
     src/main.cpp \
     src/documenthandler.cpp \
-    src/historymanager.cpp
+    src/historymanager.cpp \
+    src/materialsyntaxhighlighter.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -22,7 +23,8 @@ include(deployment.pri)
 
 HEADERS += \
     src/documenthandler.h \
-    src/historymanager.h
+    src/historymanager.h \
+    src/materialsyntaxhighlighter.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts
