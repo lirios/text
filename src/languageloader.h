@@ -10,6 +10,7 @@ class LanguageLoader
 {
 public:
     LanguageLoader();
+    LanguageSpecification *loadByName(QString name);
     LanguageSpecification *loadFromFile(QString path);
 protected:
     void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);

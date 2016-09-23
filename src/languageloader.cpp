@@ -4,21 +4,25 @@
 
 LanguageLoader::LanguageLoader() { }
 
+LanguageSpecification *LanguageLoader::loadByName(QString name) {
+    return loadFromFile(QString("/usr/share/gtksourceview-3.0/language-specs/%1.lang").arg(name));
+}
+
 LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
+    std::cerr << path.toStdString() << "\n";
     LanguageSpecification *result = new LanguageSpecification();
-    QFile *file = new QFile(path);
-    file->open(QFile::ReadOnly);
-    QXmlStreamReader *xml = new QXmlStreamReader(file);
-    while (!xml->atEnd()) {
-        xml->readNext();
-        if(xml->name() == "metadata")
-            parseMetadata(result, xml);
-        if(xml->name() == "context")
-            parseContext(result, xml);
+    QFile file(path);
+    if(file.open(QFile::ReadOnly)) {
+        QXmlStreamReader xml(&file);
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if(xml.name() == "metadata")
+                parseMetadata(result, &xml);
+            if(xml.name() == "context")
+                parseContext(result, &xml);
+        }
     }
-    delete xml;
-    file->close();
-    delete file;
+    file.close();
     return result;
 }
 

@@ -1,6 +1,4 @@
 #include "languagespecification.h"
 
-LanguageSpecification::LanguageSpecification()
-{
-
-}
+LanguageSpecification::LanguageSpecification() :
+    keywords(QHash<QRegExp, QString>()) { }

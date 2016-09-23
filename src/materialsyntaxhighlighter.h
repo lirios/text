@@ -9,6 +9,7 @@ class MaterialSyntaxHighlighter : public QSyntaxHighlighter
     Q_OBJECT
 public:
     MaterialSyntaxHighlighter(QTextDocument *parent);
+    void setLanguage(LanguageSpecification *l);
 
 protected:
     void highlightBlock(const QString &text);

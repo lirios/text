@@ -22,6 +22,7 @@
 #include <QTextDocument>
 #include <QFileInfo>
 #include <QDebug>
+#include "languageloader.h"
 
 DocumentHandler::DocumentHandler() :
     m_target(0),
@@ -75,8 +76,14 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
         }
         QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
         setText(codec->toUnicode(data));
-        if(m_document)
+        if(m_document) {
             m_document->setModified(false);
+
+            // Enable syntax highlighting
+            // TODO: recognize language by MIME type
+            LanguageLoader ll;
+            m_highlighter->setLanguage(ll.loadByName("cpp"));
+        }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";
         else

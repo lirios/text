@@ -2,15 +2,18 @@
 #include "languageloader.h"
 
 MaterialSyntaxHighlighter::MaterialSyntaxHighlighter(QTextDocument *parent)
-    : QSyntaxHighlighter (parent)
-{
-    LanguageLoader *ll = new LanguageLoader();
-    lang = ll->loadFromFile("/usr/share/gtksourceview-3.0/language-specs/cpp.lang");
-    delete ll;
+    : QSyntaxHighlighter (parent),
+      lang(nullptr) { }
+
+void MaterialSyntaxHighlighter::setLanguage(LanguageSpecification *l) {
+    lang = l;
+    rehighlight();
 }
 
-void MaterialSyntaxHighlighter::highlightBlock(const QString &text)
-{
+void MaterialSyntaxHighlighter::highlightBlock(const QString &text) {
+    if(lang == nullptr)
+        return;
+
     QTextCharFormat keywordFormat;
     keywordFormat.setFontWeight(QFont::Bold);
     keywordFormat.setForeground(QColor("blue"));
