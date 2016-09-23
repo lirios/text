@@ -2,7 +2,7 @@
 #define MATERIALSYNTAXHIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
-
+#include "languagespecification.h"
 
 class MaterialSyntaxHighlighter : public QSyntaxHighlighter
 {
@@ -12,6 +12,7 @@ public:
 
 protected:
     void highlightBlock(const QString &text);
+    LanguageSpecification *lang;
 };
 
 #endif // MATERIALSYNTAXHIGHLIGHTER_H

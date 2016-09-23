@@ -4,14 +4,16 @@
 #include <QString>
 #include <QXmlStreamReader>
 
+#include "languagespecification.h"
+
 class LanguageLoader
 {
 public:
     LanguageLoader();
-    void loadFromFile(QString path);
-private:
-    void parseMetadata(QXmlStreamReader *xml);
-    void parseContext(QXmlStreamReader *xml);
+    LanguageSpecification *loadFromFile(QString path);
+protected:
+    void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
+    void parseContext(LanguageSpecification *lang, QXmlStreamReader *xml);
 };
 
 #endif // LANGUAGELOADER_H

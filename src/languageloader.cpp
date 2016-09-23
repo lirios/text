@@ -4,27 +4,29 @@
 
 LanguageLoader::LanguageLoader() { }
 
-void LanguageLoader::loadFromFile(QString path) {
+LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
+    LanguageSpecification *result = new LanguageSpecification();
     QFile *file = new QFile(path);
     file->open(QFile::ReadOnly);
     QXmlStreamReader *xml = new QXmlStreamReader(file);
-    while(!xml->atEnd()) {
+    while (!xml->atEnd()) {
         xml->readNext();
         if(xml->name() == "metadata")
-            parseMetadata(xml);
+            parseMetadata(result, xml);
         if(xml->name() == "context")
-            parseContext(xml);
+            parseContext(result, xml);
     }
     delete xml;
     file->close();
     delete file;
+    return result;
 }
 
-void LanguageLoader::parseMetadata(QXmlStreamReader *xml) {
+void LanguageLoader::parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml) {
     xml->skipCurrentElement();
 }
 
-void LanguageLoader::parseContext(QXmlStreamReader *xml) {
+void LanguageLoader::parseContext(LanguageSpecification *lang, QXmlStreamReader *xml) {
     std::cerr << "Context started\n";
     // TODO: parse attributes
     xml->readNext();
@@ -33,13 +35,13 @@ void LanguageLoader::parseContext(QXmlStreamReader *xml) {
             xml->readNext();
             while (xml->name() != "include" || xml->tokenType() != QXmlStreamReader::EndElement) {
                 if(xml->name() == "context")
-                    parseContext(xml);
+                    parseContext(lang, xml);
                 xml->readNext();
             }
         }
         if(xml->name() == "keyword") {
             xml->readNext();
-            std::cerr << "Keyword: " << xml->text().toString().toStdString() << "\n";
+            lang->keywords.insert(QRegExp("\\b(" + xml->text().toString() + ")\\b"), "keyword");
             xml->readNext();
         }
         xml->readNext();

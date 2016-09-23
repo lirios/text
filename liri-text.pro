@@ -9,7 +9,8 @@ SOURCES += \
     src/historymanager.cpp \
     src/materialsyntaxhighlighter.cpp \
     src/highlightingstyle.cpp \
-    src/languageloader.cpp
+    src/languageloader.cpp \
+    src/languagespecification.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -28,7 +29,8 @@ HEADERS += \
     src/historymanager.h \
     src/materialsyntaxhighlighter.h \
     src/highlightingstyle.h \
-    src/languageloader.h
+    src/languageloader.h \
+    src/languagespecification.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts
