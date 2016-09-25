@@ -8,9 +8,10 @@ SOURCES += \
     src/documenthandler.cpp \
     src/historymanager.cpp \
     src/materialsyntaxhighlighter.cpp \
-    src/highlightingstyle.cpp \
     src/languageloader.cpp \
-    src/languagespecification.cpp
+    src/languagespecification.cpp \
+    src/languagecontext.cpp \
+    src/languagestyle.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -28,9 +29,10 @@ HEADERS += \
     src/documenthandler.h \
     src/historymanager.h \
     src/materialsyntaxhighlighter.h \
-    src/highlightingstyle.h \
     src/languageloader.h \
-    src/languagespecification.h
+    src/languagespecification.h \
+    src/languagecontext.h \
+    src/languagestyle.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

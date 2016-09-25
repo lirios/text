@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QXmlStreamReader>
+#include <QHash>
 
 #include "languagespecification.h"
 
@@ -10,11 +11,12 @@ class LanguageLoader
 {
 public:
     LanguageLoader();
-    LanguageSpecification *loadByName(QString name);
-    LanguageSpecification *loadFromFile(QString path);
+    static LanguageSpecification *loadById(QString name);
+    static LanguageSpecification *loadFromFile(QString path);
 protected:
-    void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
-    void parseContext(LanguageSpecification *lang, QXmlStreamReader *xml);
+    static void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
+    static QString parseContext(LanguageSpecification *lang, QXmlStreamReader *xml);
+    static QHash<QString, LanguageSpecification> contexts;
 };
 
 #endif // LANGUAGELOADER_H

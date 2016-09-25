@@ -82,7 +82,7 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
             // Enable syntax highlighting
             // TODO: recognize language by MIME type
             LanguageLoader ll;
-            m_highlighter->setLanguage(ll.loadByName("cpp"));
+            m_highlighter->setLanguage(ll.loadById("cpp"));
         }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";

@@ -17,8 +17,10 @@ void MaterialSyntaxHighlighter::highlightBlock(const QString &text) {
     QTextCharFormat keywordFormat;
     keywordFormat.setFontWeight(QFont::Bold);
     keywordFormat.setForeground(QColor("blue"));
-    for (QRegExp kwRegexp : lang->keywords.keys()) {
-        if(lang->keywords[kwRegexp] == "keyword") {
+    LanguageContext *root = lang->getMainContext();
+    for (QString kw : root->keywords.keys()) {
+        if(root->keywords[kw] == "keyword") {
+            QRegExp kwRegexp("\\b(" + kw + ")\\b");
             int start = 0;
             while ((start = kwRegexp.indexIn(text, start)) != -1) {
                 setFormat(start, kwRegexp.matchedLength(), keywordFormat);
