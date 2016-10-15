@@ -9,10 +9,10 @@ public:
     enum ElementType {
         Simple
       , Container
+      , SubPattern
       , Keyword
     } type;
 
-    LanguageContextElement();
     LanguageContextElement(ElementType t);
 };
 

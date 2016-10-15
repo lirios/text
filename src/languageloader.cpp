@@ -3,6 +3,9 @@
 #include <iostream>
 #include <QDebug>
 #include "languagecontextelementkeyword.h"
+#include "languagecontextelementsimple.h"
+#include "languagecontextelementcontainer.h"
+#include "languagecontextelementsubpattern.h"
 
 LanguageLoader::LanguageLoader() :
     knownContexts() { }
@@ -26,7 +29,6 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
                 parseMetadata(result, &xml);
             if(xml.name() == "context") {
                 LanguageContext *context = parseContext(xml, result->name);
-                knownContexts[result->name + ":" + context->id] = context;
             }
         }
     }
@@ -58,19 +60,24 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
     if(!result) {
         result = new LanguageContext();
     }
-    if(id != "")
+    if(id != "") {
         result->id = id;
+        knownContexts[langId + ":" + id] = result;
+    }
     xml.readNext();
+    LanguageContextElement *mainElement = nullptr;
     while (xml.name() != "context" || xml.tokenType() != QXmlStreamReader::EndElement) {
-        if(xml.name() == "include") {
-            xml.readNext();
-            while (xml.name() != "include" || xml.tokenType() != QXmlStreamReader::EndElement) {
-                if(xml.name() == "context") {
-                    LanguageContext *inc = parseContext(xml, langId);
-                    result->include(inc);
-                }
-                xml.readNext();
-            }
+        if(xml.name() == "start") {
+            if(!mainElement)
+                mainElement = new LanguageContextElementContainer();
+        }
+        if(xml.name() == "end") {
+            if(!mainElement)
+                mainElement = new LanguageContextElementContainer();
+        }
+        if(xml.name() == "match") {
+            if(!mainElement)
+                mainElement = new LanguageContextElementSimple();
         }
         if(xml.name() == "keyword") {
             xml.readNext();
@@ -78,7 +85,31 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
             result->elements.append(kw);
             xml.readNext();
         }
+        if(xml.name() == "include") {
+            xml.readNext();
+            while (xml.name() != "include" || xml.tokenType() != QXmlStreamReader::EndElement) {
+                if(xml.name() == "context") {
+                    LanguageContext *inc = parseContext(xml, langId);
+                    if(mainElement) {
+                        if(mainElement->type == LanguageContextElement::Simple) {
+                            LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
+                            simple->includes.append(inc->elements);
+                        } else if(mainElement->type == LanguageContextElement::Container) {
+                            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+                            container->includes.append(inc->elements);
+                        } else {
+                            Q_ASSERT(false);
+                        }
+                    } else {
+                        result->include(inc);
+                    }
+                }
+                xml.readNext();
+            }
+        }
         xml.readNext();
     }
+    if(mainElement)
+        result->elements.append(mainElement);
     return result;
 }
