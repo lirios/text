@@ -6,17 +6,16 @@
 
 #include "languagestyle.h"
 #include "languagecontext.h"
+#include "languagecontextelement.h"
 
 class LanguageSpecification
 {
 public:
     LanguageSpecification();
-    inline LanguageContext *getMainContext() { return contexts[name]; }
-    void mergeLanguage(const LanguageSpecification *other);
 
     QString name;
     QHash<QString, LanguageStyle*> styles;
-    QHash<QString, LanguageContext*> contexts;
+    QList<LanguageContextElement*> mainContext;
 };
 
 #endif // LANGUAGESPECIFICATION_H

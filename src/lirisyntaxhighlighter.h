@@ -4,11 +4,11 @@
 #include <QSyntaxHighlighter>
 #include "languagespecification.h"
 
-class MaterialSyntaxHighlighter : public QSyntaxHighlighter
+class LiriSyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 public:
-    MaterialSyntaxHighlighter(QTextDocument *parent);
+    LiriSyntaxHighlighter(QTextDocument *parent);
     void setLanguage(LanguageSpecification *l);
 
 protected:

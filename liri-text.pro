@@ -7,11 +7,13 @@ SOURCES += \
     src/main.cpp \
     src/documenthandler.cpp \
     src/historymanager.cpp \
-    src/materialsyntaxhighlighter.cpp \
     src/languageloader.cpp \
     src/languagespecification.cpp \
     src/languagecontext.cpp \
-    src/languagestyle.cpp
+    src/languagestyle.cpp \
+    src/languagecontextelement.cpp \
+    src/languagecontextelementkeyword.cpp \
+    src/lirisyntaxhighlighter.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -28,11 +30,13 @@ include(deployment.pri)
 HEADERS += \
     src/documenthandler.h \
     src/historymanager.h \
-    src/materialsyntaxhighlighter.h \
     src/languageloader.h \
     src/languagespecification.h \
     src/languagecontext.h \
-    src/languagestyle.h
+    src/languagestyle.h \
+    src/languagecontextelement.h \
+    src/languagecontextelementkeyword.h \
+    src/lirisyntaxhighlighter.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

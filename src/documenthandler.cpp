@@ -49,7 +49,7 @@ void DocumentHandler::setTarget(QQuickItem *target) {
             connect(m_document, SIGNAL(modificationChanged(bool)), this, SIGNAL(modifiedChanged()));
             if(m_highlighter != nullptr)
                 delete m_highlighter;
-            m_highlighter = new MaterialSyntaxHighlighter(m_document);
+            m_highlighter = new LiriSyntaxHighlighter(m_document);
         }
     }
     emit targetChanged();

@@ -3,13 +3,18 @@
 
 #include <QHash>
 #include <QRegExp>
+#include "languagecontextelement.h"
 
 class LanguageContext
 {
 public:
     LanguageContext();
-    QList<LanguageContext*> includes;
-    QHash<QString, QString> keywords;
+
+    QString id;
+
+    void include(LanguageContext *inc);
+
+    QList<LanguageContextElement *> elements;
 };
 
 #endif // LANGUAGECONTEXT_H

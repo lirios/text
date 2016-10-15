@@ -2,8 +2,10 @@
 #include <QFile>
 #include <iostream>
 #include <QDebug>
+#include "languagecontextelementkeyword.h"
 
-LanguageLoader::LanguageLoader() { }
+LanguageLoader::LanguageLoader() :
+    knownContexts() { }
 
 LanguageSpecification *LanguageLoader::loadById(QString name) {
     std::cerr << "Loading " << name.toStdString() << "\n";
@@ -23,11 +25,15 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
             if(xml.name() == "metadata")
                 parseMetadata(result, &xml);
             if(xml.name() == "context") {
-                parseContext(result, &xml);
+                LanguageContext *context = parseContext(xml, result->name);
+                knownContexts[result->name + ":" + context->id] = context;
             }
         }
     }
     file.close();
+    QString mainId = result->name + ":" + result->name;
+    if(knownContexts.keys().contains(mainId))
+        result->mainContext = knownContexts[mainId]->elements;
     return result;
 }
 
@@ -35,35 +41,44 @@ void LanguageLoader::parseMetadata(LanguageSpecification *lang, QXmlStreamReader
     xml->skipCurrentElement();
 }
 
-QString LanguageLoader::parseContext(LanguageSpecification *lang, QXmlStreamReader *xml) {
-    QString id = xml->attributes().value("id").toString();
-    if(xml->attributes().hasAttribute("ref")) {
-        QStringRef refId = xml->attributes().value("ref");
-        if(refId.contains(':') && !lang->contexts.keys().contains(refId.toString())) {
-            lang->mergeLanguage(loadById(refId.left(refId.indexOf(':')).toString()));
+LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
+    LanguageContext *result = nullptr;
+    QString id = xml.attributes().value("id").toString();
+    if(xml.attributes().hasAttribute("ref")) {
+        QStringRef refId = xml.attributes().value("ref");
+        if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
+            loadById(refId.left(refId.indexOf(':')).toString());
         }
-        lang->contexts[id] = lang->contexts[refId.toString()];
-    } else {
-        lang->contexts[id] = new LanguageContext();
+        QString refIdCopy = refId.toString();
+        if(!refIdCopy.contains(':'))
+            refIdCopy = langId + ":" + refIdCopy;
+        if(knownContexts.keys().contains(refIdCopy))
+            result = knownContexts[refIdCopy];
     }
-    xml->readNext();
-    while (xml->name() != "context" || xml->tokenType() != QXmlStreamReader::EndElement) {
-        if(xml->name() == "include") {
-            xml->readNext();
-            while (xml->name() != "include" || xml->tokenType() != QXmlStreamReader::EndElement) {
-                if(xml->name() == "context") {
-                    QString includeId = parseContext(lang, xml);
-                    lang->contexts[id]->includes.append(lang->contexts[includeId]);
+    if(!result) {
+        result = new LanguageContext();
+    }
+    if(id != "")
+        result->id = id;
+    xml.readNext();
+    while (xml.name() != "context" || xml.tokenType() != QXmlStreamReader::EndElement) {
+        if(xml.name() == "include") {
+            xml.readNext();
+            while (xml.name() != "include" || xml.tokenType() != QXmlStreamReader::EndElement) {
+                if(xml.name() == "context") {
+                    LanguageContext *inc = parseContext(xml, langId);
+                    result->include(inc);
                 }
-                xml->readNext();
+                xml.readNext();
             }
         }
-        if(xml->name() == "keyword") {
-            xml->readNext();
-            lang->contexts[id]->keywords.insert(xml->text().toString(), "keyword");
-            xml->readNext();
+        if(xml.name() == "keyword") {
+            xml.readNext();
+            LanguageContextElementKeyword *kw = new LanguageContextElementKeyword(xml.text().toString());
+            result->elements.append(kw);
+            xml.readNext();
         }
-        xml->readNext();
+        xml.readNext();
     }
-    return id;
+    return result;
 }

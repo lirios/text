@@ -11,12 +11,12 @@ class LanguageLoader
 {
 public:
     LanguageLoader();
-    static LanguageSpecification *loadById(QString name);
-    static LanguageSpecification *loadFromFile(QString path);
+    LanguageSpecification *loadById(QString name);
+    LanguageSpecification *loadFromFile(QString path);
 protected:
-    static void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
-    static QString parseContext(LanguageSpecification *lang, QXmlStreamReader *xml);
-    static QHash<QString, LanguageSpecification> contexts;
+    void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
+    LanguageContext *parseContext(QXmlStreamReader &xml, QString langId);
+    QHash<QString, LanguageContext *> knownContexts;
 };
 
 #endif // LANGUAGELOADER_H
