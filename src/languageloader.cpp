@@ -70,14 +70,26 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         if(xml.name() == "start") {
             if(!mainElement)
                 mainElement = new LanguageContextElementContainer();
+            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+            xml.readNext();
+            container->start = QRegExp(xml.text().toString());
+            xml.readNext();
         }
         if(xml.name() == "end") {
             if(!mainElement)
                 mainElement = new LanguageContextElementContainer();
+            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+            xml.readNext();
+            container->end = QRegExp(xml.text().toString());
+            xml.readNext();
         }
         if(xml.name() == "match") {
             if(!mainElement)
                 mainElement = new LanguageContextElementSimple();
+            LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
+            xml.readNext();
+            simple->match = QRegExp(xml.text().toString());
+            xml.readNext();
         }
         if(xml.name() == "keyword") {
             xml.readNext();
@@ -109,7 +121,13 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         }
         xml.readNext();
     }
-    if(mainElement)
+    if(mainElement) {
+        if(mainElement->type == LanguageContextElement::Container) {
+            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+            if(container->end.pattern() == "")
+                container->end = QRegExp("\n");
+        }
         result->elements.append(mainElement);
+    }
     return result;
 }
