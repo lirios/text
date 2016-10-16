@@ -1,4 +1,5 @@
 #include <QTextDocument>
+#include <QRegularExpression>
 #include "lirisyntaxhighlighter.h"
 #include "languageloader.h"
 #include "languagecontextelementkeyword.h"
@@ -58,18 +59,17 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             auto container = currentStateData->containers[i];
             int start = 0;
             int end;
-            QRegExp endRegex = QRegExp(container->endPattern);
+            QRegularExpression endRegex = QRegularExpression(container->endPattern);
             if(container->endPattern == "")
                 end = -1;
             else
-                end = endRegex.indexIn(text, start);
+                end = endRegex.match(text, start).capturedEnd();
 
             QTextBlock nextBlock = currentBlock().next();
             if(nextBlock.isValid()) {
                 if(end == -1) {
                     end = text.length();
                 } else {
-                    end += endRegex.matchedLength();
                     if(nextStateData->containers.contains(container)) {
                         nextStateData->containers.removeOne(container);
                     }
@@ -85,49 +85,46 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     for (LanguageContextElement *ce : root) {
         if(ce->type == LanguageContextElement::Keyword) {
             LanguageContextElementKeyword *kw = static_cast<LanguageContextElementKeyword *>(ce);
-            QRegExp kwRegexp("\\b(" + kw->keyword + ")\\b");
-            int start = 0;
-            while ((start = kwRegexp.indexIn(text, start)) != -1) {
-                setFormat(start, kwRegexp.matchedLength(), keywordFormat);
-                start += kwRegexp.matchedLength();
+            QRegularExpression kwRegexp("\\b(" + kw->keyword + ")\\b");
+            QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text);
+            while (kwI.hasNext()) {
+                QRegularExpressionMatch kwMatch = kwI.next();
+                setFormat(kwMatch.capturedStart(), kwMatch.capturedLength(), keywordFormat);
             }
         }
         if(ce->type == LanguageContextElement::Simple) {
             LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(ce);
-            QRegExp matchRegex = QRegExp(simple->matchPattern);
-            int start = 0;
-            while ((start = matchRegex.indexIn(text, start)) != -1) {
-                setFormat(start, matchRegex.matchedLength(), simpleFormat);
-                start += matchRegex.matchedLength();
+            QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
+            QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
+            while (matchI.hasNext()) {
+                QRegularExpressionMatch match = matchI.next();
+                setFormat(match.capturedStart(), match.capturedLength(), simpleFormat);
             }
         }
         if(ce->type == LanguageContextElement::Container) {
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(ce);
-            QRegExp startRegex = QRegExp(container->startPattern);
-            QRegExp endRegex = QRegExp(container->endPattern);
-            int start = 0;
-            while ((start = startRegex.indexIn(text, start)) != -1) {
-                int end;
-                if(container->endPattern == "")
-                    end = -1;
-                else
-                    end = endRegex.indexIn(text, start + startRegex.matchedLength());
-
-                if(end == -1) {
-                    end = text.length();
-                    if(container->endPattern != "") {
-                        nextStateData->containers.insert(0, container);
-                        QTextBlock nextBlock = currentBlock().next();
-                        if(nextBlock.isValid()) {
-                            state++;
-                        }
-                    }
+            QRegularExpression startRegex = QRegularExpression(container->startPattern);
+            QRegularExpression endRegex = QRegularExpression(container->endPattern);
+            QRegularExpressionMatch startMatch;
+            QRegularExpressionMatch endMatch;
+            while ((startMatch = startRegex.match(text, endMatch.hasMatch() ? endMatch.capturedEnd() : 0)).hasMatch()) {
+                if(container->endPattern == "") {
+                    setFormat(startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat);
+                    break;
                 }
-                else
-                    end += endRegex.matchedLength();
 
-                setFormat(start, end - start, containerFormat);
-                start = end;
+                endMatch = endRegex.match(text, startMatch.capturedEnd());
+                if(endMatch.hasMatch()) {
+                    setFormat(startMatch.capturedStart(), endMatch.capturedEnd() - startMatch.capturedStart(), containerFormat);
+                } else {
+                    nextStateData->containers.insert(0, container);
+                    QTextBlock nextBlock = currentBlock().next();
+                    if(nextBlock.isValid()) {
+                        state++;
+                    }
+                    setFormat(startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat);
+                    break;
+                }
             }
         }
     }
