@@ -9,8 +9,8 @@ class LanguageContextElementContainer : public LanguageContextElement
 {
 public:
     LanguageContextElementContainer();
-    QRegExp start;
-    QRegExp end;
+    QString startPattern;
+    QString endPattern;
     QList<LanguageContextElement *> includes;
 };
 

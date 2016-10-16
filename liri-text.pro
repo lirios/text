@@ -16,7 +16,8 @@ SOURCES += \
     src/lirisyntaxhighlighter.cpp \
     src/languagecontextelementsimple.cpp \
     src/languagecontextelementcontainer.cpp \
-    src/languagecontextelementsubpattern.cpp
+    src/languagecontextelementsubpattern.cpp \
+    src/highlightdata.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -42,7 +43,8 @@ HEADERS += \
     src/lirisyntaxhighlighter.h \
     src/languagecontextelementsimple.h \
     src/languagecontextelementcontainer.h \
-    src/languagecontextelementsubpattern.h
+    src/languagecontextelementsubpattern.h \
+    src/highlightdata.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

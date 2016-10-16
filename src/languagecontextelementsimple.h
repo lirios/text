@@ -2,14 +2,13 @@
 #define LANGUAGECONTEXTELEMENTSIMPLE_H
 
 #include <QList>
-#include <QRegExp>
 #include "languagecontextelement.h"
 
 class LanguageContextElementSimple : public LanguageContextElement
 {
 public:
     LanguageContextElementSimple();
-    QRegExp match;
+    QString matchPattern;
     QList<LanguageContextElement *> includes;
 };
 

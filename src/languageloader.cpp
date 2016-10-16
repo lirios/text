@@ -28,7 +28,7 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
             if(xml.name() == "metadata")
                 parseMetadata(result, &xml);
             if(xml.name() == "context") {
-                LanguageContext *context = parseContext(xml, result->name);
+                parseContext(xml, result->name);
             }
         }
     }
@@ -72,7 +72,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementContainer();
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
             xml.readNext();
-            container->start = QRegExp(xml.text().toString());
+            container->startPattern = xml.text().toString();
             xml.readNext();
         }
         if(xml.name() == "end") {
@@ -80,7 +80,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementContainer();
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
             xml.readNext();
-            container->end = QRegExp(xml.text().toString());
+            container->endPattern = xml.text().toString();
             xml.readNext();
         }
         if(xml.name() == "match") {
@@ -88,7 +88,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementSimple();
             LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
             xml.readNext();
-            simple->match = QRegExp(xml.text().toString());
+            simple->matchPattern = xml.text().toString();
             xml.readNext();
         }
         if(xml.name() == "keyword") {
@@ -122,11 +122,6 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         xml.readNext();
     }
     if(mainElement) {
-        if(mainElement->type == LanguageContextElement::Container) {
-            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
-            if(container->end.pattern() == "")
-                container->end = QRegExp("\n");
-        }
         result->elements.append(mainElement);
     }
     return result;

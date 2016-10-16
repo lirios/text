@@ -1,9 +1,11 @@
+#include <QTextDocument>
 #include "lirisyntaxhighlighter.h"
 #include "languageloader.h"
 #include "languagecontextelementkeyword.h"
 #include "languagecontextelementcontainer.h"
 #include "languagecontextelementsimple.h"
 #include "languagecontextelementsubpattern.h"
+#include "highlightdata.h"
 
 LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter (parent),
@@ -35,6 +37,51 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     subPatternFormat.setForeground(QColor("red"));
 
     QList<LanguageContextElement *> root = lang->mainContext;
+
+    int state = previousBlockState();
+
+    HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
+    HighlightData *nextStateData = static_cast<HighlightData *>(currentBlock().next().userData());
+    if(!currentStateData) {
+        currentStateData = new HighlightData();
+        setCurrentBlockUserData(currentStateData);
+    }
+    if(!nextStateData) {
+        nextStateData = new HighlightData();
+        if(currentBlock().next().isValid())
+            currentBlock().next().setUserData(nextStateData);
+    }
+    nextStateData->containers = currentStateData->containers;
+
+    if(currentStateData) {
+        for (int i = 0; i < currentStateData->containers.length(); ++i) {
+            auto container = currentStateData->containers[i];
+            int start = 0;
+            int end;
+            QRegExp endRegex = QRegExp(container->endPattern);
+            if(container->endPattern == "")
+                end = -1;
+            else
+                end = endRegex.indexIn(text, start);
+
+            QTextBlock nextBlock = currentBlock().next();
+            if(nextBlock.isValid()) {
+                if(end == -1) {
+                    end = text.length();
+                } else {
+                    end += endRegex.matchedLength();
+                    if(nextStateData->containers.contains(container)) {
+                        nextStateData->containers.removeOne(container);
+                    }
+                    state--;
+                }
+            }
+
+            setFormat(start, end - start, containerFormat);
+            start = end;
+        }
+    }
+
     for (LanguageContextElement *ce : root) {
         if(ce->type == LanguageContextElement::Keyword) {
             LanguageContextElementKeyword *kw = static_cast<LanguageContextElementKeyword *>(ce);
@@ -47,24 +94,42 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         }
         if(ce->type == LanguageContextElement::Simple) {
             LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(ce);
+            QRegExp matchRegex = QRegExp(simple->matchPattern);
             int start = 0;
-            while ((start = simple->match.indexIn(text, start)) != -1) {
-                setFormat(start, simple->match.matchedLength(), simpleFormat);
-                start += simple->match.matchedLength();
+            while ((start = matchRegex.indexIn(text, start)) != -1) {
+                setFormat(start, matchRegex.matchedLength(), simpleFormat);
+                start += matchRegex.matchedLength();
             }
         }
         if(ce->type == LanguageContextElement::Container) {
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(ce);
+            QRegExp startRegex = QRegExp(container->startPattern);
+            QRegExp endRegex = QRegExp(container->endPattern);
             int start = 0;
-            while ((start = container->start.indexIn(text, start)) != -1) {
-                int end = container->end.indexIn(text, start + container->start.matchedLength());
-                if(end == -1)
-                    end = text.length();
+            while ((start = startRegex.indexIn(text, start)) != -1) {
+                int end;
+                if(container->endPattern == "")
+                    end = -1;
                 else
-                    end += container->end.matchedLength();
+                    end = endRegex.indexIn(text, start + startRegex.matchedLength());
+
+                if(end == -1) {
+                    end = text.length();
+                    if(container->endPattern != "") {
+                        nextStateData->containers.insert(0, container);
+                        QTextBlock nextBlock = currentBlock().next();
+                        if(nextBlock.isValid()) {
+                            state++;
+                        }
+                    }
+                }
+                else
+                    end += endRegex.matchedLength();
+
                 setFormat(start, end - start, containerFormat);
                 start = end;
             }
         }
     }
+    setCurrentBlockState(state);
 }
