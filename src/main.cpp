@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
     // Set app info
     app.setOrganizationName("liri-project");
-    app.setOrganizationDomain("liriproject.me");
+    app.setOrganizationDomain("liri.io");
     app.setApplicationName("liri-text");
 
     // Load Translations
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     bool nf = parser.isSet(newFileOption);
 
     // Register types and singletons
-    qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
+    qmlRegisterType<DocumentHandler>("io.liri.text", 1, 0, "DocumentHandler");
 
     QQmlApplicationEngine engine;
 
@@ -92,5 +92,5 @@ int main(int argc, char *argv[])
 
     // Start with main.qml
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-	return app.exec();
+    return app.exec();
 }
