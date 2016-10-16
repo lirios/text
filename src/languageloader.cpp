@@ -27,9 +27,10 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
                 result->name = xml.attributes().value("id").toString();
             if(xml.name() == "metadata")
                 parseMetadata(result, &xml);
-            if(xml.name() == "context") {
+            if(xml.name() == "define-regex")
+                parseDefineRegex(xml);
+            if(xml.name() == "context")
                 parseContext(xml, result->name);
-            }
         }
     }
     file.close();
@@ -72,7 +73,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementContainer();
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
             xml.readNext();
-            container->startPattern = xml.text().toString();
+            container->startPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "end") {
@@ -80,7 +81,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementContainer();
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
             xml.readNext();
-            container->endPattern = xml.text().toString();
+            container->endPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "match") {
@@ -88,7 +89,7 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
                 mainElement = new LanguageContextElementSimple();
             LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
             xml.readNext();
-            simple->matchPattern = xml.text().toString();
+            simple->matchPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "keyword") {
@@ -123,6 +124,28 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
     }
     if(mainElement) {
         result->elements.append(mainElement);
+    }
+    return result;
+}
+
+void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml) {
+    QString id = xml.attributes().value("id").toString();
+    xml.readNext();
+    knownRegexes[id] = resolveRegex(xml.text().toString());
+    xml.readNext();
+}
+
+QString LanguageLoader::resolveRegex(QString pattern) {
+    QString result = pattern;
+
+    result = result.remove(QRegExp("\\s+#[^\n]*\n\\s*"));
+    result = result.remove(QRegExp("\\s*\n\\s*"));
+    result = result.remove(QRegExp("\\s"));
+
+    result = result.replace("\\%[", "\\b");
+    result = result.replace("\\%]", "\\b");
+    for (QString id : knownRegexes.keys()) {
+        result = result.replace("\\%{" + id + "}", knownRegexes[id]);
     }
     return result;
 }

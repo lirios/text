@@ -16,7 +16,10 @@ public:
 protected:
     void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
     LanguageContext *parseContext(QXmlStreamReader &xml, QString langId);
+    void parseDefineRegex(QXmlStreamReader &xml);
+    QString resolveRegex(QString pattern);
     QHash<QString, LanguageContext *> knownContexts;
+    QHash<QString, QString> knownRegexes;
 };
 
 #endif // LANGUAGELOADER_H
