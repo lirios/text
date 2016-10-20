@@ -6,10 +6,6 @@
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.  
 
-## Installation
-You may find a prebuilt binary for your platform on [releases page](https://github.com/liri-project/liri-text/releases).
-If your platform is not yet supported or you wish to contribute to this project's development, you can compile Liri Text from source following the instructions below:
-
 ## Dependencies
 * Qt >= 5.5.0 with at least the following modules is required:
  * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
