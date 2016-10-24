@@ -74,15 +74,14 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     nextStateData->containers = currentStateData->containers;
 
     if(currentStateData) {
-        for (int i = 0; i < currentStateData->containers.length(); ++i) {
-            auto container = currentStateData->containers[i];
+        for (auto container : currentStateData->containers) {
             int start = 0;
             int end;
-            QRegularExpression endRegex = QRegularExpression(container->endPattern);
+            QRegularExpressionMatch endRegex = QRegularExpression(container->endPattern).match(text, start);
             if(container->endPattern == "")
-                end = -1;
+                end = text.length();
             else
-                end = endRegex.match(text, start).capturedEnd();
+                end = endRegex.capturedEnd();
 
             QTextBlock nextBlock = currentBlock().next();
             if(nextBlock.isValid()) {
@@ -92,15 +91,19 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
                     if(nextStateData->containers.contains(container)) {
                         nextStateData->containers.removeOne(container);
                     }
-                    state--;
+                    state++;
                 }
             }
 
             setFormat(start, end - start, containerFormat);
             start = end;
+            if(!endRegex.hasMatch())
+                break;
         }
     }
 
+    // TODO: only perform this when text block has changed
+    currentStateData->matches[nullptr].clear();
     for (LanguageContextElement *ce : root) {
         if(ce->type == LanguageContextElement::Keyword) {
             LanguageContextElementKeyword *kw = static_cast<LanguageContextElementKeyword *>(ce);
@@ -108,7 +111,7 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text);
             while (kwI.hasNext()) {
                 QRegularExpressionMatch kwMatch = kwI.next();
-                setFormat(kwMatch.capturedStart(), kwMatch.capturedLength(), keywordFormat);
+                currentStateData->matches[nullptr].append({kwMatch.capturedStart(), kwMatch.capturedLength(), keywordFormat});
             }
         }
         if(ce->type == LanguageContextElement::Simple) {
@@ -117,7 +120,7 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch match = matchI.next();
-                setFormat(match.capturedStart(), match.capturedLength(), simpleFormat);
+                currentStateData->matches[nullptr].append({match.capturedStart(), match.capturedLength(), simpleFormat});
             }
         }
         if(ce->type == LanguageContextElement::Container) {
@@ -128,22 +131,33 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             QRegularExpressionMatch endMatch;
             while ((startMatch = startRegex.match(text, endMatch.hasMatch() ? endMatch.capturedEnd() : 0)).hasMatch()) {
                 if(container->endPattern == "") {
-                    setFormat(startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat);
+                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat});
                     break;
                 }
 
                 endMatch = endRegex.match(text, startMatch.capturedEnd());
                 if(endMatch.hasMatch()) {
-                    setFormat(startMatch.capturedStart(), endMatch.capturedEnd() - startMatch.capturedStart(), containerFormat);
+                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), endMatch.capturedEnd() - startMatch.capturedStart(), containerFormat});
                 } else {
                     nextStateData->containers.insert(0, container);
                     QTextBlock nextBlock = currentBlock().next();
                     if(nextBlock.isValid()) {
                         state++;
                     }
-                    setFormat(startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat);
+                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat});
                     break;
                 }
+            }
+        }
+    }
+    std::sort(currentStateData->matches[nullptr].begin(), currentStateData->matches[nullptr].end());
+
+    if(currentStateData->containers.length() == 0) {
+        int position = 0;
+        for (auto m : currentStateData->matches[nullptr]) {
+            if(m.start >= position) {
+                setFormat(m.start, m.length, m.style);
+                position = m.start + m.length;
             }
         }
     }
