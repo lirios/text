@@ -9,15 +9,14 @@ SOURCES += \
     src/historymanager.cpp \
     src/languageloader.cpp \
     src/languagespecification.cpp \
-    src/languagecontext.cpp \
     src/languagestyle.cpp \
-    src/languagecontextelement.cpp \
-    src/languagecontextelementkeyword.cpp \
     src/lirisyntaxhighlighter.cpp \
-    src/languagecontextelementsimple.cpp \
-    src/languagecontextelementcontainer.cpp \
-    src/languagecontextelementsubpattern.cpp \
-    src/highlightdata.cpp
+    src/highlightdata.cpp \
+    src/languagecontext.cpp \
+    src/languagecontextcontainer.cpp \
+    src/languagecontextkeyword.cpp \
+    src/languagecontextsubpattern.cpp \
+    src/languagecontextsimple.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -36,15 +35,14 @@ HEADERS += \
     src/historymanager.h \
     src/languageloader.h \
     src/languagespecification.h \
-    src/languagecontext.h \
     src/languagestyle.h \
-    src/languagecontextelement.h \
-    src/languagecontextelementkeyword.h \
     src/lirisyntaxhighlighter.h \
-    src/languagecontextelementsimple.h \
-    src/languagecontextelementcontainer.h \
-    src/languagecontextelementsubpattern.h \
-    src/highlightdata.h
+    src/highlightdata.h \
+    src/languagecontext.h \
+    src/languagecontextcontainer.h \
+    src/languagecontextkeyword.h \
+    src/languagecontextsimple.h \
+    src/languagecontextsubpattern.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

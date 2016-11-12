@@ -23,7 +23,7 @@
 #include <QSyntaxHighlighter>
 #include <QRegularExpressionMatch>
 #include "languagespecification.h"
-#include "languagecontextelementcontainer.h"
+#include "languagecontextcontainer.h"
 #include "highlightdata.h"
 
 class LiriSyntaxHighlighter : public QSyntaxHighlighter
@@ -36,14 +36,14 @@ public:
 protected:
     struct Match {
         QRegularExpressionMatch match;
-        LanguageContextElement *context;
+        LanguageContext *context;
 
         inline bool operator <(const Match &other) { return this->match.capturedStart() < other.match.capturedStart(); }
     };
 
     void highlightBlock(const QString &text);
-    void findMatches(const QString &text, HighlightData *currentStateData, HighlightData *nextStateData, QList<LanguageContextElement *> root);
-    bool highlightPart(const QString &text, const LanguageContextElementContainer *currentContainer, int start, int end, HighlightData *nextStateData);
+    void findMatches(const QString &text, HighlightData *currentStateData, HighlightData *nextStateData, QList<LanguageContext *> root);
+    bool highlightPart(const QString &text, QList<LanguageContext *> currentContainer, int start, int end, HighlightData *nextStateData);
     LanguageSpecification *lang;
     QTextCharFormat keywordFormat;
     QTextCharFormat simpleFormat;

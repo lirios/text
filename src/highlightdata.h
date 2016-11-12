@@ -22,7 +22,7 @@
 
 #include <QTextBlockUserData>
 #include <QHash>
-#include "languagecontextelementcontainer.h"
+#include "languagecontextcontainer.h"
 
 class HighlightData : public QTextBlockUserData
 {
@@ -30,7 +30,7 @@ public:
     HighlightData();
     ~HighlightData();
 
-    QList<LanguageContextElementContainer *> containers;
+    QList<LanguageContextContainer *> containers;
 };
 
 #endif // HIGHLIGHTDATA_H

@@ -22,10 +22,10 @@
 #include <iostream>
 #include <QDebug>
 #include <QRegularExpression>
-#include "languagecontextelementkeyword.h"
-#include "languagecontextelementsimple.h"
-#include "languagecontextelementcontainer.h"
-#include "languagecontextelementsubpattern.h"
+#include "languagecontextkeyword.h"
+#include "languagecontextsimple.h"
+#include "languagecontextcontainer.h"
+#include "languagecontextsubpattern.h"
 
 LanguageLoader::LanguageLoader() :
     knownContexts() { }
@@ -56,7 +56,7 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
     file.close();
     QString mainId = result->name + ":" + result->name;
     if(knownContexts.keys().contains(mainId))
-        result->mainContext->includes = knownContexts[mainId]->elements;
+        result->mainContext = static_cast<LanguageContextSimple *>(knownContexts[mainId]);
     return result;
 }
 
@@ -78,44 +78,57 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         if(knownContexts.keys().contains(refIdCopy))
             result = knownContexts[refIdCopy];
     }
-    if(!result) {
-        result = new LanguageContext();
-    }
-    if(id != "") {
-        result->id = id;
+    if(result && id != "") {
         knownContexts[langId + ":" + id] = result;
     }
     xml.readNext();
-    LanguageContextElement *mainElement = nullptr;
     while (xml.name() != "context" || xml.tokenType() != QXmlStreamReader::EndElement) {
         if(xml.name() == "start") {
-            if(!mainElement)
-                mainElement = new LanguageContextElementContainer();
-            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+            if(!result) {
+                result = new LanguageContextContainer();
+                if(id != "") {
+                    knownContexts[langId + ":" + id] = result;
+                }
+            }
+            LanguageContextContainer *container = static_cast<LanguageContextContainer *>(result);
             xml.readNext();
             container->startPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "end") {
-            if(!mainElement)
-                mainElement = new LanguageContextElementContainer();
-            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
+            if(!result) {
+                result = new LanguageContextContainer();
+                if(id != "") {
+                    knownContexts[langId + ":" + id] = result;
+                }
+            }
+            LanguageContextContainer *container = static_cast<LanguageContextContainer *>(result);
             xml.readNext();
             container->endPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "match") {
-            if(!mainElement)
-                mainElement = new LanguageContextElementSimple();
-            LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
+            if(!result) {
+                result = new LanguageContextSimple();
+                if(id != "") {
+                    knownContexts[langId + ":" + id] = result;
+                }
+            }
+            LanguageContextSimple *simple = static_cast<LanguageContextSimple *>(result);
             xml.readNext();
             simple->matchPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "keyword") {
+            if(!result) {
+                result = new LanguageContextKeyword();
+                if(id != "") {
+                    knownContexts[langId + ":" + id] = result;
+                }
+            }
+            LanguageContextKeyword *kw = static_cast<LanguageContextKeyword *>(result);
             xml.readNext();
-            LanguageContextElementKeyword *kw = new LanguageContextElementKeyword(xml.text().toString());
-            result->elements.append(kw);
+            kw->keywords.append(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "include") {
@@ -123,27 +136,29 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
             while (xml.name() != "include" || xml.tokenType() != QXmlStreamReader::EndElement) {
                 if(xml.name() == "context") {
                     LanguageContext *inc = parseContext(xml, langId);
-                    if(mainElement) {
-                        if(mainElement->type == LanguageContextElement::Simple) {
-                            LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(mainElement);
-                            simple->includes.append(inc->elements);
-                        } else if(mainElement->type == LanguageContextElement::Container) {
-                            LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(mainElement);
-                            container->includes.append(inc->elements);
-                        } else {
-                            Q_ASSERT(false);
+                    if(!result) {
+                        result = new LanguageContextSimple();
+                        if(id != "") {
+                            knownContexts[langId + ":" + id] = result;
                         }
+                    }
+
+                    if(result->type == LanguageContext::Simple) {
+                        LanguageContextSimple *simple = static_cast<LanguageContextSimple *>(result);
+                        if(inc)
+                            simple->includes.append(inc);
+                    } else if(result->type == LanguageContext::Container) {
+                        LanguageContextContainer *container = static_cast<LanguageContextContainer *>(result);
+                        if(inc)
+                            container->includes.append(inc);
                     } else {
-                        result->include(inc);
+                        Q_ASSERT(false);
                     }
                 }
                 xml.readNext();
             }
         }
         xml.readNext();
-    }
-    if(mainElement) {
-        result->elements.append(mainElement);
     }
     return result;
 }

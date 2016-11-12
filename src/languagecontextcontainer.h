@@ -17,7 +17,20 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "languagecontextelementcontainer.h"
+#ifndef LANGUAGECONTEXTCONTAINER_H
+#define LANGUAGECONTEXTCONTAINER_H
 
-LanguageContextElementContainer::LanguageContextElementContainer() :
-    LanguageContextElement(LanguageContextElement::Container) { }
+#include <QList>
+#include <QRegExp>
+#include "languagecontext.h"
+
+class LanguageContextContainer : public LanguageContext
+{
+public:
+    LanguageContextContainer();
+    QString startPattern;
+    QString endPattern;
+    QList<LanguageContext *> includes;
+};
+
+#endif // LANGUAGECONTEXTCONTAINER_H

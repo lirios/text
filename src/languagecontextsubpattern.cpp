@@ -17,18 +17,7 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGECONTEXTELEMENTSIMPLE_H
-#define LANGUAGECONTEXTELEMENTSIMPLE_H
+#include "languagecontextsubpattern.h"
 
-#include <QList>
-#include "languagecontextelement.h"
-
-class LanguageContextElementSimple : public LanguageContextElement
-{
-public:
-    LanguageContextElementSimple();
-    QString matchPattern;
-    QList<LanguageContextElement *> includes;
-};
-
-#endif // LANGUAGECONTEXTELEMENTSIMPLE_H
+LanguageContextSubPattern::LanguageContextSubPattern() :
+    LanguageContext(LanguageContext::SubPattern) { }

@@ -17,7 +17,15 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "languagecontextelementsubpattern.h"
+#ifndef LANGUAGECONTEXTSUBPATTERN_H
+#define LANGUAGECONTEXTSUBPATTERN_H
 
-LanguageContextElementSubPattern::LanguageContextElementSubPattern() :
-    LanguageContextElement(LanguageContextElement::SubPattern) { }
+#include "languagecontext.h"
+
+class LanguageContextSubPattern : public LanguageContext
+{
+public:
+    LanguageContextSubPattern();
+};
+
+#endif // LANGUAGECONTEXTSUBPATTERN_H

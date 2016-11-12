@@ -20,20 +20,19 @@
 #ifndef LANGUAGECONTEXT_H
 #define LANGUAGECONTEXT_H
 
-#include <QHash>
-#include <QRegExp>
-#include "languagecontextelement.h"
+#include "languagestyle.h"
 
 class LanguageContext
 {
 public:
-    LanguageContext();
+    enum ElementType {
+        Simple
+      , Container
+      , SubPattern
+      , Keyword
+    } type;
 
-    QString id;
-
-    void include(LanguageContext *inc);
-
-    QList<LanguageContextElement *> elements;
+    LanguageContext(ElementType t);
 };
 
 #endif // LANGUAGECONTEXT_H

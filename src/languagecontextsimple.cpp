@@ -17,7 +17,7 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "languagecontextelement.h"
+#include "languagecontextsimple.h"
 
-LanguageContextElement::LanguageContextElement(LanguageContextElement::ElementType t) :
-    type(t) {  }
+LanguageContextSimple::LanguageContextSimple() :
+    LanguageContext(LanguageContext::Simple) { }

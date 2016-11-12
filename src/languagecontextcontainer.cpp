@@ -17,19 +17,7 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGECONTEXTELEMENTKEYWORD_H
-#define LANGUAGECONTEXTELEMENTKEYWORD_H
+#include "languagecontextcontainer.h"
 
-#include "languagecontextelement.h"
-#include <QString>
-
-class LanguageContextElementKeyword : public LanguageContextElement
-{
-public:
-    LanguageContextElementKeyword();
-    LanguageContextElementKeyword(QString kw);
-
-    QString keyword;
-};
-
-#endif // LANGUAGECONTEXTELEMENTKEYWORD_H
+LanguageContextContainer::LanguageContextContainer() :
+    LanguageContext(LanguageContext::Container) { }

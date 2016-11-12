@@ -17,7 +17,19 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "languagecontextelementsimple.h"
+#ifndef LANGUAGECONTEXTKEYWORD_H
+#define LANGUAGECONTEXTKEYWORD_H
 
-LanguageContextElementSimple::LanguageContextElementSimple() :
-    LanguageContextElement(LanguageContextElement::Simple) { }
+#include "languagecontext.h"
+#include <QString>
+#include <QList>
+
+class LanguageContextKeyword : public LanguageContext
+{
+public:
+    LanguageContextKeyword();
+
+    QList<QString> keywords;
+};
+
+#endif // LANGUAGECONTEXTKEYWORD_H
