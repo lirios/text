@@ -21,6 +21,7 @@
 #include <QFile>
 #include <iostream>
 #include <QDebug>
+#include <QRegularExpression>
 #include "languagecontextelementkeyword.h"
 #include "languagecontextelementsimple.h"
 #include "languagecontextelementcontainer.h"
@@ -157,9 +158,8 @@ void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml) {
 QString LanguageLoader::resolveRegex(QString pattern) {
     QString result = pattern;
 
-    result = result.remove(QRegExp("\\s+#[^\n]*\n\\s*"));
-    result = result.remove(QRegExp("\\s*\n\\s*"));
-    result = result.remove(QRegExp("\\s"));
+    QRegularExpression whiteSpace("(\\s+#[^\n]*\n\\s*|\\s*\n\\s*|(?<!\\\\)\\s)");
+    result.replace(whiteSpace, "");
 
     result = result.replace("\\%[", "\\b");
     result = result.replace("\\%]", "\\b");
