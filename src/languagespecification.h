@@ -26,6 +26,7 @@
 #include "languagestyle.h"
 #include "languagecontext.h"
 #include "languagecontextelement.h"
+#include "languagecontextelementcontainer.h"
 
 class LanguageSpecification
 {
@@ -34,7 +35,7 @@ public:
 
     QString name;
     QHash<QString, LanguageStyle*> styles;
-    QList<LanguageContextElement*> mainContext;
+    LanguageContextElementContainer *mainContext;
 };
 
 #endif // LANGUAGESPECIFICATION_H

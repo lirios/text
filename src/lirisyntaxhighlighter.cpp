@@ -25,11 +25,23 @@
 #include "languagecontextelementcontainer.h"
 #include "languagecontextelementsimple.h"
 #include "languagecontextelementsubpattern.h"
-#include "highlightdata.h"
 
 LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter (parent),
-      lang(nullptr) { }
+      lang(nullptr) {
+
+    keywordFormat.setFontWeight(QFont::Bold);
+    keywordFormat.setForeground(QColor("blue"));
+
+    simpleFormat.setFontWeight(QFont::Cursive);
+    simpleFormat.setForeground(QColor("green"));
+
+    containerFormat.setFontWeight(QFont::Bold);
+    containerFormat.setForeground(QColor("brown"));
+
+    subPatternFormat.setFontWeight(QFont::Normal);
+    subPatternFormat.setForeground(QColor("red"));
+}
 
 void LiriSyntaxHighlighter::setLanguage(LanguageSpecification *l) {
     lang = l;
@@ -40,24 +52,6 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     if(lang == nullptr)
         return;
 
-    QTextCharFormat keywordFormat;
-    keywordFormat.setFontWeight(QFont::Bold);
-    keywordFormat.setForeground(QColor("blue"));
-
-    QTextCharFormat simpleFormat;
-    simpleFormat.setFontWeight(QFont::Cursive);
-    simpleFormat.setForeground(QColor("green"));
-
-    QTextCharFormat containerFormat;
-    containerFormat.setFontWeight(QFont::Bold);
-    containerFormat.setForeground(QColor("brown"));
-
-    QTextCharFormat subPatternFormat;
-    subPatternFormat.setFontWeight(QFont::Normal);
-    subPatternFormat.setForeground(QColor("red"));
-
-    QList<LanguageContextElement *> root = lang->mainContext;
-
     int state = previousBlockState();
 
     HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
@@ -67,21 +61,22 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         setCurrentBlockUserData(currentStateData);
     }
     if(!nextStateData) {
+        // FIXME: properly handle last block without memory allocation on every rehighlight
         nextStateData = new HighlightData();
         if(currentBlock().next().isValid())
             currentBlock().next().setUserData(nextStateData);
     }
     nextStateData->containers = currentStateData->containers;
 
-    if(currentStateData) {
+    {
+        int start = 0;
         for (auto container : currentStateData->containers) {
-            int start = 0;
             int end;
-            QRegularExpressionMatch endRegex = QRegularExpression(container->endPattern).match(text, start);
+            QRegularExpressionMatch endMatch = QRegularExpression(container->endPattern).match(text, start);
             if(container->endPattern == "")
                 end = text.length();
             else
-                end = endRegex.capturedEnd();
+                end = endMatch.capturedEnd();
 
             QTextBlock nextBlock = currentBlock().next();
             if(nextBlock.isValid()) {
@@ -96,70 +91,109 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             }
 
             setFormat(start, end - start, containerFormat);
-            start = end;
-            if(!endRegex.hasMatch())
+            if(endMatch.hasMatch()) {
+                highlightPart(text, container, start, end, nullptr);
+                start = end;
+            } else {
+                bool change = highlightPart(text, container, start, end, nextStateData);
+                start = end;
+                if(change)
+                    state++;
                 break;
+            }
         }
+        bool change = highlightPart(text, lang->mainContext, start, text.length(), nextStateData);
+        if(change)
+            state++;
     }
 
-    // TODO: only perform this when text block has changed
-    currentStateData->matches[nullptr].clear();
-    for (LanguageContextElement *ce : root) {
-        if(ce->type == LanguageContextElement::Keyword) {
+    setCurrentBlockState(state);
+}
+
+bool LiriSyntaxHighlighter::highlightPart(const QString &text, const LanguageContextElementContainer *currentContainer, int start, int end, HighlightData *nextStateData) {
+    bool change = false;
+
+    QList<Match> matches;
+    for (LanguageContextElement *ce : currentContainer->includes) {
+        switch (ce->type) {
+        case LanguageContextElement::Keyword: {
             LanguageContextElementKeyword *kw = static_cast<LanguageContextElementKeyword *>(ce);
             QRegularExpression kwRegexp("\\b(" + kw->keyword + ")\\b");
             QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text);
             while (kwI.hasNext()) {
                 QRegularExpressionMatch kwMatch = kwI.next();
-                currentStateData->matches[nullptr].append({kwMatch.capturedStart(), kwMatch.capturedLength(), keywordFormat});
+                if(kwMatch.capturedStart() >= start && kwMatch.capturedEnd() <= end)
+                    matches.append({kwMatch, ce});
             }
+            break;
         }
-        if(ce->type == LanguageContextElement::Simple) {
+        case LanguageContextElement::Simple: {
             LanguageContextElementSimple *simple = static_cast<LanguageContextElementSimple *>(ce);
             QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
             QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch match = matchI.next();
-                currentStateData->matches[nullptr].append({match.capturedStart(), match.capturedLength(), simpleFormat});
+                if(match.capturedStart() >= start && match.capturedEnd() <= end)
+                    matches.append({match, ce});
             }
+            break;
         }
-        if(ce->type == LanguageContextElement::Container) {
+        case LanguageContextElement::Container: {
             LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(ce);
             QRegularExpression startRegex = QRegularExpression(container->startPattern);
-            QRegularExpression endRegex = QRegularExpression(container->endPattern);
-            QRegularExpressionMatch startMatch;
-            QRegularExpressionMatch endMatch;
-            while ((startMatch = startRegex.match(text, endMatch.hasMatch() ? endMatch.capturedEnd() : 0)).hasMatch()) {
+            QRegularExpressionMatchIterator matchI = startRegex.globalMatch(text);
+            while (matchI.hasNext()) {
+                QRegularExpressionMatch startMatch = matchI.next();
+                if(startMatch.capturedStart() >= start && startMatch.capturedEnd() <= end)
+                    matches.append({startMatch, ce});
+            }
+            break;
+        }
+        }
+    }
+    std::sort(matches.begin(), matches.end());
+
+    int position = 0;
+    for (auto m : matches) {
+        if(m.match.capturedStart() >= position) {
+            switch (m.context->type) {
+            case LanguageContextElement::Keyword:
+                setFormat(m.match.capturedStart(), m.match.capturedLength(), keywordFormat);
+                position = m.match.capturedEnd();
+                break;
+            case LanguageContextElement::Simple:
+                setFormat(m.match.capturedStart(), m.match.capturedLength(), simpleFormat);
+                position = m.match.capturedEnd();
+                break;
+            case LanguageContextElement::Container:
+                LanguageContextElementContainer *container = static_cast<LanguageContextElementContainer *>(m.context);
                 if(container->endPattern == "") {
-                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat});
+                    setFormat(m.match.capturedStart(), end - m.match.capturedStart(), containerFormat);
+                    highlightPart(text, container, m.match.capturedEnd(), end, nullptr);
+                    position = end;
                     break;
                 }
-
-                endMatch = endRegex.match(text, startMatch.capturedEnd());
+                QRegularExpression endRegex = QRegularExpression(container->endPattern);
+                QRegularExpressionMatch endMatch = endRegex.match(text, m.match.capturedEnd());
                 if(endMatch.hasMatch()) {
-                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), endMatch.capturedEnd() - startMatch.capturedStart(), containerFormat});
+                    setFormat(m.match.capturedStart(), endMatch.capturedEnd() - m.match.capturedStart(), containerFormat);
+                    highlightPart(text, container, m.match.capturedEnd(), endMatch.capturedStart(), nullptr);
+                    position = endMatch.capturedEnd();
+                    break;
                 } else {
-                    nextStateData->containers.insert(0, container);
-                    QTextBlock nextBlock = currentBlock().next();
-                    if(nextBlock.isValid()) {
-                        state++;
+                    if(nextStateData) {
+                        nextStateData->containers.insert(0, container);
+                        change = true;
                     }
-                    currentStateData->matches[nullptr].append({startMatch.capturedStart(), text.length() - startMatch.capturedStart(), containerFormat});
+                    setFormat(m.match.capturedStart(), end - m.match.capturedStart(), containerFormat);
+                    highlightPart(text, container, m.match.capturedEnd(), end, nextStateData);
+                    position = end;
                     break;
                 }
+                break;
             }
         }
     }
-    std::sort(currentStateData->matches[nullptr].begin(), currentStateData->matches[nullptr].end());
 
-    if(currentStateData->containers.length() == 0) {
-        int position = 0;
-        for (auto m : currentStateData->matches[nullptr]) {
-            if(m.start >= position) {
-                setFormat(m.start, m.length, m.style);
-                position = m.start + m.length;
-            }
-        }
-    }
-    setCurrentBlockState(state);
+    return change;
 }

@@ -20,5 +20,7 @@
 #include "languagespecification.h"
 #include <iostream>
 
-LanguageSpecification::LanguageSpecification() { }
+LanguageSpecification::LanguageSpecification() {
+    mainContext = new LanguageContextElementContainer();
+}
 

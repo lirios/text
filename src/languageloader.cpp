@@ -55,7 +55,7 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
     file.close();
     QString mainId = result->name + ":" + result->name;
     if(knownContexts.keys().contains(mainId))
-        result->mainContext = knownContexts[mainId]->elements;
+        result->mainContext->includes = knownContexts[mainId]->elements;
     return result;
 }
 

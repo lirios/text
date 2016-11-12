@@ -30,16 +30,7 @@ public:
     HighlightData();
     ~HighlightData();
 
-    struct Match {
-        int start;
-        int length;
-        QTextCharFormat style;
-
-        inline bool operator <(const Match &other) { return this->start < other.start; }
-    };
-
     QList<LanguageContextElementContainer *> containers;
-    QHash<LanguageContextElementContainer *, QList<Match>> matches;
 };
 
 #endif // HIGHLIGHTDATA_H
