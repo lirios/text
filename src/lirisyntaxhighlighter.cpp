@@ -45,7 +45,14 @@ LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
 
 void LiriSyntaxHighlighter::setLanguage(LanguageSpecification *l) {
     lang = l;
-    rehighlight();
+    if(defStyles)
+        rehighlight();
+}
+
+void LiriSyntaxHighlighter::setDefaultStyle(LanguageDefaultStyles *def) {
+    defStyles = def;
+    if(lang)
+        rehighlight();
 }
 
 void LiriSyntaxHighlighter::highlightBlock(const QString &text) {

@@ -25,19 +25,23 @@
 #include <QHash>
 
 #include "languagespecification.h"
+#include "languagedefaultstyles.h"
 
 class LanguageLoader
 {
 public:
-    LanguageLoader();
+    LanguageLoader(LanguageDefaultStyles *defaultStyles);
     LanguageSpecification *loadById(QString name);
     LanguageSpecification *loadFromFile(QString path);
 protected:
-    void parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml);
+    void parseMetadata(QXmlStreamReader &xml);
     LanguageContext *parseContext(QXmlStreamReader &xml, QString langId);
+    LanguageStyle *parseStyle(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml);
     QString resolveRegex(QString pattern);
+
     QHash<QString, LanguageContext *> knownContexts;
+    QHash<QString, LanguageStyle *> knownStyles;
     QHash<QString, QString> knownRegexes;
 };
 

@@ -25,6 +25,7 @@
 #include "languagespecification.h"
 #include "languagecontextcontainer.h"
 #include "highlightdata.h"
+#include "languagedefaultstyles.h"
 
 class LiriSyntaxHighlighter : public QSyntaxHighlighter
 {
@@ -32,6 +33,7 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
     void setLanguage(LanguageSpecification *l);
+    void setDefaultStyle(LanguageDefaultStyles *def);
 
 protected:
     struct Match {
@@ -52,6 +54,7 @@ protected:
     bool highlightPart(const QStringRef &text, QList<LanguageContext *> currentContainer, HighlightData *stateData = nullptr);
 
     LanguageSpecification *lang;
+    LanguageDefaultStyles *defStyles;
     QTextCharFormat keywordFormat;
     QTextCharFormat simpleFormat;
     QTextCharFormat containerFormat;

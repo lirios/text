@@ -16,7 +16,8 @@ SOURCES += \
     src/languagecontextcontainer.cpp \
     src/languagecontextkeyword.cpp \
     src/languagecontextsubpattern.cpp \
-    src/languagecontextsimple.cpp
+    src/languagecontextsimple.cpp \
+    src/languagedefaultstyles.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -42,7 +43,8 @@ HEADERS += \
     src/languagecontextcontainer.h \
     src/languagecontextkeyword.h \
     src/languagecontextsimple.h \
-    src/languagecontextsubpattern.h
+    src/languagecontextsubpattern.h \
+    src/languagedefaultstyles.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

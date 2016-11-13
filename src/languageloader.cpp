@@ -27,8 +27,14 @@
 #include "languagecontextcontainer.h"
 #include "languagecontextsubpattern.h"
 
-LanguageLoader::LanguageLoader() :
-    knownContexts() { }
+LanguageLoader::LanguageLoader(LanguageDefaultStyles *defaultStyles) :
+    knownContexts(),
+    knownRegexes(),
+    knownStyles() {
+    for (auto styleId : defaultStyles->styles.keys()) {
+        knownStyles[styleId] = nullptr;
+    }
+}
 
 LanguageSpecification *LanguageLoader::loadById(QString name) {
     std::cerr << "Loading " << name.toStdString() << "\n";
@@ -46,11 +52,13 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
             if(xml.name() == "language" && xml.tokenType() == QXmlStreamReader::StartElement)
                 result->name = xml.attributes().value("id").toString();
             if(xml.name() == "metadata")
-                parseMetadata(result, &xml);
+                parseMetadata(xml);
             if(xml.name() == "define-regex")
                 parseDefineRegex(xml);
             if(xml.name() == "context")
                 parseContext(xml, result->name);
+            if(xml.name() == "style")
+                parseStyle(xml, result->name);
         }
     }
     file.close();
@@ -60,8 +68,8 @@ LanguageSpecification *LanguageLoader::loadFromFile(QString path) {
     return result;
 }
 
-void LanguageLoader::parseMetadata(LanguageSpecification *lang, QXmlStreamReader *xml) {
-    xml->skipCurrentElement();
+void LanguageLoader::parseMetadata(QXmlStreamReader &xml) {
+    xml.skipCurrentElement();
 }
 
 LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
@@ -174,6 +182,34 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         }
         xml.readNext();
     }
+    return result;
+}
+
+LanguageStyle *LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
+    LanguageStyle *result = nullptr;
+    QString id = xml.attributes().value("id").toString();
+    if(xml.attributes().hasAttribute("map-to")) {
+        QStringRef refId = xml.attributes().value("map-to");
+        if(refId.contains(':') && !knownStyles.keys().contains(refId.toString())) {
+            loadById(refId.left(refId.indexOf(':')).toString());
+        }
+        QString refIdCopy = refId.toString();
+        if(!refIdCopy.contains(':'))
+            refIdCopy = langId + ":" + refIdCopy;
+        if(knownStyles.keys().contains(refIdCopy)) {
+            if(knownStyles[refIdCopy])
+                result = knownStyles[refIdCopy];
+            else {
+                result = new LanguageStyle();
+                result->defaultId = refIdCopy;
+                knownStyles[langId + ":" + id] = result;
+            }
+        }
+    }
+    if(result && id != "") {
+        knownStyles[langId + ":" + id] = result;
+    }
+    xml.skipCurrentElement();
     return result;
 }
 

@@ -17,16 +17,18 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGESTYLE_H
-#define LANGUAGESTYLE_H
+#ifndef LANGUAGEDEFAULTSTYLES_H
+#define LANGUAGEDEFAULTSTYLES_H
 
+#include <QHash>
 #include <QString>
+#include <QTextCharFormat>
 
-class LanguageStyle
+class LanguageDefaultStyles
 {
 public:
-    LanguageStyle();
-    QString defaultId;
+    LanguageDefaultStyles();
+    QHash<QString, QTextCharFormat> styles;
 };
 
-#endif // LANGUAGESTYLE_H
+#endif // LANGUAGEDEFAULTSTYLES_H

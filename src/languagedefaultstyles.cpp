@@ -17,16 +17,22 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGESTYLE_H
-#define LANGUAGESTYLE_H
+#include "languagedefaultstyles.h"
 
-#include <QString>
-
-class LanguageStyle
-{
-public:
-    LanguageStyle();
-    QString defaultId;
-};
-
-#endif // LANGUAGESTYLE_H
+LanguageDefaultStyles::LanguageDefaultStyles() {
+    styles = {
+        {"def:comment", QTextCharFormat()}
+      , {"def:shebang", QTextCharFormat()}
+      , {"def:doc-comment-element", QTextCharFormat()}
+      , {"def:constant", QTextCharFormat()}
+      , {"def:special-char", QTextCharFormat()}
+      , {"def:identifier", QTextCharFormat()}
+      , {"def:statement", QTextCharFormat()}
+      , {"def:type", QTextCharFormat()}
+      , {"def:preprocessor", QTextCharFormat()}
+      , {"def:error", QTextCharFormat()}
+      , {"def:warning", QTextCharFormat()}
+      , {"def:note", QTextCharFormat()}
+      , {"def:underlined", QTextCharFormat()}
+    };
+}
