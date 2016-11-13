@@ -26,6 +26,14 @@ class LanguageContextSubPattern : public LanguageContext
 {
 public:
     LanguageContextSubPattern();
+
+    int group;
+
+    enum {
+        Default,
+        Start,
+        End
+    } where;
 };
 
 #endif // LANGUAGECONTEXTSUBPATTERN_H

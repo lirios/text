@@ -20,4 +20,6 @@
 #include "languagecontextsubpattern.h"
 
 LanguageContextSubPattern::LanguageContextSubPattern() :
-    LanguageContext(LanguageContext::SubPattern) { }
+    LanguageContext(LanguageContext::SubPattern),
+    group(0),
+    where(Default) { }

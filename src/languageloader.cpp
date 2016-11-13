@@ -81,6 +81,20 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
     if(result && id != "") {
         knownContexts[langId + ":" + id] = result;
     }
+
+    if(xml.attributes().hasAttribute("sub-pattern")) {
+        result = new LanguageContextSubPattern();
+        if(id != "")
+            knownContexts[langId + ":" + id] = result;
+        LanguageContextSubPattern *subpattern = static_cast<LanguageContextSubPattern *>(result);
+
+        subpattern->group = xml.attributes().value("sub-pattern").toInt();
+        if(xml.attributes().value("where") == "start")
+            subpattern->where = LanguageContextSubPattern::Start;
+        if(xml.attributes().value("where") == "end")
+            subpattern->where = LanguageContextSubPattern::End;
+    }
+
     xml.readNext();
     while (xml.name() != "context" || xml.tokenType() != QXmlStreamReader::EndElement) {
         if(xml.name() == "start") {

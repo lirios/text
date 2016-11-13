@@ -101,6 +101,17 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
     }
     QRegularExpression endRegex = QRegularExpression(container->endPattern);
     QRegularExpressionMatch endMatch = endRegex.match(text, innerStart);
+
+    for (LanguageContext *inc : container->includes) {
+        if(inc->type == LanguageContext::SubPattern) {
+            LanguageContextSubPattern *subpattern = static_cast<LanguageContextSubPattern *>(inc);
+            if(startMatch.hasMatch() && subpattern->where == LanguageContextSubPattern::Start)
+                setFormat(text.position() + startMatch.capturedStart(subpattern->group), startMatch.capturedLength(subpattern->group), subPatternFormat);
+            if(endMatch.hasMatch() && subpattern->where == LanguageContextSubPattern::End)
+                setFormat(text.position() + endMatch.capturedStart(subpattern->group), endMatch.capturedLength(subpattern->group), subPatternFormat);
+        }
+    }
+
     if(endMatch.hasMatch()) {
         setFormat(text.position(), endMatch.capturedEnd(), containerFormat);
         QStringRef part = text.mid(innerStart, endMatch.capturedStart() - innerStart);
@@ -173,6 +184,12 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
             case LanguageContext::Simple:
                 setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(), simpleFormat);
                 position = m.match.capturedEnd();
+                for (LanguageContext *inc : static_cast<LanguageContextSimple *>(m.context)->includes) {
+                    if(inc->type == LanguageContext::SubPattern) {
+                        LanguageContextSubPattern *subpattern = static_cast<LanguageContextSubPattern *>(inc);
+                        setFormat(text.position() + m.match.capturedStart(subpattern->group), m.match.capturedLength(subpattern->group), subPatternFormat);
+                    }
+                }
                 break;
             case LanguageContext::Container:
                 LanguageContextContainer *container = static_cast<LanguageContextContainer *>(m.context);
