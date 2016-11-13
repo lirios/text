@@ -42,8 +42,15 @@ protected:
     };
 
     void highlightBlock(const QString &text);
-    void findMatches(const QString &text, HighlightData *currentStateData, HighlightData *nextStateData, QList<LanguageContext *> root);
-    bool highlightPart(const QString &text, QList<LanguageContext *> currentContainer, int start, int end, HighlightData *nextStateData);
+
+    // Returns length. If container's end was not found, returns negative number
+    // -2 if call to highlightPart returned true, -1 otherwise
+    int highlightTillContainerEnd(const QStringRef &text, LanguageContextContainer *container,
+                                  HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
+
+    // Returns true if stateData's changed
+    bool highlightPart(const QStringRef &text, QList<LanguageContext *> currentContainer, HighlightData *stateData = nullptr);
+
     LanguageSpecification *lang;
     QTextCharFormat keywordFormat;
     QTextCharFormat simpleFormat;
