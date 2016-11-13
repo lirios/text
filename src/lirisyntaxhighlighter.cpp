@@ -92,45 +92,57 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
 int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, LanguageContextContainer *container,
                                                      HighlightData *stateData, QRegularExpressionMatch startMatch) {
     int innerStart = startMatch.hasMatch() ? startMatch.capturedLength() : 0;
+    int len;
+    QRegularExpressionMatch endMatch;
 
     if(container->endPattern == "") {
         setFormat(text.position(), text.length(), containerFormat);
         QStringRef part = text.mid(innerStart);
         highlightPart(part, container->includes);
-        return text.length();
+        len = text.length();
+    } else {
+        QRegularExpression endRegex = QRegularExpression(container->endPattern);
+
+        endMatch = endRegex.match(text, innerStart);
+        if(endMatch.hasMatch()) {
+            setFormat(text.position(), endMatch.capturedEnd(), containerFormat);
+            QStringRef part = text.mid(innerStart, endMatch.capturedStart() - innerStart);
+            highlightPart(part, container->includes);
+            len = endMatch.capturedEnd();
+        } else {
+            if(stateData) {
+                stateData->containers.insert(0, container);
+            }
+            setFormat(text.position(), text.length(), containerFormat);
+            QStringRef part = text.mid(innerStart);
+            bool change = highlightPart(part, container->includes, stateData);
+            len = -1 - change;
+        }
     }
-    QRegularExpression endRegex = QRegularExpression(container->endPattern);
-    QRegularExpressionMatch endMatch = endRegex.match(text, innerStart);
 
     for (LanguageContext *inc : container->includes) {
         if(inc->type == LanguageContext::SubPattern) {
             LanguageContextSubPattern *subpattern = static_cast<LanguageContextSubPattern *>(inc);
-            if(startMatch.hasMatch() && subpattern->where == LanguageContextSubPattern::Start)
-                setFormat(text.position() + startMatch.capturedStart(subpattern->group), startMatch.capturedLength(subpattern->group), subPatternFormat);
-            if(endMatch.hasMatch() && subpattern->where == LanguageContextSubPattern::End)
-                setFormat(text.position() + endMatch.capturedStart(subpattern->group), endMatch.capturedLength(subpattern->group), subPatternFormat);
+            if(subpattern->where == LanguageContextSubPattern::Start &&
+                   startMatch.hasMatch() && startMatch.capturedStart(subpattern->group) >= 0)
+                setFormat(text.position() + startMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
+                          startMatch.capturedLength(subpattern->group), subPatternFormat);
+
+            if(subpattern->where == LanguageContextSubPattern::End &&
+                     endMatch.hasMatch() && endMatch.capturedStart(subpattern->group) >= 0)
+                setFormat(text.position() + endMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
+                          endMatch.capturedLength(subpattern->group), subPatternFormat);
         }
     }
 
-    if(endMatch.hasMatch()) {
-        setFormat(text.position(), endMatch.capturedEnd(), containerFormat);
-        QStringRef part = text.mid(innerStart, endMatch.capturedStart() - innerStart);
-        highlightPart(part, container->includes);
-        return endMatch.capturedEnd();
-    } else {
-        if(stateData) {
-            stateData->containers.insert(0, container);
-        }
-        setFormat(text.position(), text.length(), containerFormat);
-        QStringRef part = text.mid(innerStart);
-        bool change = highlightPart(part, container->includes, stateData);
-        return -1 - change;
-    }
+    return len;
 }
 
 bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<LanguageContext *> currentContainer, HighlightData *stateData) {
     QList<Match> matches;
-    for (LanguageContext *context : currentContainer) {
+    QList<LanguageContext *> extendedContainer = currentContainer;
+    for (int i = 0; i < extendedContainer.length(); ++i) {
+        LanguageContext *context = extendedContainer[i];
         switch (context->type) {
         case LanguageContext::Keyword: {
             LanguageContextKeyword *kw = static_cast<LanguageContextKeyword *>(context);
@@ -147,8 +159,7 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
         case LanguageContext::Simple: {
             LanguageContextSimple *simple = static_cast<LanguageContextSimple *>(context);
             if(simple->matchPattern == "") {
-                if(highlightPart(text, simple->includes, stateData))
-                    return true;
+                extendedContainer.append(simple->includes);
             } else {
                 QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
                 QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
@@ -206,4 +217,11 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
     }
 
     return false;
+}
+
+bool LiriSyntaxHighlighter::Match::operator <(const LiriSyntaxHighlighter::Match &other) {
+    if(this->match.capturedStart() == other.match.capturedStart())
+        return this->match.capturedEnd() > other.match.capturedEnd();
+    else
+        return this->match.capturedStart() < other.match.capturedStart();
 }

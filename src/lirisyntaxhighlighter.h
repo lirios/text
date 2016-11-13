@@ -38,7 +38,7 @@ protected:
         QRegularExpressionMatch match;
         LanguageContext *context;
 
-        inline bool operator <(const Match &other) { return this->match.capturedStart() < other.match.capturedStart(); }
+        inline bool operator <(const Match &other);
     };
 
     void highlightBlock(const QString &text);
