@@ -118,44 +118,43 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
 }
 
 bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<LanguageContext *> currentContainer, HighlightData *stateData) {
-    bool change = false;
-
     QList<Match> matches;
-    for (LanguageContext *ce : currentContainer) {
-        switch (ce->type) {
+    for (LanguageContext *context : currentContainer) {
+        switch (context->type) {
         case LanguageContext::Keyword: {
-            LanguageContextKeyword *kw = static_cast<LanguageContextKeyword *>(ce);
+            LanguageContextKeyword *kw = static_cast<LanguageContextKeyword *>(context);
             for (QString keyword : kw->keywords) {
                 QRegularExpression kwRegexp("\\b(" + keyword + ")\\b");
                 QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text);
                 while (kwI.hasNext()) {
                     QRegularExpressionMatch kwMatch = kwI.next();
-                    matches.append({kwMatch, ce});
+                    matches.append({kwMatch, context});
                 }
             }
             break;
         }
         case LanguageContext::Simple: {
-            LanguageContextSimple *simple = static_cast<LanguageContextSimple *>(ce);
-            if(simple->matchPattern == "")
-                change |= highlightPart(text, simple->includes, stateData);
-            else {
+            LanguageContextSimple *simple = static_cast<LanguageContextSimple *>(context);
+            if(simple->matchPattern == "") {
+                if(highlightPart(text, simple->includes, stateData))
+                    return true;
+            } else {
                 QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
                 QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
                 while (matchI.hasNext()) {
                     QRegularExpressionMatch match = matchI.next();
-                    matches.append({match, ce});
+                    matches.append({match, context});
                 }
             }
             break;
         }
         case LanguageContext::Container: {
-            LanguageContextContainer *container = static_cast<LanguageContextContainer *>(ce);
+            LanguageContextContainer *container = static_cast<LanguageContextContainer *>(context);
             QRegularExpression startRegex = QRegularExpression(container->startPattern);
             QRegularExpressionMatchIterator matchI = startRegex.globalMatch(text);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch startMatch = matchI.next();
-                matches.append({startMatch, ce});
+                matches.append({startMatch, context});
             }
             break;
         }
@@ -180,8 +179,7 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
                 int start = m.match.capturedStart();
                 int len = highlightTillContainerEnd(text.mid(start), container, stateData, m.match);
                 if(len < 0) {
-                    change = true;
-                    break;
+                    return true;
                 } else {
                     position = start + len;
                 }
@@ -190,5 +188,5 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
         }
     }
 
-    return change;
+    return false;
 }
