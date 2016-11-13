@@ -55,10 +55,6 @@ protected:
 
     LanguageSpecification *lang;
     LanguageDefaultStyles *defStyles;
-    QTextCharFormat keywordFormat;
-    QTextCharFormat simpleFormat;
-    QTextCharFormat containerFormat;
-    QTextCharFormat subPatternFormat;
 };
 
 #endif // LIRISYNTAXHIGHLIGHTER_H

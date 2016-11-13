@@ -29,8 +29,8 @@
 
 LanguageLoader::LanguageLoader(LanguageDefaultStyles *defaultStyles) :
     knownContexts(),
-    knownRegexes(),
-    knownStyles() {
+    knownStyles(),
+    knownRegexes() {
     for (auto styleId : defaultStyles->styles.keys()) {
         knownStyles[styleId] = nullptr;
     }
@@ -101,6 +101,16 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
             subpattern->where = LanguageContextSubPattern::Start;
         if(xml.attributes().value("where") == "end")
             subpattern->where = LanguageContextSubPattern::End;
+    }
+
+    QString styleId = "";
+    if(xml.attributes().hasAttribute("style-ref")) {
+        QStringRef styleIdRef = xml.attributes().value("style-ref");
+        if(styleIdRef.contains(':') && !knownStyles.keys().contains(styleIdRef.toString()))
+            loadById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
+        styleId = styleIdRef.toString();
+        if(!styleId.contains(':'))
+            styleId = langId + ":" + styleId;
     }
 
     xml.readNext();
@@ -182,6 +192,16 @@ LanguageContext *LanguageLoader::parseContext(QXmlStreamReader &xml, QString lan
         }
         xml.readNext();
     }
+
+    if(knownStyles.keys().contains(styleId)) {
+        if(knownStyles[styleId])
+            result->style = knownStyles[styleId];
+        else {
+            result->style = new LanguageStyle();
+            result->style->defaultId = styleId;
+        }
+    }
+
     return result;
 }
 

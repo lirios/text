@@ -33,6 +33,8 @@ public:
     } type;
 
     LanguageContext(ElementType t);
+
+    LanguageStyle *style;
 };
 
 #endif // LANGUAGECONTEXT_H
