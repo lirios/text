@@ -90,7 +90,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
     QRegularExpressionMatch endMatch;
 
     if(container->endPattern == "") {
-        setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
+        if(container->style)
+            setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
         QStringRef part = text.mid(innerStart);
         highlightPart(part, container->includes);
         len = text.length();
@@ -99,7 +100,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
 
         endMatch = endRegex.match(text, innerStart);
         if(endMatch.hasMatch()) {
-            setFormat(text.position(), endMatch.capturedEnd(), defStyles->styles[container->style->defaultId]);
+            if(container->style)
+                setFormat(text.position(), endMatch.capturedEnd(), defStyles->styles[container->style->defaultId]);
             QStringRef part = text.mid(innerStart, endMatch.capturedStart() - innerStart);
             highlightPart(part, container->includes);
             len = endMatch.capturedEnd();
@@ -107,7 +109,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
             if(stateData) {
                 stateData->containers.insert(0, container);
             }
-            setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
+            if(container->style)
+                setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
             QStringRef part = text.mid(innerStart);
             bool change = highlightPart(part, container->includes, stateData);
             len = -1 - change;
@@ -119,13 +122,15 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, Lan
             LanguageContextSubPattern *subpattern = static_cast<LanguageContextSubPattern *>(inc);
             if(subpattern->where == LanguageContextSubPattern::Start &&
                    startMatch.hasMatch() && startMatch.capturedStart(subpattern->group) >= 0)
-                setFormat(text.position() + startMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
-                          startMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
+                if(subpattern->style)
+                    setFormat(text.position() + startMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
+                              startMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
 
             if(subpattern->where == LanguageContextSubPattern::End &&
                      endMatch.hasMatch() && endMatch.capturedStart(subpattern->group) >= 0)
-                setFormat(text.position() + endMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
-                          endMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
+                if(subpattern->style)
+                    setFormat(text.position() + endMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
+                              endMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
         }
     }
 
@@ -183,13 +188,15 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<Language
         if(m.match.capturedStart() >= position) {
             switch (m.context->type) {
             case LanguageContext::Keyword:
-                setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
-                          defStyles->styles[m.context->style->defaultId]);
+                if(m.context->style)
+                    setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
+                              defStyles->styles[m.context->style->defaultId]);
                 position = m.match.capturedEnd();
                 break;
             case LanguageContext::Simple:
-                setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
-                          defStyles->styles[m.context->style->defaultId]);
+                if(m.context->style)
+                    setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
+                              defStyles->styles[m.context->style->defaultId]);
                 position = m.match.capturedEnd();
                 for (LanguageContext *inc : static_cast<LanguageContextSimple *>(m.context)->includes) {
                     if(inc->type == LanguageContext::SubPattern) {

@@ -20,4 +20,5 @@
 #include "languagecontext.h"
 
 LanguageContext::LanguageContext(LanguageContext::ElementType t) :
-    type(t) {  }
+    type(t),
+    style(nullptr) {  }
