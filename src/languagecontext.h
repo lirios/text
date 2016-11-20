@@ -20,6 +20,8 @@
 #ifndef LANGUAGECONTEXT_H
 #define LANGUAGECONTEXT_H
 
+#include <QSharedPointer>
+
 #include "languagestyle.h"
 
 class LanguageContext
@@ -33,8 +35,11 @@ public:
     } type;
 
     LanguageContext(ElementType t);
+    virtual ~LanguageContext();
 
-    LanguageStyle *style;
+    QSharedPointer<LanguageStyle> style;
+protected:
+    void resolveCircularDeps(QList<LanguageContext *> stack, QSharedPointer<LanguageContext> context);
 };
 
 #endif // LANGUAGECONTEXT_H

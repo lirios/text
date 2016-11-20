@@ -18,7 +18,38 @@
  */
 
 #include "languagecontext.h"
+#include "languagecontextcontainer.h"
+#include "languagecontextsimple.h"
 
 LanguageContext::LanguageContext(LanguageContext::ElementType t) :
     type(t),
-    style(nullptr) {  }
+    style(nullptr) { }
+
+LanguageContext::~LanguageContext() { }
+
+void LanguageContext::resolveCircularDeps(QList<LanguageContext *> stack, QSharedPointer<LanguageContext> context) {
+    if(context->type == Simple) {
+        auto simple = context.staticCast<LanguageContextSimple>();
+        for (auto inc : simple->includes) {
+            if(stack.contains(inc.data())) {
+                simple->includes.removeOne(inc);
+                return;
+            }
+            auto newStack = stack;
+            newStack.append(inc.data());
+            resolveCircularDeps(newStack, inc);
+        }
+    }
+    if(context->type == Container) {
+        auto container = context.staticCast<LanguageContextContainer>();
+        for (auto inc : container->includes) {
+            if(stack.contains(inc.data())) {
+                container->includes.removeOne(inc);
+                return;
+            }
+            auto newStack = stack;
+            newStack.append(inc.data());
+            resolveCircularDeps(newStack, inc);
+        }
+    }
+}

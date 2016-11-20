@@ -22,6 +22,7 @@
 
 #include <QHash>
 #include <QString>
+#include <QSharedPointer>
 
 #include "languagestyle.h"
 #include "languagecontext.h"
@@ -32,10 +33,11 @@ class LanguageSpecification
 {
 public:
     LanguageSpecification();
+    ~LanguageSpecification();
 
     QString name;
-    QHash<QString, LanguageStyle*> styles;
-    LanguageContextSimple *mainContext;
+    QHash<QString, QSharedPointer<LanguageStyle>> styles;
+    QSharedPointer<LanguageContextSimple> mainContext;
 };
 
 #endif // LANGUAGESPECIFICATION_H

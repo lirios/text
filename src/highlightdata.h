@@ -30,7 +30,7 @@ public:
     HighlightData();
     ~HighlightData();
 
-    QList<LanguageContextContainer *> containers;
+    QList<QSharedPointer<LanguageContextContainer>> containers;
 };
 
 #endif // HIGHLIGHTDATA_H

@@ -21,14 +21,16 @@
 #define LANGUAGECONTEXTSIMPLE_H
 
 #include <QList>
+#include <QSharedPointer>
 #include "languagecontext.h"
 
 class LanguageContextSimple : public LanguageContext
 {
 public:
     LanguageContextSimple();
+    virtual ~LanguageContextSimple();
     QString matchPattern;
-    QList<LanguageContext *> includes;
+    QList<QSharedPointer<LanguageContext>> includes;
 };
 
 #endif // LANGUAGECONTEXTSIMPLE_H

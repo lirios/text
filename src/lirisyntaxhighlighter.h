@@ -32,13 +32,14 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
     Q_OBJECT
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
-    void setLanguage(LanguageSpecification *l);
-    void setDefaultStyle(LanguageDefaultStyles *def);
+    ~LiriSyntaxHighlighter();
+    void setLanguage(QSharedPointer<LanguageSpecification> l);
+    void setDefaultStyle(QSharedPointer<LanguageDefaultStyles> def);
 
 protected:
     struct Match {
         QRegularExpressionMatch match;
-        LanguageContext *context;
+        QSharedPointer<LanguageContext> context;
 
         inline bool operator <(const Match &other);
     };
@@ -47,14 +48,14 @@ protected:
 
     // Returns length. If container's end was not found, returns negative number
     // -2 if call to highlightPart returned true, -1 otherwise
-    int highlightTillContainerEnd(const QStringRef &text, LanguageContextContainer *container,
+    int highlightTillContainerEnd(const QStringRef &text, QSharedPointer<LanguageContextContainer> container,
                                   HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
     // Returns true if stateData's changed
-    bool highlightPart(const QStringRef &text, QList<LanguageContext *> currentContainer, HighlightData *stateData = nullptr);
+    bool highlightPart(const QStringRef &text, QList<QSharedPointer<LanguageContext> > currentContainer, HighlightData *stateData = nullptr);
 
-    LanguageSpecification *lang;
-    LanguageDefaultStyles *defStyles;
+    QSharedPointer<LanguageSpecification> lang;
+    QSharedPointer<LanguageDefaultStyles> defStyles;
 };
 
 #endif // LIRISYNTAXHIGHLIGHTER_H

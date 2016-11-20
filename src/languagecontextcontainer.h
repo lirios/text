@@ -22,15 +22,17 @@
 
 #include <QList>
 #include <QRegExp>
+#include <QSharedPointer>
 #include "languagecontext.h"
 
 class LanguageContextContainer : public LanguageContext
 {
 public:
     LanguageContextContainer();
+    virtual ~LanguageContextContainer();
     QString startPattern;
     QString endPattern;
-    QList<LanguageContext *> includes;
+    QList<QSharedPointer<LanguageContext>> includes;
 };
 
 #endif // LANGUAGECONTEXTCONTAINER_H

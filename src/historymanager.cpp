@@ -36,7 +36,9 @@ HistoryManager::HistoryManager() {
     loadHistory();
 }
 
-HistoryManager::~HistoryManager() { }
+HistoryManager::~HistoryManager() {
+    historyStorage->deleteLater();
+}
 
 int HistoryManager::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)

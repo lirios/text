@@ -19,7 +19,4 @@
 
 #include "languagestyle.h"
 
-LanguageStyle::LanguageStyle()
-{
-
-}
+LanguageStyle::LanguageStyle() { }
