@@ -23,6 +23,5 @@ LanguageContextSimple::LanguageContextSimple() :
     LanguageContext(LanguageContext::Simple) { }
 
 LanguageContextSimple::~LanguageContextSimple() {
-    for (auto inc : includes)
-        resolveCircularDeps(QList<LanguageContext *>({inc.data()}), inc);
+    resolveCircularDeps(this);
 }

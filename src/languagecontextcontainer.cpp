@@ -23,6 +23,5 @@ LanguageContextContainer::LanguageContextContainer() :
     LanguageContext(LanguageContext::Container) { }
 
 LanguageContextContainer::~LanguageContextContainer() {
-    for (auto inc : includes)
-        resolveCircularDeps(QList<LanguageContext *>({inc.data()}), inc);
+    resolveCircularDeps(this);
 }
