@@ -76,6 +76,7 @@ private:
     QTextDocument *m_document;
     LiriSyntaxHighlighter *m_highlighter;
     QFileSystemWatcher *m_watcher;
+    QSharedPointer<LanguageDefaultStyles> m_defStyles;
 
     QUrl m_fileUrl;
     QString m_text;

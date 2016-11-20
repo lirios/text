@@ -31,6 +31,8 @@ DocumentHandler::DocumentHandler() :
 
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
+
+    m_defStyles = QSharedPointer<LanguageDefaultStyles>::create();
 }
 
 DocumentHandler::~DocumentHandler() {
@@ -53,6 +55,7 @@ void DocumentHandler::setTarget(QQuickItem *target) {
             if(m_highlighter != nullptr)
                 delete m_highlighter;
             m_highlighter = new LiriSyntaxHighlighter(m_document);
+            m_highlighter->setDefaultStyle(m_defStyles);
         }
     }
     emit targetChanged();
@@ -84,9 +87,7 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
 
             // Enable syntax highlighting
             // TODO: recognize language by MIME type
-            QSharedPointer<LanguageDefaultStyles> def = QSharedPointer<LanguageDefaultStyles>(new LanguageDefaultStyles());
-            m_highlighter->setDefaultStyle(def);
-            LanguageLoader ll(def);
+            LanguageLoader ll(m_defStyles);
             m_highlighter->setLanguage(ll.loadById("cpp"));
         }
         if(m_fileUrl.isEmpty())
