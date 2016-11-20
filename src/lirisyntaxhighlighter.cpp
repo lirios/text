@@ -48,8 +48,6 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     if(lang == nullptr)
         return;
 
-    int state = previousBlockState();
-
     HighlightData *previousStateData = static_cast<HighlightData *>(currentBlock().previous().userData());
     HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
     if(!previousStateData && currentBlock().previous().isValid()) {
@@ -69,20 +67,17 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
 
             int len = highlightTillContainerEnd(text.midRef(start), container, currentStateData);
             if(len < 0) {
-                if(len == -2)
-                    state++;
                 start = text.length();
                 currentStateData->containers.append(previousStateData->containers.mid(i + 1));
                 break;
             } else {
                 start += len;
-                state++;
             }
         }
     }
-    state += highlightPart(text.midRef(start), lang->mainContext->includes, currentStateData);
+    highlightPart(text.midRef(start), lang->mainContext->includes, currentStateData);
 
-    setCurrentBlockState(state);
+    setCurrentBlockState(qHash(currentStateData->containers));
 }
 
 int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSharedPointer<LanguageContextContainer> container,
@@ -114,8 +109,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
             if(container->style)
                 setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
             QStringRef part = text.mid(innerStart);
-            bool change = highlightPart(part, container->includes, stateData);
-            len = -1 - change;
+            highlightPart(part, container->includes, stateData);
+            len = -1;
         }
     }
 

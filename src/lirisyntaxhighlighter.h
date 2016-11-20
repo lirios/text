@@ -47,7 +47,6 @@ protected:
     void highlightBlock(const QString &text);
 
     // Returns length. If container's end was not found, returns negative number
-    // -2 if call to highlightPart returned true, -1 otherwise
     int highlightTillContainerEnd(const QStringRef &text, QSharedPointer<LanguageContextContainer> container,
                                   HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
