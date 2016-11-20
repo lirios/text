@@ -1,9 +1,11 @@
 Liri Text
 =========
 
-# Authors
+# Core Developers
 
  * Andrew Penkrat <contact.aldrog@gmail.com>
+
+# Contributors
 
 This is the list of contributors to this code base.
 

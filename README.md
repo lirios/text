@@ -1,4 +1,6 @@
-# Liri Text
+Liri Text
+=========
+
 [![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
@@ -14,8 +16,8 @@ Liri Text is a cross-platform text editor made in accordance with Material Desig
 
 ## Build
   ```sh
-  git clone --recursive https://github.com/liri-project/liri-text.git
-  cd liri-text
+  git clone --recursive https://github.com/lirios/text.git
+  cd text
   mkdir build; cd build
   qmake ..
   make
