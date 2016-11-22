@@ -44,9 +44,10 @@ QSharedPointer<LanguageSpecification> LanguageLoader::loadById(QString name) {
 }
 
 QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path) {
-    QSharedPointer<LanguageSpecification> result = QSharedPointer<LanguageSpecification>(new LanguageSpecification());
+    QSharedPointer<LanguageSpecification> result;
     QFile file(path);
     if(file.open(QFile::ReadOnly)) {
+        result = QSharedPointer<LanguageSpecification>(new LanguageSpecification());
         QXmlStreamReader xml(&file);
         while (!xml.atEnd()) {
             xml.readNext();
@@ -63,9 +64,11 @@ QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path)
         }
     }
     file.close();
-    QString mainId = result->name + ":" + result->name;
-    if(knownContexts.keys().contains(mainId))
-        result->mainContext = knownContexts[mainId].staticCast<LanguageContextSimple>();
+    if(result) {
+        QString mainId = result->name + ":" + result->name;
+        if(knownContexts.keys().contains(mainId))
+            result->mainContext = knownContexts[mainId].staticCast<LanguageContextSimple>();
+    }
     return result;
 }
 

@@ -31,6 +31,7 @@
 #include "material/src/plugin.h"
 #include "documenthandler.h"
 #include "historymanager.h"
+#include "languagemanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -89,6 +90,10 @@ int main(int argc, char *argv[])
 
     // Temporary solution untill we have font customization
     engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
+    // Init languages database
+    LanguageManager::init();
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, LanguageManager::close);
 
     // Start with main.qml
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));

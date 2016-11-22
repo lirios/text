@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick sql
 CONFIG += c++11
 
 SOURCES += \
@@ -17,7 +17,8 @@ SOURCES += \
     src/languagecontextkeyword.cpp \
     src/languagecontextsubpattern.cpp \
     src/languagecontextsimple.cpp \
-    src/languagedefaultstyles.cpp
+    src/languagedefaultstyles.cpp \
+    src/languagemanager.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -44,7 +45,8 @@ HEADERS += \
     src/languagecontextkeyword.h \
     src/languagecontextsimple.h \
     src/languagecontextsubpattern.h \
-    src/languagedefaultstyles.h
+    src/languagedefaultstyles.h \
+    src/languagemanager.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts
