@@ -44,34 +44,6 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QStrin
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path) {
-    qDebug() << "Loading from" << path;
-    QSharedPointer<LanguageSpecification> result;
-    QFile file(path);
-    if(file.open(QFile::ReadOnly)) {
-        result = QSharedPointer<LanguageSpecification>(new LanguageSpecification());
-        QXmlStreamReader xml(&file);
-        while (!xml.atEnd()) {
-            xml.readNext();
-            if(xml.name() == "language" && xml.tokenType() == QXmlStreamReader::StartElement)
-                result->name = xml.attributes().value("id").toString();
-            if(xml.name() == "define-regex")
-                parseDefineRegex(xml);
-            if(xml.name() == "context" && result->name != "json" && result->name != "perl" && result->name != "ruby")
-                parseContext(xml, result->name);
-            if(xml.name() == "style")
-                parseStyle(xml, result->name);
-        }
-    }
-    file.close();
-    if(result) {
-        QString mainId = result->name + ":" + result->name;
-        if(knownContexts.keys().contains(mainId))
-            result->mainContext = knownContexts[mainId].staticCast<LanguageContextSimple>();
-    }
-    return result;
-}
-
 // TODO: fix loading of json, perl and ruby
 QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString path) {
     QFile file(path);

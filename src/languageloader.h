@@ -24,7 +24,7 @@
 #include <QXmlStreamReader>
 #include <QHash>
 
-#include "languagespecification.h"
+#include "languagecontextsimple.h"
 #include "languagedefaultstyles.h"
 #include "languagemetadata.h"
 
@@ -34,7 +34,6 @@ public:
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
     QSharedPointer<LanguageContextSimple> loadMainContextById(QString id);
-    QSharedPointer<LanguageSpecification> loadFromFile(QString path);
     QSharedPointer<LanguageContextSimple> loadMainContext(QString path);
     LanguageMetadata loadMetadata(QString path);
 protected:
