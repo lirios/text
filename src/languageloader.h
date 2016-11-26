@@ -31,6 +31,7 @@
 class LanguageLoader
 {
 public:
+    LanguageLoader();
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
     QSharedPointer<LanguageContextSimple> loadMainContextById(QString id);

@@ -27,10 +27,9 @@
 #include "languagecontextsubpattern.h"
 #include "languagemanager.h"
 
-LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) :
-    knownContexts(),
-    knownStyles(),
-    knownRegexes() {
+LanguageLoader::LanguageLoader() { }
+
+LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) {
     for (auto styleId : defaultStyles->styles.keys()) {
         knownStyles[styleId] = QSharedPointer<LanguageStyle>();
     }

@@ -60,11 +60,11 @@ void LanguageManager::initDB() {
 }
 
 void LanguageManager::updateDB() {
-    LanguageLoader *ll = new LanguageLoader(QSharedPointer<LanguageDefaultStyles>(new LanguageDefaultStyles));
+    LanguageLoader ll;
     for (QDir dir : specsDirs) {
         for (QFileInfo file : dir.entryInfoList()) {
             if(file.isFile()) {
-                LanguageMetadata langData = ll->loadMetadata(file.absoluteFilePath());
+                LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
                 QSqlQuery(QStringLiteral("UPDATE languages SET "
                                          "id='%1',spec_path='%2',mime_types='%3',display='%4' "
                                          "WHERE id='%1'").arg(
