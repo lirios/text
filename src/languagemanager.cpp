@@ -64,17 +64,17 @@ void LanguageManager::updateDB() {
     for (QDir dir : specsDirs) {
         for (QFileInfo file : dir.entryInfoList()) {
             if(file.isFile()) {
-                auto lang = ll->loadFromFile(file.absoluteFilePath());
+                LanguageMetadata langData = ll->loadMetadata(file.absoluteFilePath());
                 QSqlQuery(QStringLiteral("UPDATE languages SET "
                                          "id='%1',spec_path='%2',mime_types='%3',display='%4' "
                                          "WHERE id='%1'").arg(
-                              lang->name, file.absoluteFilePath(), "", lang->name),
+                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
                                 m_db);
                 // If update failed, insert
                 QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, display) "
                                          "SELECT '%1','%2','%3','%4' "
                                          "WHERE (SELECT Changes() = 0)").arg(
-                              lang->name, file.absoluteFilePath(), "", lang->name),
+                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
                                 m_db);
             }
         }

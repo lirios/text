@@ -22,8 +22,8 @@
 
 #include <QSyntaxHighlighter>
 #include <QRegularExpressionMatch>
-#include "languagespecification.h"
 #include "languagecontextcontainer.h"
+#include "languagecontextsimple.h"
 #include "highlightdata.h"
 #include "languagedefaultstyles.h"
 
@@ -33,7 +33,7 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
     ~LiriSyntaxHighlighter();
-    void setLanguage(QSharedPointer<LanguageSpecification> l);
+    void setLanguage(QSharedPointer<LanguageContextSimple> l);
     void setDefaultStyle(QSharedPointer<LanguageDefaultStyles> def);
 
 protected:
@@ -53,7 +53,7 @@ protected:
     // Returns true if stateData's changed
     bool highlightPart(const QStringRef &text, QList<QSharedPointer<LanguageContext> > currentContainer, HighlightData *stateData = nullptr);
 
-    QSharedPointer<LanguageSpecification> lang;
+    QSharedPointer<LanguageContextSimple> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
 };
 

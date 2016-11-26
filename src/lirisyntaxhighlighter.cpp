@@ -32,7 +32,7 @@ LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
 
 LiriSyntaxHighlighter::~LiriSyntaxHighlighter() { }
 
-void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageSpecification> l) {
+void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextSimple> l) {
     lang = l;
     if(defStyles)
         rehighlight();
@@ -75,7 +75,7 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
             }
         }
     }
-    highlightPart(text.midRef(start), lang->mainContext->includes, currentStateData);
+    highlightPart(text.midRef(start), lang->includes, currentStateData);
 
     setCurrentBlockState(qHash(currentStateData->containers));
 }

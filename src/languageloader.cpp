@@ -25,6 +25,7 @@
 #include "languagecontextsimple.h"
 #include "languagecontextcontainer.h"
 #include "languagecontextsubpattern.h"
+#include "languagemanager.h"
 
 LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) :
     knownContexts(),
@@ -37,13 +38,14 @@ LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyl
 
 LanguageLoader::~LanguageLoader() { }
 
-QSharedPointer<LanguageSpecification> LanguageLoader::loadById(QString name) {
-    qDebug() << "Loading " << name;
-    // TODO: Build languages database, querry it here for path to spec
-    return loadFromFile(QString("/usr/share/gtksourceview-3.0/language-specs/%1.lang").arg(name));
+QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QString id) {
+    qDebug() << "Loading" << id;
+    QString path = LanguageManager::pathForId(id);
+    return loadMainContext(path);
 }
 
 QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path) {
+    qDebug() << "Loading from" << path;
     QSharedPointer<LanguageSpecification> result;
     QFile file(path);
     if(file.open(QFile::ReadOnly)) {
@@ -53,11 +55,9 @@ QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path)
             xml.readNext();
             if(xml.name() == "language" && xml.tokenType() == QXmlStreamReader::StartElement)
                 result->name = xml.attributes().value("id").toString();
-            if(xml.name() == "metadata")
-                parseMetadata(xml);
             if(xml.name() == "define-regex")
                 parseDefineRegex(xml);
-            if(xml.name() == "context")
+            if(xml.name() == "context" && result->name != "json" && result->name != "perl" && result->name != "ruby")
                 parseContext(xml, result->name);
             if(xml.name() == "style")
                 parseStyle(xml, result->name);
@@ -72,8 +72,70 @@ QSharedPointer<LanguageSpecification> LanguageLoader::loadFromFile(QString path)
     return result;
 }
 
-void LanguageLoader::parseMetadata(QXmlStreamReader &xml) {
-    xml.skipCurrentElement();
+// TODO: fix loading of json, perl and ruby
+QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString path) {
+    QFile file(path);
+    QString langId;
+    if(file.open(QFile::ReadOnly)) {
+        QXmlStreamReader xml(&file);
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if(xml.name() == "language" && xml.tokenType() == QXmlStreamReader::StartElement)
+                langId = xml.attributes().value("id").toString();
+            if(xml.name() == "define-regex")
+                parseDefineRegex(xml);
+            if(xml.name() == "context")
+                parseContext(xml, langId);
+            if(xml.name() == "style")
+                parseStyle(xml, langId);
+        }
+    }
+    file.close();
+    QString contextId = langId + ":" + langId;
+    if(knownContexts.keys().contains(contextId))
+        return knownContexts[contextId].staticCast<LanguageContextSimple>();
+    else
+        return QSharedPointer<LanguageContextSimple>();
+}
+
+LanguageMetadata LanguageLoader::loadMetadata(QString path) {
+    LanguageMetadata result;
+    QFile file(path);
+    if(file.open(QFile::ReadOnly)) {
+        QXmlStreamReader xml(&file);
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if(xml.name() == "language") {
+                result.id = xml.attributes().value("id").toString();
+                if(xml.attributes().hasAttribute("_name")) // Translatable
+                    result.name = xml.attributes().value("_name").toString();
+                else
+                    result.name = xml.attributes().value("name").toString();
+            }
+            if(xml.name() == "metadata") {
+                parseMetadata(xml, result);
+                break;
+            }
+        }
+    }
+    file.close();
+    return result;
+}
+
+void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata) {
+    while (xml.name() != "metadata" || xml.tokenType() != QXmlStreamReader::EndElement) {
+        xml.readNext();
+        if(xml.name() == "property") {
+            QString pName = xml.attributes().value("name").toString();
+            xml.readNext();
+            if(pName == "mimetypes")
+                metadata.mimetypes = xml.text().toString();
+            if(pName == "globs")
+                metadata.globs = xml.text().toString();
+            // Note: metadata can also have line-comment and block-comment properties
+            xml.readNext();
+        }
+    }
 }
 
 QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
@@ -82,7 +144,7 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
     if(xml.attributes().hasAttribute("ref")) {
         QStringRef refId = xml.attributes().value("ref");
         if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
-            loadById(refId.left(refId.indexOf(':')).toString());
+            loadMainContextById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))
@@ -111,7 +173,7 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
     if(xml.attributes().hasAttribute("style-ref")) {
         QStringRef styleIdRef = xml.attributes().value("style-ref");
         if(styleIdRef.contains(':') && !knownStyles.keys().contains(styleIdRef.toString()))
-            loadById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
+            loadMainContextById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
         styleId = styleIdRef.toString();
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
@@ -215,7 +277,7 @@ QSharedPointer<LanguageStyle> LanguageLoader::parseStyle(QXmlStreamReader &xml, 
     if(xml.attributes().hasAttribute("map-to")) {
         QStringRef refId = xml.attributes().value("map-to");
         if(refId.contains(':') && !knownStyles.keys().contains(refId.toString())) {
-            loadById(refId.left(refId.indexOf(':')).toString());
+            loadMainContextById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))

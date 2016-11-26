@@ -46,7 +46,8 @@ HEADERS += \
     src/languagecontextsimple.h \
     src/languagecontextsubpattern.h \
     src/languagedefaultstyles.h \
-    src/languagemanager.h
+    src/languagemanager.h \
+    src/languagemetadata.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

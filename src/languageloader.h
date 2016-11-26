@@ -26,16 +26,19 @@
 
 #include "languagespecification.h"
 #include "languagedefaultstyles.h"
+#include "languagemetadata.h"
 
 class LanguageLoader
 {
 public:
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
-    QSharedPointer<LanguageSpecification> loadById(QString name);
+    QSharedPointer<LanguageContextSimple> loadMainContextById(QString id);
     QSharedPointer<LanguageSpecification> loadFromFile(QString path);
+    QSharedPointer<LanguageContextSimple> loadMainContext(QString path);
+    LanguageMetadata loadMetadata(QString path);
 protected:
-    void parseMetadata(QXmlStreamReader &xml);
+    void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
     QSharedPointer<LanguageContext> parseContext(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml);
