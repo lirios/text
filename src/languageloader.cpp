@@ -51,14 +51,16 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString pa
         QXmlStreamReader xml(&file);
         while (!xml.atEnd()) {
             xml.readNext();
-            if(xml.name() == "language" && xml.tokenType() == QXmlStreamReader::StartElement)
-                langId = xml.attributes().value("id").toString();
-            if(xml.name() == "define-regex")
-                parseDefineRegex(xml);
-            if(xml.name() == "context")
-                parseContext(xml, langId);
-            if(xml.name() == "style")
-                parseStyle(xml, langId);
+            if(xml.isStartElement()) {
+                if(xml.name() == "language")
+                    langId = xml.attributes().value("id").toString();
+                if(xml.name() == "define-regex")
+                    parseDefineRegex(xml);
+                if(xml.name() == "context")
+                    parseContext(xml, langId);
+                if(xml.name() == "style")
+                    parseStyle(xml, langId);
+            }
         }
     }
     file.close();
@@ -76,16 +78,18 @@ LanguageMetadata LanguageLoader::loadMetadata(QString path) {
         QXmlStreamReader xml(&file);
         while (!xml.atEnd()) {
             xml.readNext();
-            if(xml.name() == "language") {
-                result.id = xml.attributes().value("id").toString();
-                if(xml.attributes().hasAttribute("_name")) // Translatable
-                    result.name = xml.attributes().value("_name").toString();
-                else
-                    result.name = xml.attributes().value("name").toString();
-            }
-            if(xml.name() == "metadata") {
-                parseMetadata(xml, result);
-                break;
+            if(xml.isStartElement()) {
+                if(xml.name() == "language") {
+                    result.id = xml.attributes().value("id").toString();
+                    if(xml.attributes().hasAttribute("_name")) // Translatable
+                        result.name = xml.attributes().value("_name").toString();
+                    else
+                        result.name = xml.attributes().value("name").toString();
+                }
+                if(xml.name() == "metadata") {
+                    parseMetadata(xml, result);
+                    break;
+                }
             }
         }
     }
@@ -94,7 +98,7 @@ LanguageMetadata LanguageLoader::loadMetadata(QString path) {
 }
 
 void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata) {
-    while (xml.name() != "metadata" || xml.tokenType() != QXmlStreamReader::EndElement) {
+    while (!(xml.name() == "metadata" && xml.isEndElement())) {
         xml.readNext();
         if(xml.name() == "property") {
             QString pName = xml.attributes().value("name").toString();
@@ -151,7 +155,7 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
     }
 
     xml.readNext();
-    while (xml.name() != "context" || xml.tokenType() != QXmlStreamReader::EndElement) {
+    while (!(xml.name() == "context" && xml.isEndElement())) {
         if(xml.name() == "start") {
             if(!result) {
                 result = QSharedPointer<LanguageContext>(new LanguageContextContainer());
@@ -202,7 +206,7 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
         }
         if(xml.name() == "include") {
             xml.readNext();
-            while (xml.name() != "include" || xml.tokenType() != QXmlStreamReader::EndElement) {
+            while (!(xml.name() == "include" && xml.isEndElement())) {
                 if(xml.name() == "context") {
                     QSharedPointer<LanguageContext> inc = parseContext(xml, langId);
                     if(!result) {
