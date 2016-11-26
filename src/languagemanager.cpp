@@ -23,6 +23,7 @@
 #include <QStandardPaths>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QRegularExpression>
 
 #include "languageloader.h"
 
@@ -41,7 +42,7 @@ QString LanguageManager::pathForId(QString id) {
         return QString();
 }
 
-QString LanguageManager::pathForMimetype(QMimeType mimetype) {
+QString LanguageManager::pathForMimetype(QMimeType mimetype, QString filename) {
     // Original name first
     {
         QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
@@ -69,6 +70,20 @@ QString LanguageManager::pathForMimetype(QMimeType mimetype) {
             return query.value(0).toString();
     }
 
+    // MIME type lookup failed
+    // Search for glob fitting the filename
+    QSqlQuery query(QStringLiteral("SELECT globs, spec_path FROM languages"),
+                    QSqlDatabase::database("languages"));
+    while (query.next()) {
+        QString globs = query.value(0).toString();
+        for (QString glob : globs.split(';')) {
+            // Very simple glob-to-regex translation
+            QRegularExpression regexp("^" + glob.replace('.', "\\.").replace('?', ".").replace('*', ".*") + "$");
+            if(regexp.match(filename, 0).hasMatch())
+                return query.value(1).toString();
+        }
+    }
+
     return QString();
 }
 
@@ -85,7 +100,7 @@ void LanguageManager::initDB() {
     db.setDatabaseName(dataDir.filePath("languages.db"));
     db.open();
     QSqlQuery("CREATE TABLE IF NOT EXISTS languages "
-              "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, display TEXT)",
+              "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)",
               db);
 }
 
@@ -97,15 +112,15 @@ void LanguageManager::updateDB() {
             if(file.isFile()) {
                 LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
                 QSqlQuery(QStringLiteral("UPDATE languages SET "
-                                         "id='%1',spec_path='%2',mime_types='%3',display='%4' "
+                                         "id='%1',spec_path='%2',mime_types='%3',globs='%4',display='%5' "
                                          "WHERE id='%1'").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
+                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.globs, langData.name),
                           QSqlDatabase::database("languages"));
                 // If update failed, insert
-                QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, display) "
-                                         "SELECT '%1','%2','%3','%4' "
+                QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, globs, display) "
+                                         "SELECT '%1','%2','%3','%4','%5' "
                                          "WHERE (SELECT Changes() = 0)").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
+                              langData.id, file.absoluteFilePath(), langData.mimetypes, langData.globs, langData.name),
                           QSqlDatabase::database("languages"));
             }
         }

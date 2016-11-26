@@ -43,8 +43,8 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QStrin
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimetype) {
-    QString path = LanguageManager::pathForMimetype(mimetype);
+QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimetype, QString filename) {
+    QString path = LanguageManager::pathForMimetype(mimetype, filename);
     return loadMainContext(path);
 }
 

@@ -91,7 +91,7 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
             QMimeDatabase db;
             QMimeType mimetype = db.mimeTypeForFileNameAndData(m_fileUrl.toString(), data);
             LanguageLoader ll(m_defStyles);
-            m_highlighter->setLanguage(ll.loadMainContextByMimeType(mimetype));
+            m_highlighter->setLanguage(ll.loadMainContextByMimeType(mimetype, m_fileUrl.fileName()));
         }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";

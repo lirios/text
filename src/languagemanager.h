@@ -31,7 +31,7 @@ class LanguageManager : public QObject
 public:
     static void init();
     static QString pathForId(QString id);
-    static QString pathForMimetype(QMimeType mimetype);
+    static QString pathForMimetype(QMimeType mimetype, QString filename);
 public slots:
     static void close();
 protected:
