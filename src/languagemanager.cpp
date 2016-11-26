@@ -41,6 +41,37 @@ QString LanguageManager::pathForId(QString id) {
         return QString();
 }
 
+QString LanguageManager::pathForMimetype(QMimeType mimetype) {
+    // Original name first
+    {
+        QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
+                                       "WHERE instr(mime_types, '%1') > 0").arg(mimetype.name()),
+                        QSqlDatabase::database("languages"));
+        if(query.next())
+            return query.value(0).toString();
+    }
+
+    // Aliases second
+    for (QString aType : mimetype.aliases()) {
+        QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
+                                       "WHERE instr(mime_types, '%1') > 0").arg(aType),
+                        QSqlDatabase::database("languages"));
+        if(query.next())
+            return query.value(0).toString();
+    }
+
+    // Parents last
+    for (QString pType : mimetype.allAncestors()) {
+        QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
+                                       "WHERE instr(mime_types, '%1') > 0").arg(pType),
+                        QSqlDatabase::database("languages"));
+        if(query.next())
+            return query.value(0).toString();
+    }
+
+    return QString();
+}
+
 void LanguageManager::close() {
     QSqlDatabase::removeDatabase("languages");
 }
@@ -58,6 +89,7 @@ void LanguageManager::initDB() {
               db);
 }
 
+// TODO: remove obsolete entries
 void LanguageManager::updateDB() {
     LanguageLoader ll;
     for (QDir dir : specsDirs) {

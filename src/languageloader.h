@@ -23,6 +23,7 @@
 #include <QString>
 #include <QXmlStreamReader>
 #include <QHash>
+#include <QMimeType>
 
 #include "languagecontextsimple.h"
 #include "languagedefaultstyles.h"
@@ -35,6 +36,7 @@ public:
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
     QSharedPointer<LanguageContextSimple> loadMainContextById(QString id);
+    QSharedPointer<LanguageContextSimple> loadMainContextByMimeType(QMimeType mimetype);
     QSharedPointer<LanguageContextSimple> loadMainContext(QString path);
     LanguageMetadata loadMetadata(QString path);
 protected:

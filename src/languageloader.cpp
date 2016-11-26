@@ -43,6 +43,11 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QStrin
     return loadMainContext(path);
 }
 
+QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimetype) {
+    QString path = LanguageManager::pathForMimetype(mimetype);
+    return loadMainContext(path);
+}
+
 // TODO: fix loading of json, perl and ruby
 QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString path) {
     QFile file(path);
