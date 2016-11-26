@@ -34,7 +34,7 @@ void LanguageManager::init() {
 QString LanguageManager::pathForId(QString id) {
     QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
                                    "WHERE id = '%1'").arg(id),
-                    m_db);
+                    QSqlDatabase::database("languages"));
     if(query.next())
         return query.value(0).toString();
     else
@@ -42,7 +42,6 @@ QString LanguageManager::pathForId(QString id) {
 }
 
 void LanguageManager::close() {
-    m_db.close();
     QSqlDatabase::removeDatabase("languages");
 }
 
@@ -51,12 +50,12 @@ void LanguageManager::initDB() {
     if(!dataDir.exists())
         dataDir.mkpath(".");
 
-    m_db = QSqlDatabase::addDatabase("QSQLITE", "languages");
-    m_db.setDatabaseName(dataDir.filePath("languages.db"));
-    m_db.open();
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "languages");
+    db.setDatabaseName(dataDir.filePath("languages.db"));
+    db.open();
     QSqlQuery("CREATE TABLE IF NOT EXISTS languages "
               "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, display TEXT)",
-              m_db);
+              db);
 }
 
 void LanguageManager::updateDB() {
@@ -69,19 +68,18 @@ void LanguageManager::updateDB() {
                                          "id='%1',spec_path='%2',mime_types='%3',display='%4' "
                                          "WHERE id='%1'").arg(
                               langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
-                                m_db);
+                          QSqlDatabase::database("languages"));
                 // If update failed, insert
                 QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, display) "
                                          "SELECT '%1','%2','%3','%4' "
                                          "WHERE (SELECT Changes() = 0)").arg(
                               langData.id, file.absoluteFilePath(), langData.mimetypes, langData.name),
-                                m_db);
+                          QSqlDatabase::database("languages"));
             }
         }
     }
 }
 
-QSqlDatabase LanguageManager::m_db;
 QList<QDir> LanguageManager::specsDirs = QList<QDir>({
                                                QDir("/usr/share/gtksourceview-3.0/language-specs")
                                                      });

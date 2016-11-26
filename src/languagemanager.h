@@ -36,7 +36,6 @@ protected:
     static void initDB();
     static void updateDB();
 private:
-    static QSqlDatabase m_db;
     static QList<QDir> specsDirs;
 };
 
