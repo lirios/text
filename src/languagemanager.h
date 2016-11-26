@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 
+class QDir;
 class LanguageManager : public QObject
 {
     Q_OBJECT
@@ -33,8 +34,10 @@ public slots:
     static void close();
 protected:
     static void initDB();
+    static void updateDB();
 private:
     static QSqlDatabase m_db;
+    static QList<QDir> specsDirs;
 };
 
 #endif // LANGUAGEMANAGER_H

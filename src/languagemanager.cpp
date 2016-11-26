@@ -24,8 +24,11 @@
 #include <QSqlQuery>
 #include <QVariant>
 
+#include "languageloader.h"
+
 void LanguageManager::init() {
     initDB();
+    updateDB();
 }
 
 QString LanguageManager::pathForId(QString id) {
@@ -56,4 +59,29 @@ void LanguageManager::initDB() {
               m_db);
 }
 
+void LanguageManager::updateDB() {
+    LanguageLoader *ll = new LanguageLoader(QSharedPointer<LanguageDefaultStyles>(new LanguageDefaultStyles));
+    for (QDir dir : specsDirs) {
+        for (QFileInfo file : dir.entryInfoList()) {
+            if(file.isFile()) {
+                auto lang = ll->loadFromFile(file.absoluteFilePath());
+                QSqlQuery(QStringLiteral("UPDATE languages SET "
+                                         "id='%1',spec_path='%2',mime_types='%3',display='%4' "
+                                         "WHERE id='%1'").arg(
+                              lang->name, file.absoluteFilePath(), "", lang->name),
+                                m_db);
+                // If update failed, insert
+                QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, display) "
+                                         "SELECT '%1','%2','%3','%4' "
+                                         "WHERE (SELECT Changes() = 0)").arg(
+                              lang->name, file.absoluteFilePath(), "", lang->name),
+                                m_db);
+            }
+        }
+    }
+}
+
 QSqlDatabase LanguageManager::m_db;
+QList<QDir> LanguageManager::specsDirs = QList<QDir>({
+                                               QDir("/usr/share/gtksourceview-3.0/language-specs")
+                                                     });
