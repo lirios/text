@@ -74,25 +74,27 @@ QString LanguageManager::pathForMimetype(QMimeType mimetype, QString filename) {
 
     // MIME type lookup failed
     // Search for glob fitting the filename
-    QSqlQuery query(QStringLiteral("SELECT globs, spec_path FROM languages"),
-                    QSqlDatabase::database("languages"));
-    while (query.next()) {
-        QString globs = query.value(0).toString();
-        for (QString glob : globs.split(';')) {
-            // Very simple glob-to-regex translation
+    {
+        QSqlQuery query(QStringLiteral("SELECT globs, spec_path FROM languages"),
+                        QSqlDatabase::database("languages"));
+        while (query.next()) {
+            QString globs = query.value(0).toString();
+            for (QString glob : globs.split(';')) {
+                // Very simple glob-to-regex translation
 
-            glob.replace('.', "\\.");
-            glob.replace('?', ".");
-            // In glob starting with *. * shouldn't match empty string
-            if(glob.startsWith("*\\."))
-                glob.replace(0, 1, ".+");
-            // Elsewhere it can
-            glob.replace('*', ".*");
+                glob.replace('.', "\\.");
+                glob.replace('?', ".");
+                // In glob starting with *. * shouldn't match empty string
+                if(glob.startsWith("*\\."))
+                    glob.replace(0, 1, ".+");
+                // Elsewhere it can
+                glob.replace('*', ".*");
 
-            QRegularExpression regexp("^" + glob + "$");
+                QRegularExpression regexp("^" + glob + "$");
 
-            if(regexp.match(filename, 0).hasMatch())
-                return query.value(1).toString();
+                if(regexp.match(filename, 0).hasMatch())
+                    return query.value(1).toString();
+            }
         }
     }
 
@@ -117,7 +119,6 @@ void LanguageManager::initDB() {
               db);
 }
 
-// TODO: remove obsolete entries
 void LanguageManager::updateDB() {
     LanguageLoader ll;
     for (QDir dir : specsDirs) {
@@ -137,6 +138,17 @@ void LanguageManager::updateDB() {
                           QSqlDatabase::database("languages"));
             }
         }
+    }
+
+    // Search for obsolete entries
+    QSqlQuery query(QStringLiteral("SELECT id, spec_path FROM languages"),
+                    QSqlDatabase::database("languages"));
+    while (query.next()) {
+        QFileInfo file(query.value(1).toString());
+        if(!file.exists())
+            QSqlQuery(QStringLiteral("DELETE FROM languages "
+                                     "WHERE id='%1'").arg(query.value(0).toString()),
+                      QSqlDatabase::database("languages"));
     }
 }
 
