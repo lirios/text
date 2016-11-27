@@ -80,7 +80,17 @@ QString LanguageManager::pathForMimetype(QMimeType mimetype, QString filename) {
         QString globs = query.value(0).toString();
         for (QString glob : globs.split(';')) {
             // Very simple glob-to-regex translation
-            QRegularExpression regexp("^" + glob.replace('.', "\\.").replace('?', ".").replace('*', ".*") + "$");
+
+            glob.replace('.', "\\.");
+            glob.replace('?', ".");
+            // In glob starting with *. * shouldn't match empty string
+            if(glob.startsWith("*\\."))
+                glob.replace(0, 1, ".+");
+            // Elsewhere it can
+            glob.replace('*', ".*");
+
+            QRegularExpression regexp("^" + glob + "$");
+
             if(regexp.match(filename, 0).hasMatch())
                 return query.value(1).toString();
         }
