@@ -8,7 +8,6 @@ SOURCES += \
     src/documenthandler.cpp \
     src/historymanager.cpp \
     src/languageloader.cpp \
-    src/languagespecification.cpp \
     src/languagestyle.cpp \
     src/lirisyntaxhighlighter.cpp \
     src/highlightdata.cpp \
@@ -36,7 +35,6 @@ HEADERS += \
     src/documenthandler.h \
     src/historymanager.h \
     src/languageloader.h \
-    src/languagespecification.h \
     src/languagestyle.h \
     src/lirisyntaxhighlighter.h \
     src/highlightdata.h \
