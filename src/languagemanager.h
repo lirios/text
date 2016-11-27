@@ -17,27 +17,31 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGESPECIFICATION_H
-#define LANGUAGESPECIFICATION_H
+#ifndef LANGUAGEMANAGER_H
+#define LANGUAGEMANAGER_H
 
-#include <QHash>
-#include <QString>
-#include <QSharedPointer>
+#include <QObject>
+#include <QSqlDatabase>
+#include <QMimeType>
+#include <QFileSystemWatcher>
 
-#include "languagestyle.h"
-#include "languagecontext.h"
-#include "languagecontext.h"
-#include "languagecontextsimple.h"
-
-class LanguageSpecification
+class QDir;
+class LanguageManager : public QObject
 {
+    Q_OBJECT
 public:
-    LanguageSpecification();
-    ~LanguageSpecification();
-
-    QString name;
-    QHash<QString, QSharedPointer<LanguageStyle>> styles;
-    QSharedPointer<LanguageContextSimple> mainContext;
+    static void init();
+    static QString pathForId(QString id);
+    static QString pathForMimetype(QMimeType mimeType, QString filename);
+public slots:
+    static void close();
+protected:
+    static void initDB();
+protected slots:
+    static void updateDB();
+private:
+    static QStringList specsDirs;
+    static QFileSystemWatcher *watcher;
 };
 
-#endif // LANGUAGESPECIFICATION_H
+#endif // LANGUAGEMANAGER_H

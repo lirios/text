@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick sql
 CONFIG += c++11
 
 SOURCES += \
@@ -8,7 +8,6 @@ SOURCES += \
     src/documenthandler.cpp \
     src/historymanager.cpp \
     src/languageloader.cpp \
-    src/languagespecification.cpp \
     src/languagestyle.cpp \
     src/lirisyntaxhighlighter.cpp \
     src/highlightdata.cpp \
@@ -17,7 +16,8 @@ SOURCES += \
     src/languagecontextkeyword.cpp \
     src/languagecontextsubpattern.cpp \
     src/languagecontextsimple.cpp \
-    src/languagedefaultstyles.cpp
+    src/languagedefaultstyles.cpp \
+    src/languagemanager.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -35,7 +35,6 @@ HEADERS += \
     src/documenthandler.h \
     src/historymanager.h \
     src/languageloader.h \
-    src/languagespecification.h \
     src/languagestyle.h \
     src/lirisyntaxhighlighter.h \
     src/highlightdata.h \
@@ -44,7 +43,9 @@ HEADERS += \
     src/languagecontextkeyword.h \
     src/languagecontextsimple.h \
     src/languagecontextsubpattern.h \
-    src/languagedefaultstyles.h
+    src/languagedefaultstyles.h \
+    src/languagemanager.h \
+    src/languagemetadata.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts
@@ -66,4 +67,13 @@ unix {
     desktop.files += liri-text.desktop
     target.path = $$PREFIX/bin
     target.files += liri-text
+
+    CONFIG += use_gtksourceview_language_specs
+    use_gtksourceview_language_specs {
+        DEFINES += GTKSOURCEVIEW_LANGUAGE_SPECS=\\\"/usr/share/gtksourceview-3.0/language-specs/\\\"
+    }
+
+    DATA_PREFIX = $$PREFIX/share/liri-text
 }
+
+DEFINES += LIRI_LANGUAGE_SPECS=\\\"$$DATA_PREFIX/language-specs/\\\"

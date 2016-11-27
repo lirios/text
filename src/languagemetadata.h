@@ -17,9 +17,16 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "languagespecification.h"
+#ifndef LANGUAGEMETADATA_H
+#define LANGUAGEMETADATA_H
 
-LanguageSpecification::LanguageSpecification() { }
+#include <QString>
 
-LanguageSpecification::~LanguageSpecification() { }
+struct LanguageMetadata {
+    QString id;
+    QString name;
+    QString mimeTypes;
+    QString globs;
+};
 
+#endif // LANGUAGEMETADATA_H

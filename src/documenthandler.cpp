@@ -21,8 +21,10 @@
 
 #include <QTextDocument>
 #include <QFileInfo>
+#include <QMimeDatabase>
 #include <QDebug>
 #include "languageloader.h"
+#include "languagemanager.h"
 
 DocumentHandler::DocumentHandler() :
     m_target(0),
@@ -86,9 +88,10 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
             m_document->setModified(false);
 
             // Enable syntax highlighting
-            // TODO: recognize language by MIME type
+            QMimeDatabase db;
+            QMimeType mimeType = db.mimeTypeForFileNameAndData(m_fileUrl.toString(), data);
             LanguageLoader ll(m_defStyles);
-            m_highlighter->setLanguage(ll.loadById("cpp"));
+            m_highlighter->setLanguage(ll.loadMainContextByMimeType(mimeType, m_fileUrl.fileName()));
         }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";

@@ -74,8 +74,8 @@ private slots:
 private:
     QQuickItem *m_target;
     QTextDocument *m_document;
-    LiriSyntaxHighlighter *m_highlighter;
     QFileSystemWatcher *m_watcher;
+    LiriSyntaxHighlighter *m_highlighter;
     QSharedPointer<LanguageDefaultStyles> m_defStyles;
 
     QUrl m_fileUrl;

@@ -23,19 +23,24 @@
 #include <QString>
 #include <QXmlStreamReader>
 #include <QHash>
+#include <QMimeType>
 
-#include "languagespecification.h"
+#include "languagecontextsimple.h"
 #include "languagedefaultstyles.h"
+#include "languagemetadata.h"
 
 class LanguageLoader
 {
 public:
+    LanguageLoader();
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
-    QSharedPointer<LanguageSpecification> loadById(QString name);
-    QSharedPointer<LanguageSpecification> loadFromFile(QString path);
+    QSharedPointer<LanguageContextSimple> loadMainContextById(QString id);
+    QSharedPointer<LanguageContextSimple> loadMainContextByMimeType(QMimeType mimeType, QString filename);
+    QSharedPointer<LanguageContextSimple> loadMainContext(QString path);
+    LanguageMetadata loadMetadata(QString path);
 protected:
-    void parseMetadata(QXmlStreamReader &xml);
+    void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
     QSharedPointer<LanguageContext> parseContext(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml);
