@@ -69,4 +69,13 @@ unix {
     desktop.files += liri-text.desktop
     target.path = $$PREFIX/bin
     target.files += liri-text
+
+    CONFIG += use_gtksourceview_language_specs
+    use_gtksourceview_language_specs {
+        DEFINES += GTKSOURCEVIEW_LANGUAGE_SPECS=\\\"/usr/share/gtksourceview-3.0/language-specs/\\\"
+    }
+
+    DATA_PREFIX = $$PREFIX/share/liri-text
 }
+
+DEFINES += LIRI_LANGUAGE_SPECS=\\\"$$DATA_PREFIX/language-specs/\\\"

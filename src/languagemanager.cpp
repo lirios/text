@@ -131,6 +131,9 @@ void LanguageManager::updateDB() {
 }
 
 QStringList LanguageManager::specsDirs = QStringList({
-                                         QString("/usr/share/gtksourceview-3.0/language-specs")
+            #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
+                                         QString(GTKSOURCEVIEW_LANGUAGE_SPECS),
+            #endif
+                                         QString(LIRI_LANGUAGE_SPECS)
                                                      });
 QFileSystemWatcher *LanguageManager::watcher = nullptr;
