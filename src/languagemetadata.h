@@ -25,7 +25,7 @@
 struct LanguageMetadata {
     QString id;
     QString name;
-    QString mimetypes;
+    QString mimeTypes;
     QString globs;
 };
 

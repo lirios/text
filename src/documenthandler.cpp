@@ -89,9 +89,9 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
 
             // Enable syntax highlighting
             QMimeDatabase db;
-            QMimeType mimetype = db.mimeTypeForFileNameAndData(m_fileUrl.toString(), data);
+            QMimeType mimeType = db.mimeTypeForFileNameAndData(m_fileUrl.toString(), data);
             LanguageLoader ll(m_defStyles);
-            m_highlighter->setLanguage(ll.loadMainContextByMimeType(mimetype, m_fileUrl.fileName()));
+            m_highlighter->setLanguage(ll.loadMainContextByMimeType(mimeType, m_fileUrl.fileName()));
         }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";

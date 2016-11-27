@@ -43,8 +43,8 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QStrin
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimetype, QString filename) {
-    QString path = LanguageManager::pathForMimetype(mimetype, filename);
+QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
+    QString path = LanguageManager::pathForMimetype(mimeType, filename);
     return loadMainContext(path);
 }
 
@@ -109,7 +109,7 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
             QString pName = xml.attributes().value("name").toString();
             xml.readNext();
             if(pName == "mimetypes")
-                metadata.mimetypes = xml.text().toString();
+                metadata.mimeTypes = xml.text().toString();
             if(pName == "globs")
                 metadata.globs = xml.text().toString();
             // Note: metadata can also have line-comment and block-comment properties
