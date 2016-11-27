@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QMimeType>
+#include <QFileSystemWatcher>
 
 class QDir;
 class LanguageManager : public QObject
@@ -36,9 +37,11 @@ public slots:
     static void close();
 protected:
     static void initDB();
+protected slots:
     static void updateDB();
 private:
-    static QList<QDir> specsDirs;
+    static QStringList specsDirs;
+    static QFileSystemWatcher *watcher;
 };
 
 #endif // LANGUAGEMANAGER_H

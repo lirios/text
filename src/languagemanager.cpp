@@ -30,6 +30,8 @@
 void LanguageManager::init() {
     initDB();
     updateDB();
+    watcher = new QFileSystemWatcher(specsDirs);
+    connect(watcher, &QFileSystemWatcher::directoryChanged, updateDB);
 }
 
 QString LanguageManager::pathForId(QString id) {
@@ -88,6 +90,7 @@ QString LanguageManager::pathForMimetype(QMimeType mimetype, QString filename) {
 }
 
 void LanguageManager::close() {
+    delete watcher;
     QSqlDatabase::removeDatabase("languages");
 }
 
@@ -127,6 +130,7 @@ void LanguageManager::updateDB() {
     }
 }
 
-QList<QDir> LanguageManager::specsDirs = QList<QDir>({
-                                               QDir("/usr/share/gtksourceview-3.0/language-specs")
+QStringList LanguageManager::specsDirs = QStringList({
+                                         QString("/usr/share/gtksourceview-3.0/language-specs")
                                                      });
+QFileSystemWatcher *LanguageManager::watcher = nullptr;
