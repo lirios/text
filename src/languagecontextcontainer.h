@@ -32,7 +32,7 @@ public:
     virtual ~LanguageContextContainer();
     QString startPattern;
     QString endPattern;
-    QList<QSharedPointer<LanguageContext>> includes;
+    QList<ContextDPtr> includes;
 };
 
 #endif // LANGUAGECONTEXTCONTAINER_H

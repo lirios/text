@@ -30,7 +30,7 @@ public:
     LanguageContextSimple();
     virtual ~LanguageContextSimple();
     QString matchPattern;
-    QList<QSharedPointer<LanguageContext>> includes;
+    QList<ContextDPtr> includes;
 };
 
 #endif // LANGUAGECONTEXTSIMPLE_H

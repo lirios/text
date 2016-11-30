@@ -51,7 +51,7 @@ protected:
                                   HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
     // Returns true if stateData's changed
-    bool highlightPart(const QStringRef &text, QList<QSharedPointer<LanguageContext> > currentContainer, HighlightData *stateData = nullptr);
+    bool highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData = nullptr);
 
     QSharedPointer<LanguageContextSimple> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;

@@ -42,12 +42,12 @@ void LanguageContext::resolveCircularDeps(QList<LanguageContext *> stack) {
 template<class ContextType>
 void LanguageContext::resolveCircularDeps(ContextType *current, QList<LanguageContext *> stack) {
     for (auto inc : current->includes) {
-        if(stack.contains(inc.data())) {
+        if(stack.contains(inc->data())) {
             current->includes.removeOne(inc);
             continue;
         }
         auto newStack = stack;
-        newStack.append(inc.data());
+        newStack.append(inc->data());
         resolveCircularDeps(newStack);
     }
 }

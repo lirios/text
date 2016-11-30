@@ -46,4 +46,6 @@ protected:
     void resolveCircularDeps(ContextType *current);
 };
 
+typedef QSharedPointer<QSharedPointer<LanguageContext>> ContextDPtr;
+
 #endif // LANGUAGECONTEXT_H

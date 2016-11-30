@@ -41,12 +41,12 @@ public:
     LanguageMetadata loadMetadata(QString path);
 protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
-    QSharedPointer<LanguageContext> parseContext(QXmlStreamReader &xml, QString langId);
+    ContextDPtr parseContext(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml);
     QString resolveRegex(QString pattern);
 
-    QHash<QString, QSharedPointer<LanguageContext>> knownContexts;
+    QHash<QString, ContextDPtr> knownContexts;
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;
     QHash<QString, QString> knownRegexes;
 };

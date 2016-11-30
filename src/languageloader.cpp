@@ -71,7 +71,7 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString pa
     file.close();
     QString contextId = langId + ":" + langId;
     if(knownContexts.keys().contains(contextId))
-        return knownContexts[contextId].staticCast<LanguageContextSimple>();
+        return knownContexts[contextId]->staticCast<LanguageContextSimple>();
     else
         return QSharedPointer<LanguageContextSimple>();
 }
@@ -118,9 +118,11 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
     }
 }
 
-QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
-    QSharedPointer<LanguageContext> result = QSharedPointer<LanguageContext>();
+ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
+    ContextDPtr result;
     QString id = xml.attributes().value("id").toString();
+    if(!result && id != "" && knownContexts.keys().contains(langId + ":" + id))
+        result = knownContexts[langId + ":" + id];
     if(xml.attributes().hasAttribute("ref")) {
         QStringRef refId = xml.attributes().value("ref");
         if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
@@ -131,23 +133,14 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
             refIdCopy = langId + ":" + refIdCopy;
         if(knownContexts.keys().contains(refIdCopy))
             result = knownContexts[refIdCopy];
+        else
+            result = knownContexts[refIdCopy] = ContextDPtr(new QSharedPointer<LanguageContext>());
     }
-    if(result && id != "") {
+    if(!result)
+        result = ContextDPtr(new QSharedPointer<LanguageContext>());
+
+    if(id != "")
         knownContexts[langId + ":" + id] = result;
-    }
-
-    if(xml.attributes().hasAttribute("sub-pattern")) {
-        result = QSharedPointer<LanguageContext>(new LanguageContextSubPattern());
-        if(id != "")
-            knownContexts[langId + ":" + id] = result;
-        QSharedPointer<LanguageContextSubPattern> subpattern = result.staticCast<LanguageContextSubPattern>();
-
-        subpattern->group = xml.attributes().value("sub-pattern").toInt();
-        if(xml.attributes().value("where") == "start")
-            subpattern->where = LanguageContextSubPattern::Start;
-        if(xml.attributes().value("where") == "end")
-            subpattern->where = LanguageContextSubPattern::End;
-    }
 
     QString styleId = "";
     if(xml.attributes().hasAttribute("style-ref")) {
@@ -159,52 +152,52 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
             styleId = langId + ":" + styleId;
     }
 
+    if(xml.attributes().hasAttribute("sub-pattern")) {
+        if(!*result.data())
+            *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSubPattern());
+        QSharedPointer<LanguageContextSubPattern> subpattern = result->staticCast<LanguageContextSubPattern>();
+
+        subpattern->group = xml.attributes().value("sub-pattern").toInt();
+        if(xml.attributes().value("where") == "start")
+            subpattern->where = LanguageContextSubPattern::Start;
+        if(xml.attributes().value("where") == "end")
+            subpattern->where = LanguageContextSubPattern::End;
+    }
+
     xml.readNext();
     while (!(xml.name() == "context" && xml.isEndElement())) {
         if(xml.name() == "start") {
-            if(!result) {
-                result = QSharedPointer<LanguageContext>(new LanguageContextContainer());
-                if(id != "") {
-                    knownContexts[langId + ":" + id] = result;
-                }
-            }
-            QSharedPointer<LanguageContextContainer> container = result.staticCast<LanguageContextContainer>();
+            if(!*result.data())
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer());
+
+            QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             xml.readNext();
             container->startPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "end") {
-            if(!result) {
-                result = QSharedPointer<LanguageContext>(new LanguageContextContainer());
-                if(id != "") {
-                    knownContexts[langId + ":" + id] = result;
-                }
-            }
-            QSharedPointer<LanguageContextContainer> container = result.staticCast<LanguageContextContainer>();
+            if(!*result.data())
+                *result = QSharedPointer<LanguageContext>(new LanguageContextContainer());
+
+            QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             xml.readNext();
             container->endPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "match") {
-            if(!result) {
-                result = QSharedPointer<LanguageContext>(new LanguageContextSimple());
-                if(id != "") {
-                    knownContexts[langId + ":" + id] = result;
-                }
-            }
+            if(!*result.data())
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple());
+
             xml.readNext();
-            QSharedPointer<LanguageContextSimple> simple = result.staticCast<LanguageContextSimple>();
+            QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
             simple->matchPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
         if(xml.name() == "keyword") {
-            if(!result) {
-                result = QSharedPointer<LanguageContext>(new LanguageContextKeyword());
-                if(id != "") {
-                    knownContexts[langId + ":" + id] = result;
-                }
-            }
-            QSharedPointer<LanguageContextKeyword> kw = result.staticCast<LanguageContextKeyword>();
+            if(!*result.data())
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword());
+
+            QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
             xml.readNext();
             kw->keywords.append(xml.text().toString());
             xml.readNext();
@@ -213,20 +206,16 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
             xml.readNext();
             while (!(xml.name() == "include" && xml.isEndElement())) {
                 if(xml.name() == "context") {
-                    QSharedPointer<LanguageContext> inc = parseContext(xml, langId);
-                    if(!result) {
-                        result = QSharedPointer<LanguageContext>(new LanguageContextSimple());
-                        if(id != "") {
-                            knownContexts[langId + ":" + id] = result;
-                        }
-                    }
+                    ContextDPtr inc = parseContext(xml, langId);
+                    if(!*result.data())
+                        *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple());
 
-                    if(result->type == LanguageContext::Simple) {
-                        QSharedPointer<LanguageContextSimple> simple = result.staticCast<LanguageContextSimple>();
+                    if(result->data()->type == LanguageContext::Simple) {
+                        QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
                         if(inc)
                             simple->includes.append(inc);
-                    } else if(result->type == LanguageContext::Container) {
-                        QSharedPointer<LanguageContextContainer> container = result.staticCast<LanguageContextContainer>();
+                    } else if(result->data()->type == LanguageContext::Container) {
+                        QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
                         if(inc)
                             container->includes.append(inc);
                     } else {
@@ -241,10 +230,10 @@ QSharedPointer<LanguageContext> LanguageLoader::parseContext(QXmlStreamReader &x
 
     if(knownStyles.keys().contains(styleId)) {
         if(knownStyles[styleId])
-            result->style = knownStyles[styleId];
+            result->data()->style = knownStyles[styleId];
         else {
-            result->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
-            result->style->defaultId = styleId;
+            result->data()->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
+            result->data()->style->defaultId = styleId;
         }
     }
 

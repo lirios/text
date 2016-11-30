@@ -114,9 +114,9 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
         }
     }
 
-    for (QSharedPointer<LanguageContext> inc : container->includes) {
-        if(inc->type == LanguageContext::SubPattern) {
-            QSharedPointer<LanguageContextSubPattern> subpattern = inc.staticCast<LanguageContextSubPattern>();
+    for (ContextDPtr inc : container->includes) {
+        if(inc->data()->type == LanguageContext::SubPattern) {
+            QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
             if(subpattern->where == LanguageContextSubPattern::Start &&
                    startMatch.hasMatch() && startMatch.capturedStart(subpattern->group) >= 0)
                 if(subpattern->style)
@@ -134,11 +134,11 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
     return len;
 }
 
-bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<QSharedPointer<LanguageContext>> currentContainer, HighlightData *stateData) {
+bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData) {
     QList<Match> matches;
-    QList<QSharedPointer<LanguageContext>> extendedContainer = currentContainer;
+    QList<ContextDPtr> extendedContainer = currentContainer;
     for (int i = 0; i < extendedContainer.length(); ++i) {
-        QSharedPointer<LanguageContext> context = extendedContainer[i];
+        QSharedPointer<LanguageContext> context = *extendedContainer[i].data();
         if(!context)
             continue;
 
@@ -198,9 +198,9 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<QSharedP
                     setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.context->style->defaultId]);
                 position = m.match.capturedEnd();
-                for (QSharedPointer<LanguageContext> inc : m.context.staticCast<LanguageContextSimple>()->includes) {
-                    if(inc->type == LanguageContext::SubPattern) {
-                        QSharedPointer<LanguageContextSubPattern> subpattern = inc.staticCast<LanguageContextSubPattern>();
+                for (ContextDPtr inc : m.context.staticCast<LanguageContextSimple>()->includes) {
+                    if(inc->data()->type == LanguageContext::SubPattern) {
+                        QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
                         setFormat(text.position() + m.match.capturedStart(subpattern->group),
                                   m.match.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
                     }
