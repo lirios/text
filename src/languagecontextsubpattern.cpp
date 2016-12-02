@@ -21,5 +21,6 @@
 
 LanguageContextSubPattern::LanguageContextSubPattern() :
     LanguageContext(LanguageContext::SubPattern),
-    group(0),
+    groupId(0),
+    groupName(),
     where(Default) { }

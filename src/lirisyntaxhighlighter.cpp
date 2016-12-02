@@ -117,17 +117,29 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
     for (ContextDPtr inc : container->includes) {
         if(inc->data()->type == LanguageContext::SubPattern) {
             QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
-            if(subpattern->where == LanguageContextSubPattern::Start &&
-                   startMatch.hasMatch() && startMatch.capturedStart(subpattern->group) >= 0)
-                if(subpattern->style)
-                    setFormat(text.position() + startMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
-                              startMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
+            if(subpattern->where == LanguageContextSubPattern::Start && startMatch.hasMatch()) {
+                int startStart = subpattern->groupName.isNull() ? startMatch.capturedStart(subpattern->groupId) :
+                                                                  startMatch.capturedStart(subpattern->groupName);
+                if(startStart >= 0) {
+                    int startLen = subpattern->groupName.isNull() ? startMatch.capturedLength(subpattern->groupId) :
+                                                                    startMatch.capturedLength(subpattern->groupName);
+                    if(subpattern->style)
+                        setFormat(text.position() + startStart - startMatch.capturedStart(),
+                                  startLen, defStyles->styles[subpattern->style->defaultId]);
+                }
+            }
 
-            if(subpattern->where == LanguageContextSubPattern::End &&
-                     endMatch.hasMatch() && endMatch.capturedStart(subpattern->group) >= 0)
-                if(subpattern->style)
-                    setFormat(text.position() + endMatch.capturedStart(subpattern->group) - startMatch.capturedStart(),
-                              endMatch.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
+            if(subpattern->where == LanguageContextSubPattern::End && endMatch.hasMatch()) {
+                int endStart = subpattern->groupName.isNull() ? endMatch.capturedStart(subpattern->groupId) :
+                                                                endMatch.capturedStart(subpattern->groupName);
+                if(endStart >= 0) {
+                    int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
+                                                                  endMatch.capturedLength(subpattern->groupName);
+                    if(subpattern->style)
+                        setFormat(text.position() + endStart - startMatch.capturedStart(),
+                                  endLen, defStyles->styles[subpattern->style->defaultId]);
+                }
+            }
         }
     }
 
@@ -201,8 +213,12 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                 for (ContextDPtr inc : m.context.staticCast<LanguageContextSimple>()->includes) {
                     if(inc->data()->type == LanguageContext::SubPattern) {
                         QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
-                        setFormat(text.position() + m.match.capturedStart(subpattern->group),
-                                  m.match.capturedLength(subpattern->group), defStyles->styles[subpattern->style->defaultId]);
+                        int mStart = subpattern->groupName.isNull() ? m.match.capturedStart(subpattern->groupId) :
+                                                                      m.match.capturedStart(subpattern->groupName);
+                        int mLen = subpattern->groupName.isNull() ? m.match.capturedLength(subpattern->groupId) :
+                                                                    m.match.capturedLength(subpattern->groupName);
+                        setFormat(text.position() + mStart,
+                                  mLen, defStyles->styles[subpattern->style->defaultId]);
                     }
                 }
                 break;

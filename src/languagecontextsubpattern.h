@@ -27,7 +27,8 @@ class LanguageContextSubPattern : public LanguageContext
 public:
     LanguageContextSubPattern();
 
-    int group;
+    int groupId;
+    QString groupName;
 
     enum {
         Default,

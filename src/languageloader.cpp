@@ -157,7 +157,11 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSubPattern());
         QSharedPointer<LanguageContextSubPattern> subpattern = result->staticCast<LanguageContextSubPattern>();
 
-        subpattern->group = xml.attributes().value("sub-pattern").toInt();
+        bool isId;
+        subpattern->groupId = xml.attributes().value("sub-pattern").toInt(&isId);
+        if(!isId)
+            subpattern->groupName = xml.attributes().value("sub-pattern").toString();
+
         if(xml.attributes().value("where") == "start")
             subpattern->where = LanguageContextSubPattern::Start;
         if(xml.attributes().value("where") == "end")
