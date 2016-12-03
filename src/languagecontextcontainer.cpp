@@ -19,8 +19,25 @@
 
 #include "languagecontextcontainer.h"
 
+#include <QXmlStreamAttributes>
+
 LanguageContextContainer::LanguageContextContainer() :
     LanguageContext(LanguageContext::Container) { }
+
+LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attributes) :
+    LanguageContextContainer() {
+
+    if(attributes.hasAttribute("extend-parent"))
+        extendParent = attributes.value("extend-parent") == "true";
+    if(attributes.hasAttribute("end-at-line-end"))
+        endAtLineEnd = attributes.value("end-at-line-end") == "true";
+    if(attributes.hasAttribute("end-parent"))
+        endParent = attributes.value("end-parent") == "true";
+    if(attributes.hasAttribute("first-line-only"))
+        firstLineOnly = attributes.value("first-line-only") == "true";
+    if(attributes.hasAttribute("once-only"))
+        onceOnly = attributes.value("once-only") == "true";
+}
 
 LanguageContextContainer::~LanguageContextContainer() {
     resolveCircularDeps(this);

@@ -24,12 +24,20 @@
 #include <QString>
 #include <QList>
 
+class QXmlStreamAttributes;
+
 class LanguageContextKeyword : public LanguageContext
 {
 public:
     LanguageContextKeyword();
+    LanguageContextKeyword(QXmlStreamAttributes attributes);
 
     QList<QString> keywords;
+
+    bool extendParent  = true;
+    bool endParent     = false;
+    bool firstLineOnly = false;
+    bool onceOnly      = false;
 };
 
 #endif // LANGUAGECONTEXTKEYWORD_H

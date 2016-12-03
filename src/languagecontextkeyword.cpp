@@ -19,6 +19,20 @@
 
 #include "languagecontextkeyword.h"
 
+#include <QXmlStreamAttributes>
+
 LanguageContextKeyword::LanguageContextKeyword() :
     LanguageContext(ElementType::Keyword) { }
 
+LanguageContextKeyword::LanguageContextKeyword(QXmlStreamAttributes attributes) :
+    LanguageContextKeyword() {
+
+    if(attributes.hasAttribute("extend-parent"))
+        extendParent = attributes.value("extend-parent") == "true";
+    if(attributes.hasAttribute("end-parent"))
+        endParent = attributes.value("end-parent") == "true";
+    if(attributes.hasAttribute("first-line-only"))
+        firstLineOnly = attributes.value("first-line-only") == "true";
+    if(attributes.hasAttribute("once-only"))
+        onceOnly = attributes.value("once-only") == "true";
+}

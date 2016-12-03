@@ -22,19 +22,22 @@
 
 #include "languagecontext.h"
 
+class QXmlStreamAttributes;
+
 class LanguageContextSubPattern : public LanguageContext
 {
 public:
     LanguageContextSubPattern();
+    LanguageContextSubPattern(QXmlStreamAttributes attributes);
 
-    int groupId;
-    QString groupName;
+    int groupId = 0;
+    QString groupName = QString();
 
     enum {
         Default,
         Start,
         End
-    } where;
+    } where = Default;
 };
 
 #endif // LANGUAGECONTEXTSUBPATTERN_H

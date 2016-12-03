@@ -120,7 +120,8 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
 
 ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
     ContextDPtr result;
-    QString id = xml.attributes().value("id").toString();
+    QXmlStreamAttributes contextAttributes = xml.attributes();
+    QString id = contextAttributes.value("id").toString();
     if(!result && id != "" && knownContexts.keys().contains(langId + ":" + id))
         result = knownContexts[langId + ":" + id];
     if(xml.attributes().hasAttribute("ref")) {
@@ -154,25 +155,14 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
 
     if(xml.attributes().hasAttribute("sub-pattern")) {
         if(!*result.data())
-            *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSubPattern());
-        QSharedPointer<LanguageContextSubPattern> subpattern = result->staticCast<LanguageContextSubPattern>();
-
-        bool isId;
-        subpattern->groupId = xml.attributes().value("sub-pattern").toInt(&isId);
-        if(!isId)
-            subpattern->groupName = xml.attributes().value("sub-pattern").toString();
-
-        if(xml.attributes().value("where") == "start")
-            subpattern->where = LanguageContextSubPattern::Start;
-        if(xml.attributes().value("where") == "end")
-            subpattern->where = LanguageContextSubPattern::End;
+            *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSubPattern(contextAttributes));
     }
 
     xml.readNext();
     while (!(xml.name() == "context" && xml.isEndElement())) {
         if(xml.name() == "start") {
             if(!*result.data())
-                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer());
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             xml.readNext();
@@ -181,7 +171,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
         }
         if(xml.name() == "end") {
             if(!*result.data())
-                *result = QSharedPointer<LanguageContext>(new LanguageContextContainer());
+                *result = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             xml.readNext();
@@ -190,7 +180,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
         }
         if(xml.name() == "match") {
             if(!*result.data())
-                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple());
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
 
             xml.readNext();
             QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
@@ -199,7 +189,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
         }
         if(xml.name() == "keyword") {
             if(!*result.data())
-                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword());
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes));
 
             QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
             xml.readNext();
@@ -212,7 +202,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 if(xml.name() == "context") {
                     ContextDPtr inc = parseContext(xml, langId);
                     if(!*result.data())
-                        *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple());
+                        *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
 
                     if(result->data()->type == LanguageContext::Simple) {
                         QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();

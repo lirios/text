@@ -19,8 +19,21 @@
 
 #include "languagecontextsubpattern.h"
 
+#include <QXmlStreamAttributes>
+
 LanguageContextSubPattern::LanguageContextSubPattern() :
-    LanguageContext(LanguageContext::SubPattern),
-    groupId(0),
-    groupName(),
-    where(Default) { }
+    LanguageContext(LanguageContext::SubPattern) { }
+
+LanguageContextSubPattern::LanguageContextSubPattern(QXmlStreamAttributes attributes) :
+    LanguageContextSubPattern() {
+
+    bool isId;
+    groupId = attributes.value("sub-pattern").toInt(&isId);
+    if(!isId)
+        groupName = attributes.value("sub-pattern").toString();
+
+    if(attributes.value("where") == "start")
+        where = Start;
+    if(attributes.value("where") == "end")
+        where = End;
+}

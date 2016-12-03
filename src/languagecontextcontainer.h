@@ -25,14 +25,24 @@
 #include <QSharedPointer>
 #include "languagecontext.h"
 
+class QXmlStreamAttributes;
+
 class LanguageContextContainer : public LanguageContext
 {
 public:
     LanguageContextContainer();
+    LanguageContextContainer(QXmlStreamAttributes attributes);
     virtual ~LanguageContextContainer();
+
     QString startPattern;
     QString endPattern;
     QList<ContextDPtr> includes;
+
+    bool extendParent  = true;
+    bool endAtLineEnd  = false;
+    bool endParent     = false;
+    bool firstLineOnly = false;
+    bool onceOnly      = false;
 };
 
 #endif // LANGUAGECONTEXTCONTAINER_H
