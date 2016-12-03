@@ -183,6 +183,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &length, const 
     QRegularExpressionMatch containerEndMatch;
     if(containerEndIter.hasNext())
         containerEndMatch = containerEndIter.next();
+    else if(currentContainer->endAtLineEnd)
+        containerEndMatch = QRegularExpression("$").match(text);
 
     length = 0;
     for (auto m : matches) {
@@ -196,6 +198,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &length, const 
                     if(kw->extendParent) {
                         if(containerEndIter.hasNext())
                             containerEndMatch = containerEndIter.next();
+                        else if(currentContainer->endAtLineEnd)
+                            containerEndMatch = QRegularExpression("$").match(text);
                         else
                             containerEndMatch = QRegularExpressionMatch();
                     } else
@@ -216,6 +220,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &length, const 
                     if(simple->extendParent) {
                         if(containerEndIter.hasNext())
                             containerEndMatch = containerEndIter.next();
+                        else if(currentContainer->endAtLineEnd)
+                            containerEndMatch = QRegularExpression("$").match(text);
                         else
                             containerEndMatch = QRegularExpressionMatch();
                     } else
@@ -248,6 +254,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &length, const 
                     if(container->extendParent) {
                         if(containerEndIter.hasNext())
                             containerEndMatch = containerEndIter.next();
+                        else if(currentContainer->endAtLineEnd)
+                            containerEndMatch = QRegularExpression("$").match(text);
                         else
                             containerEndMatch = QRegularExpressionMatch();
                     } else
