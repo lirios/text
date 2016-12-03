@@ -33,7 +33,7 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
     ~LiriSyntaxHighlighter();
-    void setLanguage(QSharedPointer<LanguageContextSimple> l);
+    void setLanguage(QSharedPointer<LanguageContextContainer> l);
     void setDefaultStyle(QSharedPointer<LanguageDefaultStyles> def);
 
 protected:
@@ -54,7 +54,7 @@ protected:
     bool highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData = nullptr,
                        const QRegularExpression &containerEndRegexp = QRegularExpression());
 
-    QSharedPointer<LanguageContextSimple> lang;
+    QSharedPointer<LanguageContextContainer> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
 };
 

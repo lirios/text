@@ -32,7 +32,7 @@ LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
 
 LiriSyntaxHighlighter::~LiriSyntaxHighlighter() { }
 
-void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextSimple> l) {
+void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextContainer> l) {
     lang = l;
     if(defStyles)
         rehighlight();
@@ -173,25 +173,25 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
         }
         case LanguageContext::Simple: {
             QSharedPointer<LanguageContextSimple> simple = context.staticCast<LanguageContextSimple>();
-            if(simple->matchPattern == "") {
-                extendedContainer.append(simple->includes);
-            } else {
-                QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
-                QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
-                while (matchI.hasNext()) {
-                    QRegularExpressionMatch match = matchI.next();
-                    matches.append({match, context});
-                }
+            QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
+            QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text);
+            while (matchI.hasNext()) {
+                QRegularExpressionMatch match = matchI.next();
+                matches.append({match, context});
             }
             break;
         }
         case LanguageContext::Container: {
             QSharedPointer<LanguageContextContainer> container = context.staticCast<LanguageContextContainer>();
-            QRegularExpression startRegex = QRegularExpression(container->startPattern);
-            QRegularExpressionMatchIterator matchI = startRegex.globalMatch(text);
-            while (matchI.hasNext()) {
-                QRegularExpressionMatch startMatch = matchI.next();
-                matches.append({startMatch, context});
+            if(container->startPattern == "") {
+                extendedContainer.append(container->includes);
+            } else {
+                QRegularExpression startRegex = QRegularExpression(container->startPattern);
+                QRegularExpressionMatchIterator matchI = startRegex.globalMatch(text);
+                while (matchI.hasNext()) {
+                    QRegularExpressionMatch startMatch = matchI.next();
+                    matches.append({startMatch, context});
+                }
             }
             break;
         }

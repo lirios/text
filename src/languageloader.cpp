@@ -37,19 +37,19 @@ LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyl
 
 LanguageLoader::~LanguageLoader() { }
 
-QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextById(QString id) {
+QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContextById(QString id) {
     qDebug() << "Loading" << id;
     QString path = LanguageManager::pathForId(id);
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
+QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
     QString path = LanguageManager::pathForMimetype(mimeType, filename);
     return loadMainContext(path);
 }
 
 // TODO: fix loading of json, perl and ruby
-QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString path) {
+QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString path) {
     QFile file(path);
     QString langId;
     if(file.open(QFile::ReadOnly)) {
@@ -71,9 +71,9 @@ QSharedPointer<LanguageContextSimple> LanguageLoader::loadMainContext(QString pa
     file.close();
     QString contextId = langId + ":" + langId;
     if(knownContexts.keys().contains(contextId))
-        return knownContexts[contextId]->staticCast<LanguageContextSimple>();
+        return knownContexts[contextId]->staticCast<LanguageContextContainer>();
     else
-        return QSharedPointer<LanguageContextSimple>();
+        return QSharedPointer<LanguageContextContainer>();
 }
 
 LanguageMetadata LanguageLoader::loadMetadata(QString path) {
@@ -202,7 +202,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 if(xml.name() == "context") {
                     ContextDPtr inc = parseContext(xml, langId);
                     if(!*result.data())
-                        *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
+                        *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
                     if(result->data()->type == LanguageContext::Simple) {
                         QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
