@@ -146,8 +146,12 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
     return len;
 }
 
-bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData) {
+bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer,
+                                          HighlightData *stateData, const QRegularExpression &containerEndRegexp) {
     QList<Match> matches;
+    QRegularExpressionMatchIterator containerEndIter;
+    if(containerEndRegexp.pattern() != "")
+        containerEndIter = containerEndRegexp.globalMatch(text);
     QList<ContextDPtr> extendedContainer = currentContainer;
     for (int i = 0; i < extendedContainer.length(); ++i) {
         QSharedPointer<LanguageContext> context = *extendedContainer[i].data();
@@ -195,22 +199,53 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
     }
     std::sort(matches.begin(), matches.end());
 
+    QRegularExpressionMatch containerEndMatch;
+    if(containerEndIter.hasNext())
+        containerEndMatch = containerEndIter.next();
+
     int position = 0;
     for (auto m : matches) {
         if(m.match.capturedStart() >= position) {
-            switch (m.context->type) {
-            case LanguageContext::Keyword:
-                if(m.context->style)
-                    setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
-                              defStyles->styles[m.context->style->defaultId]);
-                position = m.match.capturedEnd();
+            if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedStart())
                 break;
-            case LanguageContext::Simple:
+            switch (m.context->type) {
+            case LanguageContext::Keyword: {
+                QSharedPointer<LanguageContextKeyword> kw = m.context.staticCast<LanguageContextKeyword>();
+                if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd()) {
+                    if(kw->extendParent) {
+                        if(containerEndIter.hasNext())
+                            containerEndMatch = containerEndIter.next();
+                        else
+                            containerEndMatch = QRegularExpressionMatch();
+                    } else
+                        break; // Move to next match, maybe it has extendParent attribute
+                }
+
                 if(m.context->style)
                     setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.context->style->defaultId]);
                 position = m.match.capturedEnd();
-                for (ContextDPtr inc : m.context.staticCast<LanguageContextSimple>()->includes) {
+                if(kw->endParent)
+                    return false;
+                break;
+            }
+            case LanguageContext::Simple: {
+                QSharedPointer<LanguageContextSimple> simple = m.context.staticCast<LanguageContextSimple>();
+                if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd()) {
+                    if(simple->extendParent) {
+                        if(containerEndIter.hasNext())
+                            containerEndMatch = containerEndIter.next();
+                        else
+                            containerEndMatch = QRegularExpressionMatch();
+                    } else
+                        break; // Move to next match, maybe it has extendParent attribute
+                }
+
+                if(m.context->style)
+                    setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
+                              defStyles->styles[m.context->style->defaultId]);
+                position = m.match.capturedEnd();
+                for (ContextDPtr inc : simple->includes) {
                     if(inc->data()->type == LanguageContext::SubPattern) {
                         QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
                         int mStart = subpattern->groupName.isNull() ? m.match.capturedStart(subpattern->groupId) :
@@ -221,9 +256,23 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                                   mLen, defStyles->styles[subpattern->style->defaultId]);
                     }
                 }
+                if(simple->endParent)
+                    return false;
                 break;
-            case LanguageContext::Container:
+            }
+            case LanguageContext::Container: {
                 QSharedPointer<LanguageContextContainer> container = m.context.staticCast<LanguageContextContainer>();
+
+                if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd()) {
+                    if(container->extendParent) {
+                        if(containerEndIter.hasNext())
+                            containerEndMatch = containerEndIter.next();
+                        else
+                            containerEndMatch = QRegularExpressionMatch();
+                    } else
+                        break; // Move to next match, maybe it has extendParent attribute
+                }
+
                 int start = m.match.capturedStart();
                 int len = highlightTillContainerEnd(text.mid(start), container, stateData, m.match);
                 if(len < 0) {
@@ -231,7 +280,10 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                 } else {
                     position = start + len;
                 }
+                if(container->endParent)
+                    return false;
                 break;
+            }
             }
         }
     }

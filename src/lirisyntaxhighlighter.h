@@ -51,7 +51,8 @@ protected:
                                   HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
     // Returns true if stateData's changed
-    bool highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData = nullptr);
+    bool highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData = nullptr,
+                       const QRegularExpression &containerEndRegexp = QRegularExpression());
 
     QSharedPointer<LanguageContextSimple> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
