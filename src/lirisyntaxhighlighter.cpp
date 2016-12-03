@@ -48,12 +48,16 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     if(lang == nullptr)
         return;
 
-    HighlightData *previousStateData = static_cast<HighlightData *>(currentBlock().previous().userData());
+    HighlightData *previousStateData = nullptr;
     HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
-    if(!previousStateData && currentBlock().previous().isValid()) {
+
+    if(currentBlock().previous().isValid())
+        previousStateData = static_cast<HighlightData *>(currentBlock().previous().userData());
+    if(!previousStateData) {
         previousStateData = new HighlightData();
-        currentBlock().previous().setUserData(previousStateData);
+        previousStateData->containers = QList<QSharedPointer<LanguageContextContainer>>({lang});
     }
+
     if(!currentStateData) {
         currentStateData = new HighlightData();
         setCurrentBlockUserData(currentStateData);
@@ -61,21 +65,12 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     currentStateData->containers = QList<QSharedPointer<LanguageContextContainer>>();
 
     int start = 0;
-    if(previousStateData) {
-        for (int i = 0; i < previousStateData->containers.length(); ++i) {
-            auto container = previousStateData->containers[i];
+    for (int i = 0; i < previousStateData->containers.length(); ++i) {
+        auto container = previousStateData->containers[i];
 
-            int len = highlightTillContainerEnd(text.midRef(start), container, currentStateData);
-            if(len < 0) {
-                start = text.length();
-                currentStateData->containers.append(previousStateData->containers.mid(i + 1));
-                break;
-            } else {
-                start += len;
-            }
-        }
+        int len = highlightTillContainerEnd(text.midRef(start), container, currentStateData);
+        start += len;
     }
-    highlightPart(text.midRef(start), lang->includes, currentStateData);
 
     setCurrentBlockState(qHash(currentStateData->containers));
 }
@@ -84,60 +79,45 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
                                                      HighlightData *stateData, QRegularExpressionMatch startMatch) {
     int innerStart = startMatch.hasMatch() ? startMatch.capturedLength() : 0;
     int len;
-    QRegularExpressionMatch endMatch;
+    // Highlight whole received text
+    if(container->style)
+        setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
+    QStringRef part = text.mid(innerStart);
+    QRegularExpressionMatch endMatch = highlightPart(len, part, container, stateData);
+    len += innerStart;
+    // Clear style of block ending
+    if(container->style)
+        setFormat(text.position() + len, text.length() - len, QTextCharFormat());
 
-    if(container->endPattern == "") {
-        if(container->style)
-            setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
-        QStringRef part = text.mid(innerStart);
-        highlightPart(part, container->includes);
-        len = text.length();
-    } else {
-        QRegularExpression endRegex = QRegularExpression(container->endPattern);
+    if(!endMatch.hasMatch())
+        stateData->containers.append(container);
 
-        endMatch = endRegex.match(text, innerStart);
-        if(endMatch.hasMatch()) {
-            if(container->style)
-                setFormat(text.position(), endMatch.capturedEnd(), defStyles->styles[container->style->defaultId]);
-            QStringRef part = text.mid(innerStart, endMatch.capturedStart() - innerStart);
-            highlightPart(part, container->includes);
-            len = endMatch.capturedEnd();
-        } else {
-            if(stateData) {
-                stateData->containers.insert(0, container);
-            }
-            if(container->style)
-                setFormat(text.position(), text.length(), defStyles->styles[container->style->defaultId]);
-            QStringRef part = text.mid(innerStart);
-            highlightPart(part, container->includes, stateData);
-            len = -1;
-        }
-    }
-
-    for (ContextDPtr inc : container->includes) {
-        if(inc->data()->type == LanguageContext::SubPattern) {
-            QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
-            if(subpattern->where == LanguageContextSubPattern::Start && startMatch.hasMatch()) {
-                int startStart = subpattern->groupName.isNull() ? startMatch.capturedStart(subpattern->groupId) :
-                                                                  startMatch.capturedStart(subpattern->groupName);
-                if(startStart >= 0) {
-                    int startLen = subpattern->groupName.isNull() ? startMatch.capturedLength(subpattern->groupId) :
-                                                                    startMatch.capturedLength(subpattern->groupName);
-                    if(subpattern->style)
-                        setFormat(text.position() + startStart - startMatch.capturedStart(),
-                                  startLen, defStyles->styles[subpattern->style->defaultId]);
+    if(startMatch.hasMatch() || endMatch.hasMatch()) {
+        for (ContextDPtr inc : container->includes) {
+            if(inc->data()->type == LanguageContext::SubPattern) {
+                QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
+                if(subpattern->where == LanguageContextSubPattern::Start && startMatch.hasMatch()) {
+                    int startStart = subpattern->groupName.isNull() ? startMatch.capturedStart(subpattern->groupId) :
+                                                                      startMatch.capturedStart(subpattern->groupName);
+                    if(startStart >= 0) {
+                        int startLen = subpattern->groupName.isNull() ? startMatch.capturedLength(subpattern->groupId) :
+                                                                        startMatch.capturedLength(subpattern->groupName);
+                        if(subpattern->style)
+                            setFormat(text.position() + startStart - startMatch.capturedStart(),
+                                      startLen, defStyles->styles[subpattern->style->defaultId]);
+                    }
                 }
-            }
 
-            if(subpattern->where == LanguageContextSubPattern::End && endMatch.hasMatch()) {
-                int endStart = subpattern->groupName.isNull() ? endMatch.capturedStart(subpattern->groupId) :
-                                                                endMatch.capturedStart(subpattern->groupName);
-                if(endStart >= 0) {
-                    int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
-                                                                  endMatch.capturedLength(subpattern->groupName);
-                    if(subpattern->style)
-                        setFormat(text.position() + endStart - startMatch.capturedStart(),
-                                  endLen, defStyles->styles[subpattern->style->defaultId]);
+                if(subpattern->where == LanguageContextSubPattern::End && endMatch.hasMatch()) {
+                    int endStart = subpattern->groupName.isNull() ? endMatch.capturedStart(subpattern->groupId) :
+                                                                    endMatch.capturedStart(subpattern->groupName);
+                    if(endStart >= 0) {
+                        int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
+                                                                      endMatch.capturedLength(subpattern->groupName);
+                        if(subpattern->style)
+                            setFormat(text.position() + endStart - startMatch.capturedStart(),
+                                      endLen, defStyles->styles[subpattern->style->defaultId]);
+                    }
                 }
             }
         }
@@ -146,13 +126,14 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QStringRef &text, QSh
     return len;
 }
 
-bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer,
-                                          HighlightData *stateData, const QRegularExpression &containerEndRegexp) {
+QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &length, const QStringRef &text,
+                                                             QSharedPointer<LanguageContextContainer> currentContainer,
+                                                             HighlightData *stateData) {
     QList<Match> matches;
     QRegularExpressionMatchIterator containerEndIter;
-    if(containerEndRegexp.pattern() != "")
-        containerEndIter = containerEndRegexp.globalMatch(text);
-    QList<ContextDPtr> extendedContainer = currentContainer;
+    if(currentContainer->endPattern != "")
+        containerEndIter = QRegularExpression(currentContainer->endPattern).globalMatch(text);
+    QList<ContextDPtr> extendedContainer = currentContainer->includes;
     for (int i = 0; i < extendedContainer.length(); ++i) {
         QSharedPointer<LanguageContext> context = *extendedContainer[i].data();
         if(!context)
@@ -203,9 +184,9 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
     if(containerEndIter.hasNext())
         containerEndMatch = containerEndIter.next();
 
-    int position = 0;
+    length = 0;
     for (auto m : matches) {
-        if(m.match.capturedStart() >= position) {
+        if(m.match.capturedStart() >= length) {
             if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedStart())
                 break;
             switch (m.context->type) {
@@ -224,9 +205,9 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                 if(m.context->style)
                     setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.context->style->defaultId]);
-                position = m.match.capturedEnd();
+                length = m.match.capturedEnd();
                 if(kw->endParent)
-                    return false;
+                    return QRegularExpressionMatch();
                 break;
             }
             case LanguageContext::Simple: {
@@ -244,7 +225,7 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                 if(m.context->style)
                     setFormat(text.position() + m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.context->style->defaultId]);
-                position = m.match.capturedEnd();
+                length = m.match.capturedEnd();
                 for (ContextDPtr inc : simple->includes) {
                     if(inc->data()->type == LanguageContext::SubPattern) {
                         QSharedPointer<LanguageContextSubPattern> subpattern = inc->staticCast<LanguageContextSubPattern>();
@@ -257,7 +238,7 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
                     }
                 }
                 if(simple->endParent)
-                    return false;
+                    return QRegularExpressionMatch();
                 break;
             }
             case LanguageContext::Container: {
@@ -275,20 +256,21 @@ bool LiriSyntaxHighlighter::highlightPart(const QStringRef &text, QList<ContextD
 
                 int start = m.match.capturedStart();
                 int len = highlightTillContainerEnd(text.mid(start), container, stateData, m.match);
-                if(len < 0) {
-                    return true;
-                } else {
-                    position = start + len;
-                }
+                length = start + len;
                 if(container->endParent)
-                    return false;
+                    return QRegularExpressionMatch();
                 break;
             }
             }
         }
     }
 
-    return false;
+    if(containerEndMatch.hasMatch())
+        length = containerEndMatch.capturedEnd();
+    else
+        length = text.length();
+
+    return containerEndMatch;
 }
 
 bool LiriSyntaxHighlighter::Match::operator <(const LiriSyntaxHighlighter::Match &other) {

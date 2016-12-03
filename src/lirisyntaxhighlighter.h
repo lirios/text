@@ -48,11 +48,10 @@ protected:
 
     // Returns length. If container's end was not found, returns negative number
     int highlightTillContainerEnd(const QStringRef &text, QSharedPointer<LanguageContextContainer> container,
-                                  HighlightData *stateData = nullptr, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
+                                  HighlightData *stateData, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
     // Returns true if stateData's changed
-    bool highlightPart(const QStringRef &text, QList<ContextDPtr> currentContainer, HighlightData *stateData = nullptr,
-                       const QRegularExpression &containerEndRegexp = QRegularExpression());
+    QRegularExpressionMatch highlightPart(int &length, const QStringRef &text, QSharedPointer<LanguageContextContainer> currentContainer, HighlightData *stateData);
 
     QSharedPointer<LanguageContextContainer> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
