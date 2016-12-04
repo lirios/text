@@ -22,6 +22,7 @@
 
 #include <QTextBlockUserData>
 #include <QHash>
+#include <QRegularExpressionMatch>
 #include "languagecontextcontainer.h"
 
 class HighlightData : public QTextBlockUserData
@@ -31,6 +32,7 @@ public:
     ~HighlightData();
 
     QList<QSharedPointer<LanguageContextContainer>> containers;
+    QList<QRegularExpressionMatch> startMatches;
 };
 
 #endif // HIGHLIGHTDATA_H
