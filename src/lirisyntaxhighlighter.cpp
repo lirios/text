@@ -69,6 +69,12 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
 
         int len = highlightTillContainerEnd(text, start, container, currentStateData);
         start += len;
+        if(start <= text.length()) {
+            while(container->endParent) {
+                i++;
+                container = previousStateData->containers[i];
+            }
+        }
     }
 
     setCurrentBlockState(qHash(currentStateData->containers));
@@ -86,7 +92,7 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     if(container->style)
         setFormat(end, text.length() - end, QTextCharFormat());
 
-    if(!endMatch.hasMatch())
+    if(end > text.length())
         stateData->containers.append(container);
 
     if(startMatch.hasMatch() || endMatch.hasMatch()) {
