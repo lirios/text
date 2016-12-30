@@ -163,7 +163,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         case LanguageContext::Keyword: {
             QSharedPointer<LanguageContextKeyword> kw = context.staticCast<LanguageContextKeyword>();
             for (QString keyword : kw->keywords) {
-                QRegularExpression kwRegexp("\\b(" + keyword + ")\\b");
+                QRegularExpression kwRegexp(keyword);
                 QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text, offset);
                 while (kwI.hasNext()) {
                     QRegularExpressionMatch kwMatch = kwI.next();

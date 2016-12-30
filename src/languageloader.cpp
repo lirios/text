@@ -143,6 +143,8 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
     if(id != "")
         knownContexts[langId + ":" + id] = result;
 
+    QString kwPrefix = "\\%[", kwSuffix = "\\%]";
+
     QString styleId = "";
     if(xml.attributes().hasAttribute("style-ref")) {
         QStringRef styleIdRef = xml.attributes().value("style-ref");
@@ -187,13 +189,23 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             simple->matchPattern = resolveRegex(xml.text().toString());
             xml.readNext();
         }
+        if(xml.name() == "prefix") {
+            xml.readNext();
+            kwPrefix = xml.text().toString();
+            xml.readNext();
+        }
+        if(xml.name() == "suffix") {
+            xml.readNext();
+            kwSuffix = xml.text().toString();
+            xml.readNext();
+        }
         if(xml.name() == "keyword") {
             if(!*result.data())
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes));
 
             QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
             xml.readNext();
-            kw->keywords.append(xml.text().toString());
+            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix));
             xml.readNext();
         }
         if(xml.name() == "include") {
