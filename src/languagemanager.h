@@ -32,7 +32,7 @@ class LanguageManager : public QObject
 public:
     static void init();
     static QString pathForId(QString id);
-    static QString pathForMimetype(QMimeType mimeType, QString filename);
+    static QString pathForMimeType(QMimeType mimeType, QString filename);
 public slots:
     static void close();
 protected:

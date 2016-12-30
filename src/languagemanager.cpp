@@ -44,7 +44,7 @@ QString LanguageManager::pathForId(QString id) {
         return QString();
 }
 
-QString LanguageManager::pathForMimetype(QMimeType mimeType, QString filename) {
+QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     // Original name first
     {
         QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
