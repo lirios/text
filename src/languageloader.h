@@ -44,7 +44,8 @@ protected:
     ContextDPtr parseContext(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml);
-    QString resolveRegex(QString pattern);
+    QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options = 0);
+    QString escapeNonExtended(QString pattern);
 
     QHash<QString, ContextDPtr> knownContexts;
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;

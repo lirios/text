@@ -21,7 +21,7 @@
 #define LANGUAGECONTEXTCONTAINER_H
 
 #include <QList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSharedPointer>
 #include "languagecontext.h"
 
@@ -34,8 +34,8 @@ public:
     LanguageContextContainer(QXmlStreamAttributes attributes);
     virtual ~LanguageContextContainer();
 
-    QString startPattern;
-    QString endPattern;
+    QRegularExpression start;
+    QRegularExpression end;
     QList<ContextDPtr> includes;
 
     bool extendParent  = true;

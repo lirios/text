@@ -89,7 +89,7 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     // Highlight whole received text
     if(container->style)
         setFormat(offset, text.length() - offset, defStyles->styles[container->style->defaultId]);
-    QString endPattern = container->endPattern;
+    QString endPattern = container->end.pattern();
     if(startMatch.hasMatch()) {
         QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+)@start}");
         QRegularExpressionMatch startRefMatch;
@@ -151,7 +151,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                                                              QRegularExpression containerEndRegex, HighlightData *stateData) {
     QList<Match> matches;
     QRegularExpressionMatchIterator containerEndIter;
-    if(currentContainer->endPattern != "")
+    if(currentContainer->end.pattern() != "")
         containerEndIter = containerEndRegex.globalMatch(text, offset);
     QList<ContextDPtr> extendedContainer = currentContainer->includes;
     for (int i = 0; i < extendedContainer.length(); ++i) {
@@ -162,9 +162,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         switch (context->type) {
         case LanguageContext::Keyword: {
             QSharedPointer<LanguageContextKeyword> kw = context.staticCast<LanguageContextKeyword>();
-            for (QString keyword : kw->keywords) {
-                QRegularExpression kwRegexp(keyword);
-                QRegularExpressionMatchIterator kwI = kwRegexp.globalMatch(text, offset);
+            for (QRegularExpression keyword : kw->keywords) {
+                QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
                 while (kwI.hasNext()) {
                     QRegularExpressionMatch kwMatch = kwI.next();
                     matches.append({kwMatch, context});
@@ -174,8 +173,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Simple: {
             QSharedPointer<LanguageContextSimple> simple = context.staticCast<LanguageContextSimple>();
-            QRegularExpression matchRegex = QRegularExpression(simple->matchPattern);
-            QRegularExpressionMatchIterator matchI = matchRegex.globalMatch(text, offset);
+            QRegularExpressionMatchIterator matchI = simple->match.globalMatch(text, offset);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch match = matchI.next();
                 matches.append({match, context});
@@ -184,11 +182,10 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Container: {
             QSharedPointer<LanguageContextContainer> container = context.staticCast<LanguageContextContainer>();
-            if(container->startPattern == "") {
+            if(container->start.pattern() == "") {
                 extendedContainer.append(container->includes);
             } else {
-                QRegularExpression startRegex = QRegularExpression(container->startPattern);
-                QRegularExpressionMatchIterator matchI = startRegex.globalMatch(text, offset);
+                QRegularExpressionMatchIterator matchI = container->start.globalMatch(text, offset);
                 while (matchI.hasNext()) {
                     QRegularExpressionMatch startMatch = matchI.next();
                     matches.append({startMatch, context});

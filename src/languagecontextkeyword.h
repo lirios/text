@@ -23,6 +23,7 @@
 #include "languagecontext.h"
 #include <QString>
 #include <QList>
+#include <QRegularExpression>
 
 class QXmlStreamAttributes;
 
@@ -32,7 +33,7 @@ public:
     LanguageContextKeyword();
     LanguageContextKeyword(QXmlStreamAttributes attributes);
 
-    QList<QString> keywords;
+    QList<QRegularExpression> keywords;
 
     bool extendParent  = true;
     bool endParent     = false;

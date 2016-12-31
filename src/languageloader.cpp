@@ -167,8 +167,9 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
+            bool extended = xml.attributes().value("extended") == "true";
             xml.readNext();
-            container->startPattern = resolveRegex(xml.text().toString());
+            container->start = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "end") {
@@ -176,17 +177,19 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
+            bool extended = xml.attributes().value("extended") == "true";
             xml.readNext();
-            container->endPattern = resolveRegex(xml.text().toString());
+            container->end = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "match") {
             if(!*result.data())
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
 
-            xml.readNext();
             QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
-            simple->matchPattern = resolveRegex(xml.text().toString());
+            bool extended = xml.attributes().value("extended") == "true";
+            xml.readNext();
+            simple->match = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "prefix") {
@@ -276,21 +279,23 @@ QSharedPointer<LanguageStyle> LanguageLoader::parseStyle(QXmlStreamReader &xml, 
 
 void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml) {
     QString id = xml.attributes().value("id").toString();
+    bool extended = xml.attributes().value("extended") == "true";
     xml.readNext();
-    knownRegexes[id] = resolveRegex(xml.text().toString());
+    knownRegexes[id] = extended ? xml.text().toString() : escapeNonExtended(xml.text().toString());
     xml.readNext();
 }
 
-QString LanguageLoader::resolveRegex(QString pattern) {
-    QString result = pattern;
+QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options) {
+    QString resultPattern = pattern;
 
-    QRegularExpression whiteSpace("(\\s+#[^\n]*\n\\s*|\\s*\n\\s*|(?<!\\\\)\\s)");
-    result.replace(whiteSpace, "");
-
-    result = result.replace("\\%[", "\\b");
-    result = result.replace("\\%]", "\\b");
     for (QString id : knownRegexes.keys()) {
-        result = result.replace("\\%{" + id + "}", knownRegexes[id]);
+        resultPattern = resultPattern.replace("\\%{" + id + "}", knownRegexes[id]);
     }
-    return result;
+    resultPattern = resultPattern.replace("\\%[", "\\b");
+    resultPattern = resultPattern.replace("\\%]", "\\b");
+    return QRegularExpression(resultPattern, options);
+}
+
+QString LanguageLoader::escapeNonExtended(QString pattern) {
+    return pattern.replace('#', "\\#").replace(' ', "\\ ");
 }
