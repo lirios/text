@@ -89,7 +89,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     // Highlight whole received text
     if(container->style)
         setFormat(offset, text.length() - offset, defStyles->styles[container->style->defaultId]);
-    QString endPattern = container->end.pattern();
+    QRegularExpression endRegex = container->end;
+    QString endPattern = endRegex.pattern();
     if(startMatch.hasMatch()) {
         QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+)@start}");
         QRegularExpressionMatch startRefMatch;
@@ -101,7 +102,8 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
                                QRegularExpression::escape(isId ? startMatch.captured(id) : startMatch.captured(groupName)));
         }
     }
-    QRegularExpression endRegex = QRegularExpression(endPattern);
+    if(endRegex.pattern() != endPattern) // Don't make regex dirty if there were no changes
+        endRegex.setPattern(endPattern);
     QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, container, endRegex, stateData);
     // Clear style of block ending
     if(container->style)
