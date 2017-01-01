@@ -59,7 +59,9 @@ QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString
             if(xml.isStartElement()) {
                 if(xml.name() == "language") {
                     langId = xml.attributes().value("id").toString();
-                    languageDefaultOptions[langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                    languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                    languageLeftWordBoundary [langId] = "\\b";
+                    languageRightWordBoundary[langId] = "\\b";
                 }
                 if(xml.name() == "define-regex")
                     parseDefineRegex(xml, langId);
@@ -69,6 +71,8 @@ QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString
                     parseStyle(xml, langId);
                 if(xml.name() == "default-regex-options")
                     parseDefaultRegexOptions(xml, langId);
+                if(xml.name() == "keyword-char-class")
+                    parseWordCharClass(xml, langId);
             }
         }
     }
@@ -175,7 +179,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             xml.readNext();
             container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
                                                                                             escapeNonExtended( xml.text().toString() ),
-                                             options | QRegularExpression::ExtendedPatternSyntaxOption);
+                                             options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
             xml.readNext();
         }
         if(xml.name() == "end") {
@@ -187,7 +191,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             xml.readNext();
             container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
                                                                                           escapeNonExtended( xml.text().toString() ),
-                                           options | QRegularExpression::ExtendedPatternSyntaxOption);
+                                           options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
             xml.readNext();
         }
         if(xml.name() == "match") {
@@ -199,7 +203,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             xml.readNext();
             simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
                                                                                          escapeNonExtended( xml.text().toString() ),
-                                          options | QRegularExpression::ExtendedPatternSyntaxOption);
+                                          options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
             xml.readNext();
         }
         if(xml.name() == "prefix") {
@@ -225,7 +229,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
             QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options));
+            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options, langId));
             xml.readNext();
         }
         if(xml.name() == "include") {
@@ -329,14 +333,20 @@ void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml, QString langId) {
     xml.readNext();
 }
 
-QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options) {
+void LanguageLoader::parseWordCharClass(QXmlStreamReader &xml, QString langId) {
+    xml.readNext();
+    languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(xml.text().toString());
+    languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(xml.text().toString());
+}
+
+QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId) {
     QString resultPattern = pattern;
 
     for (QString id : knownRegexes.keys()) {
         resultPattern = resultPattern.replace("\\%{" + id + "}", knownRegexes[id]);
     }
-    resultPattern = resultPattern.replace("\\%[", "\\b");
-    resultPattern = resultPattern.replace("\\%]", "\\b");
+    resultPattern = resultPattern.replace("\\%[", languageLeftWordBoundary [langId]);
+    resultPattern = resultPattern.replace("\\%]", languageRightWordBoundary[langId]);
     return QRegularExpression(resultPattern, options);
 }
 

@@ -46,7 +46,8 @@ protected:
     QRegularExpression::PatternOptions parseRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml, QString langId);
-    QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options = 0);
+    void parseWordCharClass(QXmlStreamReader &xml, QString langId);
+    QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId);
     QString escapeNonExtended(QString pattern);
     QString applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options);
 
@@ -54,6 +55,8 @@ protected:
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;
     QHash<QString, QString> knownRegexes;
     QHash<QString, QRegularExpression::PatternOptions> languageDefaultOptions;
+    QHash<QString, QString> languageLeftWordBoundary;
+    QHash<QString, QString> languageRightWordBoundary;
 };
 
 #endif // LANGUAGELOADER_H
