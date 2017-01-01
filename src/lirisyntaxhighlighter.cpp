@@ -111,7 +111,7 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
                         int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
                                                                       endMatch.capturedLength(subpattern->groupName);
                         if(subpattern->style)
-                            setFormat(offset + endStart - startLength,
+                            setFormat(offset + endStart,
                                       endLen, defStyles->styles[subpattern->style->defaultId]);
                     }
                 }
@@ -261,7 +261,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                                 int startLen = subpattern->groupName.isNull() ? m.match.capturedLength(subpattern->groupId) :
                                                                                 m.match.capturedLength(subpattern->groupName);
                                 if(subpattern->style)
-                                    setFormat(offset + startStart - m.match.capturedStart(),
+                                    setFormat(offset + startStart,
                                               startLen, defStyles->styles[subpattern->style->defaultId]);
                             }
                         }
