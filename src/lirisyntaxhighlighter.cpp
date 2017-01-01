@@ -19,6 +19,7 @@
 
 #include <QTextDocument>
 #include <QRegularExpression>
+#include <QDebug>
 #include "lirisyntaxhighlighter.h"
 #include "languageloader.h"
 #include "languagecontextkeyword.h"
@@ -138,6 +139,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         switch (context->type) {
         case LanguageContext::Keyword: {
             QSharedPointer<LanguageContextKeyword> kw = context.staticCast<LanguageContextKeyword>();
+            if(kw->firstLineOnly && currentBlock().position() != 0)
+                break;
             for (QRegularExpression keyword : kw->keywords) {
                 QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
                 while (kwI.hasNext()) {
@@ -149,6 +152,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Simple: {
             QSharedPointer<LanguageContextSimple> simple = context.staticCast<LanguageContextSimple>();
+            if(simple->firstLineOnly && currentBlock().position() != 0)
+                break;
             QRegularExpressionMatchIterator matchI = simple->match.globalMatch(text, offset);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch match = matchI.next();
@@ -158,9 +163,13 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Container: {
             QSharedPointer<LanguageContextContainer> container = context.staticCast<LanguageContextContainer>();
+            if(container->firstLineOnly && currentBlock().position() != 0)
+                break;
             if(container->start.pattern() == "") {
                 extendedContainer.append(container->includes);
             } else {
+                if(!container->start.isValid())
+                    qDebug() << container->start.errorString() << container->start.pattern();
                 QRegularExpressionMatchIterator matchI = container->start.globalMatch(text, offset);
                 while (matchI.hasNext()) {
                     QRegularExpressionMatch startMatch = matchI.next();
