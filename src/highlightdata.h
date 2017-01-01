@@ -32,7 +32,7 @@ public:
     ~HighlightData();
 
     QList<QSharedPointer<LanguageContextContainer>> containers;
-    QList<QRegularExpressionMatch> startMatches;
+    QList<QRegularExpression> endRegexes;
 };
 
 #endif // HIGHLIGHTDATA_H
