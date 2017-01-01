@@ -43,13 +43,17 @@ protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
     ContextDPtr parseContext(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
-    void parseDefineRegex(QXmlStreamReader &xml);
+    QRegularExpression::PatternOptions parseRegexOptions(QXmlStreamReader &xml, QString langId);
+    void parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId);
+    void parseDefineRegex(QXmlStreamReader &xml, QString langId);
     QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options = 0);
     QString escapeNonExtended(QString pattern);
+    QString applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options);
 
     QHash<QString, ContextDPtr> knownContexts;
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;
     QHash<QString, QString> knownRegexes;
+    QHash<QString, QRegularExpression::PatternOptions> languageDefaultOptions;
 };
 
 #endif // LANGUAGELOADER_H

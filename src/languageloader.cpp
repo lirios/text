@@ -57,14 +57,18 @@ QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString
         while (!xml.atEnd()) {
             xml.readNext();
             if(xml.isStartElement()) {
-                if(xml.name() == "language")
+                if(xml.name() == "language") {
                     langId = xml.attributes().value("id").toString();
+                    languageDefaultOptions[langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                }
                 if(xml.name() == "define-regex")
-                    parseDefineRegex(xml);
+                    parseDefineRegex(xml, langId);
                 if(xml.name() == "context")
                     parseContext(xml, langId);
                 if(xml.name() == "style")
                     parseStyle(xml, langId);
+                if(xml.name() == "default-regex-options")
+                    parseDefaultRegexOptions(xml, langId);
             }
         }
     }
@@ -167,9 +171,11 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
-            bool extended = xml.attributes().value("extended") == "true";
+            QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            container->start = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
+            container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
+                                                                                            escapeNonExtended( xml.text().toString() ),
+                                             options | QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "end") {
@@ -177,9 +183,11 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
-            bool extended = xml.attributes().value("extended") == "true";
+            QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            container->end = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
+            container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
+                                                                                          escapeNonExtended( xml.text().toString() ),
+                                           options | QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "match") {
@@ -187,12 +195,20 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
 
             QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
-            bool extended = xml.attributes().value("extended") == "true";
+            QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            simple->match = resolveRegex(extended ? xml.text().toString() : escapeNonExtended(xml.text().toString()), QRegularExpression::ExtendedPatternSyntaxOption);
+            simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
+                                                                                         escapeNonExtended( xml.text().toString() ),
+                                          options | QRegularExpression::ExtendedPatternSyntaxOption);
             xml.readNext();
         }
         if(xml.name() == "prefix") {
+            /* According to https://developer.gnome.org/gtksourceview/stable/lang-reference.html
+             * prefix is a regex in form of define-regex, which means it can have it's own regex options.
+             * Howether, in practice none of prebundled languages have them.
+             * Futhermore, making prefix an isolated group breaks highlighting for some languages.
+             * Following these considerations, prefixes and suffixes are taken in their original form.
+             */
             xml.readNext();
             kwPrefix = xml.text().toString();
             xml.readNext();
@@ -207,8 +223,9 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
                 *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes));
 
             QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
+            QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix));
+            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options));
             xml.readNext();
         }
         if(xml.name() == "include") {
@@ -277,11 +294,38 @@ QSharedPointer<LanguageStyle> LanguageLoader::parseStyle(QXmlStreamReader &xml, 
     return result;
 }
 
-void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml) {
-    QString id = xml.attributes().value("id").toString();
-    bool extended = xml.attributes().value("extended") == "true";
+QRegularExpression::PatternOptions LanguageLoader::parseRegexOptions(QXmlStreamReader &xml, QString langId) {
+    QRegularExpression::PatternOptions result = languageDefaultOptions[langId];
+    if(xml.attributes().hasAttribute("case-sensitive")) {
+        bool caseInsensitive = xml.attributes().value("case-sensitive") == "false";
+        if(caseInsensitive)
+            result |= QRegularExpression::CaseInsensitiveOption;
+        else
+            result &= ~QRegularExpression::CaseInsensitiveOption;
+    }
+    if(xml.attributes().hasAttribute("extended")) {
+        bool extended = xml.attributes().value("extended") == "true";
+        if(extended)
+            result |= QRegularExpression::ExtendedPatternSyntaxOption;
+        else
+            result &= ~QRegularExpression::ExtendedPatternSyntaxOption;
+    }
+    if(xml.attributes().hasAttribute("dupnames")) {
+        // Not supported
+    }
+    return result;
+}
+
+void LanguageLoader::parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId) {
+    languageDefaultOptions[langId] = parseRegexOptions(xml, langId);
     xml.readNext();
-    knownRegexes[id] = extended ? xml.text().toString() : escapeNonExtended(xml.text().toString());
+}
+
+void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml, QString langId) {
+    QString id = xml.attributes().value("id").toString();
+    QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
+    xml.readNext();
+    knownRegexes[id] = applyOptionsToSubRegex(xml.text().toString(), options);
     xml.readNext();
 }
 
@@ -298,4 +342,15 @@ QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpress
 
 QString LanguageLoader::escapeNonExtended(QString pattern) {
     return pattern.replace('#', "\\#").replace(' ', "\\ ");
+}
+
+QString LanguageLoader::applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options) {
+    QString result = pattern;
+    if((options & QRegularExpression::ExtendedPatternSyntaxOption) == 0)
+        result = escapeNonExtended(result);
+    if((options & QRegularExpression::CaseInsensitiveOption) != 0)
+        result = result.prepend("(?:(?i)").append(")");
+    else
+        result = result.prepend("(?:(?-i)").append(")");
+    return result;
 }
