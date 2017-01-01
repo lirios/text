@@ -54,8 +54,8 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         previousStateData = static_cast<HighlightData *>(currentBlock().previous().userData());
     if(!previousStateData) {
         previousStateData = new HighlightData();
-        previousStateData->containers = QList<QSharedPointer<LanguageContextContainer>>({lang});
-        previousStateData->endRegexes = QList<QRegularExpression>({QRegularExpression()});
+        previousStateData->containers = QList<HighlightData::ContainerInfo>({ {lang, QRegularExpression(),
+                                                                               QList<QSharedPointer<LanguageContext>>()} });
     }
 
     HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
@@ -63,43 +63,42 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         currentStateData = new HighlightData();
         setCurrentBlockUserData(currentStateData);
     }
-    currentStateData->containers = QList<QSharedPointer<LanguageContextContainer>>();
-    currentStateData->endRegexes = QList<QRegularExpression>();
+    currentStateData->containers = QList<HighlightData::ContainerInfo>();
 
     int start = 0;
     for (int i = 0; i < previousStateData->containers.length(); ++i) {
-        auto container = previousStateData->containers[i];
+        auto containerInfo = previousStateData->containers[i];
 
-        int len = highlightTillContainerEnd(text, start, container, currentStateData, previousStateData->endRegexes[i]);
+        int len = highlightTillContainerEnd(text, start, containerInfo, currentStateData);
         start += len;
         if(start <= text.length()) {
-            while(container->endParent) {
+            while(containerInfo.container->endParent) {
                 i++;
-                container = previousStateData->containers[i];
+                containerInfo = previousStateData->containers[i];
             }
         }
     }
 
-    setCurrentBlockState(qHash(QPair< QList<QSharedPointer<LanguageContextContainer>>,
-                                      QList<QRegularExpression> >(currentStateData->containers, currentStateData->endRegexes)));
+    setCurrentBlockState(qHash(currentStateData->containers));
 }
 
-int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int offset, QSharedPointer<LanguageContextContainer> container,
-                                                     HighlightData *stateData, QRegularExpression endRegex, int startLength) {
+int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int offset, HighlightData::ContainerInfo containerInfo,
+                                                     HighlightData *stateData, int startLength) {
+    QSharedPointer<LanguageContextContainer> container = containerInfo.container;
+    HighlightData::ContainerInfo newContainerInfo = containerInfo;
     int innerStart = offset + startLength;
     int end;
     // Highlight whole received text
     if(container->style)
         setFormat(container->styleInside ? innerStart : offset, text.length(), defStyles->styles[container->style->defaultId]);
-    QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, container, endRegex, stateData);
+    QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, newContainerInfo, stateData);
     // Clear style of block ending
     int highlightEnd = endMatch.hasMatch() ? (container->styleInside ? endMatch.capturedStart() : endMatch.capturedEnd()) : end;
     if(container->style)
         setFormat(highlightEnd, text.length(), QTextCharFormat());
 
     if(end > text.length()) {
-        stateData->containers.append(container);
-        stateData->endRegexes.append(endRegex);
+        stateData->containers.append(newContainerInfo);
     }
 
     if(endMatch.hasMatch()) {
@@ -125,13 +124,13 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
 }
 
 QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QString &text, int offset,
-                                                             QSharedPointer<LanguageContextContainer> currentContainer,
-                                                             QRegularExpression containerEndRegex, HighlightData *stateData) {
+                                                             HighlightData::ContainerInfo &currentContainerInfo,
+                                                             HighlightData *stateData) {
     QList<Match> matches;
     QRegularExpressionMatchIterator containerEndIter;
-    if(currentContainer->end.pattern() != "")
-        containerEndIter = containerEndRegex.globalMatch(text, offset);
-    QList<ContextDPtr> extendedContainer = currentContainer->includes;
+    if(currentContainerInfo.endRegex.pattern() != "")
+        containerEndIter = currentContainerInfo.endRegex.globalMatch(text, offset);
+    QList<ContextDPtr> extendedContainer = currentContainerInfo.container->includes;
     for (int i = 0; i < extendedContainer.length(); ++i) {
         QSharedPointer<LanguageContext> context = *extendedContainer[i].data();
         if(!context)
@@ -140,8 +139,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         switch (context->type) {
         case LanguageContext::Keyword: {
             QSharedPointer<LanguageContextKeyword> kw = context.staticCast<LanguageContextKeyword>();
+
             if(kw->firstLineOnly && currentBlock().position() != 0)
                 break;
+            if(currentContainerInfo.forbiddenContexts.contains(context))
+                break;
+
             for (QRegularExpression keyword : kw->keywords) {
                 QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
                 while (kwI.hasNext()) {
@@ -153,8 +156,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Simple: {
             QSharedPointer<LanguageContextSimple> simple = context.staticCast<LanguageContextSimple>();
+
             if(simple->firstLineOnly && currentBlock().position() != 0)
                 break;
+            if(currentContainerInfo.forbiddenContexts.contains(context))
+                break;
+
             QRegularExpressionMatchIterator matchI = simple->match.globalMatch(text, offset);
             while (matchI.hasNext()) {
                 QRegularExpressionMatch match = matchI.next();
@@ -164,8 +171,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         case LanguageContext::Container: {
             QSharedPointer<LanguageContextContainer> container = context.staticCast<LanguageContextContainer>();
+
             if(container->firstLineOnly && currentBlock().position() != 0)
                 break;
+            if(currentContainerInfo.forbiddenContexts.contains(context))
+                break;
+
             if(container->start.pattern() == "") {
                 extendedContainer.append(container->includes);
             } else {
@@ -186,7 +197,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
     QRegularExpressionMatch containerEndMatch;
     if(containerEndIter.hasNext())
         containerEndMatch = containerEndIter.next();
-    else if(currentContainer->endAtLineEnd)
+    else if(currentContainerInfo.container->endAtLineEnd)
         containerEndMatch = QRegularExpression("$").match(text, offset);
 
     end = offset;
@@ -200,6 +211,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
 
                 if(!kw->extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd())
                     continue;
+                if(kw->onceOnly) {
+                    if(currentContainerInfo.forbiddenContexts.contains(kw))
+                        continue;
+                    else
+                        currentContainerInfo.forbiddenContexts.append(kw);
+                }
 
                 if(m.context->style)
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
@@ -214,6 +231,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
 
                 if(!simple->extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd())
                     continue;
+                if(simple->onceOnly) {
+                    if(currentContainerInfo.forbiddenContexts.contains(simple))
+                        continue;
+                    else
+                        currentContainerInfo.forbiddenContexts.append(simple);
+                }
 
                 if(m.context->style)
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
@@ -239,6 +262,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
 
                 if(!container->extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < m.match.capturedEnd())
                     continue;
+                if(container->onceOnly) {
+                    if(currentContainerInfo.forbiddenContexts.contains(container))
+                        continue;
+                    else
+                        currentContainerInfo.forbiddenContexts.append(container);
+                }
 
                 int start = m.match.capturedStart();
 
@@ -257,7 +286,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                 if(endRegex.pattern() != endPattern) // Don't make regex dirty if there were no changes
                     endRegex.setPattern(endPattern);
 
-                int len = highlightTillContainerEnd(text, start, container, stateData, endRegex, m.match.capturedLength());
+                int len = highlightTillContainerEnd(text, start, {container, endRegex, {}}, stateData, m.match.capturedLength());
                 end = start + len;
 
                 // Highlight start subpatterns
@@ -288,7 +317,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             while(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < end) {
                 if(containerEndIter.hasNext())
                     containerEndMatch = containerEndIter.next();
-                else if(currentContainer->endAtLineEnd && end < text.length())
+                else if(currentContainerInfo.container->endAtLineEnd && end < text.length())
                     containerEndMatch = QRegularExpression("$").match(text, offset);
                 else
                     containerEndMatch = QRegularExpressionMatch();

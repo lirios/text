@@ -22,3 +22,13 @@
 HighlightData::HighlightData() {  }
 
 HighlightData::~HighlightData() {  }
+
+uint qHash(const HighlightData::ContainerInfo &t, uint seed) {
+    /* Since ContainerInfo's fields have different types
+     * and their hashes are computed with different algorithms,
+     * we can simply combine them with xor
+     */
+    return qHash(t.container, seed) ^
+           qHash(t.endRegex) ^
+           qHash(t.forbiddenContexts);
+}

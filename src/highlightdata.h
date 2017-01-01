@@ -31,8 +31,15 @@ public:
     HighlightData();
     ~HighlightData();
 
-    QList<QSharedPointer<LanguageContextContainer>> containers;
-    QList<QRegularExpression> endRegexes;
+    struct ContainerInfo {
+        QSharedPointer<LanguageContextContainer> container;
+        QRegularExpression endRegex;
+        QList<QSharedPointer<LanguageContext>> forbiddenContexts;
+    };
+
+    QList<ContainerInfo> containers;
 };
+
+uint qHash(const HighlightData::ContainerInfo &t, uint seed = 0);
 
 #endif // HIGHLIGHTDATA_H

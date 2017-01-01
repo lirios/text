@@ -47,14 +47,13 @@ protected:
     void highlightBlock(const QString &text);
 
     // Returns container length
-    int highlightTillContainerEnd(const QString &text, int offset, QSharedPointer<LanguageContextContainer> container,
-                                  HighlightData *stateData, QRegularExpression endRegex, int startLength = 0);
+    int highlightTillContainerEnd(const QString &text, int offset, HighlightData::ContainerInfo containerInfo,
+                                  HighlightData *stateData, int startLength = 0);
 
     // Returns match for context end or empty match if it wasn't found
     // end is set to ending position of the context or to text.length + 1 if context doesn't end in current block
     QRegularExpressionMatch highlightPart(int &end, const QString &text, int offset,
-                                          QSharedPointer<LanguageContextContainer> currentContainer,
-                                          QRegularExpression containerEndRegex, HighlightData *stateData);
+                                          HighlightData::ContainerInfo &currentContainerInfo, HighlightData *stateData);
 
     QSharedPointer<LanguageContextContainer> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
