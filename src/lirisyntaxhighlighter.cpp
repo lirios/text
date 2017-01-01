@@ -79,7 +79,8 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         }
     }
 
-    setCurrentBlockState(qHash(currentStateData->containers));
+    setCurrentBlockState(qHash(QPair< QList<QSharedPointer<LanguageContextContainer>>,
+                                      QList<QRegularExpression> >(currentStateData->containers, currentStateData->endRegexes)));
 }
 
 int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int offset, QSharedPointer<LanguageContextContainer> container,
