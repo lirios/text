@@ -38,6 +38,7 @@ public:
     QRegularExpression end;
     QList<ContextDPtr> includes;
 
+    bool styleInside   = false;
     bool extendParent  = true;
     bool endAtLineEnd  = false;
     bool endParent     = false;

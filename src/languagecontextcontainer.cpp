@@ -27,6 +27,8 @@ LanguageContextContainer::LanguageContextContainer() :
 LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attributes) :
     LanguageContextContainer() {
 
+    if(attributes.hasAttribute("style-inside"))
+        styleInside  = attributes.value("style-inside") == "true";
     if(attributes.hasAttribute("extend-parent"))
         extendParent = attributes.value("extend-parent") == "true";
     if(attributes.hasAttribute("end-at-line-end"))

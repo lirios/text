@@ -90,11 +90,12 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     int end;
     // Highlight whole received text
     if(container->style)
-        setFormat(offset, text.length() - offset, defStyles->styles[container->style->defaultId]);
+        setFormat(container->styleInside ? innerStart : offset, text.length(), defStyles->styles[container->style->defaultId]);
     QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, container, endRegex, stateData);
     // Clear style of block ending
+    int highlightEnd = endMatch.hasMatch() ? (container->styleInside ? endMatch.capturedStart() : endMatch.capturedEnd()) : end;
     if(container->style)
-        setFormat(end, text.length() - end, QTextCharFormat());
+        setFormat(highlightEnd, text.length(), QTextCharFormat());
 
     if(end > text.length()) {
         stateData->containers.append(container);
@@ -169,7 +170,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                 extendedContainer.append(container->includes);
             } else {
                 if(!container->start.isValid())
-                    qDebug() << container->start.errorString() << container->start.pattern();
+                    qDebug() << "Regular expression error during highlighting:" << container->start.errorString();
                 QRegularExpressionMatchIterator matchI = container->start.globalMatch(text, offset);
                 while (matchI.hasNext()) {
                     QRegularExpressionMatch startMatch = matchI.next();
