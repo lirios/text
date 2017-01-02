@@ -145,12 +145,11 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(currentContainerInfo.forbiddenContexts.contains(context))
                 break;
 
-            for (QRegularExpression keyword : kw->keywords) {
-                QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
-                while (kwI.hasNext()) {
-                    QRegularExpressionMatch kwMatch = kwI.next();
-                    matches.append({kwMatch, context});
-                }
+            QRegularExpression keyword = kw->keyword;
+            QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
+            while (kwI.hasNext()) {
+                QRegularExpressionMatch kwMatch = kwI.next();
+                matches.append({kwMatch, context});
             }
             break;
         }

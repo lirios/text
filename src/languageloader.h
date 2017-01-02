@@ -41,7 +41,7 @@ public:
     LanguageMetadata loadMetadata(QString path);
 protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
-    ContextDPtr parseContext(QXmlStreamReader &xml, QString langId);
+    ContextDPtr parseContext(QXmlStreamReader &xml, QString langId, QXmlStreamAttributes additionalAttributes = QXmlStreamAttributes());
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     QRegularExpression::PatternOptions parseRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId);
@@ -50,6 +50,7 @@ protected:
     QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId);
     QString escapeNonExtended(QString pattern);
     QString applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options);
+    void applyStyleToContext(ContextDPtr context, QString styleId);
 
     QHash<QString, ContextDPtr> knownContexts;
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;

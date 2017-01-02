@@ -126,9 +126,10 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
     }
 }
 
-ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) {
+ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, QXmlStreamAttributes additionalAttributes) {
     ContextDPtr result;
     QXmlStreamAttributes contextAttributes = xml.attributes();
+    contextAttributes += additionalAttributes;
     QString id = contextAttributes.value("id").toString();
     if(!result && id != "" && knownContexts.keys().contains(langId + ":" + id))
         result = knownContexts[langId + ":" + id];
@@ -224,28 +225,39 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
         }
         if(xml.name() == "keyword") {
             if(!*result.data())
-                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes));
+                *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer());
 
-            QSharedPointer<LanguageContextKeyword> kw = result->staticCast<LanguageContextKeyword>();
+            QSharedPointer<LanguageContextContainer> kwContainer = result->staticCast<LanguageContextContainer>();
+            ContextDPtr inc = ContextDPtr(new QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes)));
+            QSharedPointer<LanguageContextKeyword> kw = inc->staticCast<LanguageContextKeyword>();
+            applyStyleToContext(inc, styleId);
+
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
             xml.readNext();
-            kw->keywords.append(resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options, langId));
+            kw->keyword = resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options, langId);
+            kwContainer->includes.append(inc);
             xml.readNext();
         }
         if(xml.name() == "include") {
             xml.readNext();
             while (!(xml.name() == "include" && xml.isEndElement())) {
                 if(xml.name() == "context") {
-                    ContextDPtr inc = parseContext(xml, langId);
                     if(!*result.data())
                         *result.data() = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
 
                     if(result->data()->type == LanguageContext::Simple) {
                         QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
+                        ContextDPtr inc = parseContext(xml, langId);
                         if(inc)
                             simple->includes.append(inc);
                     } else if(result->data()->type == LanguageContext::Container) {
                         QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
+
+                        QXmlStreamAttributes childrenAttributes;
+                        if(container->start.pattern() == "" && contextAttributes.hasAttribute("once-only"))
+                            childrenAttributes += QXmlStreamAttribute("once-only", contextAttributes.value("once-only").toString());
+                        ContextDPtr inc = parseContext(xml, langId, childrenAttributes);
+
                         if(inc)
                             container->includes.append(inc);
                     } else {
@@ -258,15 +270,7 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId) 
         xml.readNext();
     }
 
-    if(knownStyles.keys().contains(styleId)) {
-        if(knownStyles[styleId])
-            result->data()->style = knownStyles[styleId];
-        else {
-            result->data()->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
-            result->data()->style->defaultId = styleId;
-        }
-    }
-
+    applyStyleToContext(result, styleId);
     return result;
 }
 
@@ -363,4 +367,15 @@ QString LanguageLoader::applyOptionsToSubRegex(QString pattern, QRegularExpressi
     else
         result = result.prepend("(?:(?-i)").append(")");
     return result;
+}
+
+void LanguageLoader::applyStyleToContext(ContextDPtr context, QString styleId) {
+    if(knownStyles.keys().contains(styleId)) {
+        if(knownStyles[styleId])
+            context->data()->style = knownStyles[styleId];
+        else {
+            context->data()->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
+            context->data()->style->defaultId = styleId;
+        }
+    }
 }
