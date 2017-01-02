@@ -48,7 +48,6 @@ QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContextByMimeTy
     return loadMainContext(path);
 }
 
-// TODO: fix loading of json, perl and ruby
 QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString path) {
     QFile file(path);
     QString langId;
@@ -114,14 +113,12 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
     while (!(xml.name() == "metadata" && xml.isEndElement())) {
         xml.readNext();
         if(xml.name() == "property") {
-            QString pName = xml.attributes().value("name").toString();
-            xml.readNext();
+            QStringRef pName = xml.attributes().value("name");
             if(pName == "mimetypes")
-                metadata.mimeTypes = xml.text().toString();
+                metadata.mimeTypes = xml.readElementText();
             if(pName == "globs")
-                metadata.globs = xml.text().toString();
+                metadata.globs = xml.readElementText();
             // Note: metadata can also have line-comment and block-comment properties
-            xml.readNext();
         }
     }
 }
@@ -177,11 +174,9 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, 
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
-            xml.readNext();
-            container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
-                                                                                            escapeNonExtended( xml.text().toString() ),
+            container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+                                                                                            escapeNonExtended( xml.readElementText() ),
                                              options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
-            xml.readNext();
         }
         if(xml.name() == "end") {
             if(!*result.data())
@@ -189,11 +184,9 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, 
 
             QSharedPointer<LanguageContextContainer> container = result->staticCast<LanguageContextContainer>();
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
-            xml.readNext();
-            container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
-                                                                                          escapeNonExtended( xml.text().toString() ),
+            container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+                                                                                          escapeNonExtended( xml.readElementText() ),
                                            options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
-            xml.readNext();
         }
         if(xml.name() == "match") {
             if(!*result.data())
@@ -201,11 +194,9 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, 
 
             QSharedPointer<LanguageContextSimple> simple = result->staticCast<LanguageContextSimple>();
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
-            xml.readNext();
-            simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.text().toString() :
-                                                                                         escapeNonExtended( xml.text().toString() ),
+            simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+                                                                                         escapeNonExtended( xml.readElementText() ),
                                           options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
-            xml.readNext();
         }
         if(xml.name() == "prefix") {
             /* According to https://developer.gnome.org/gtksourceview/stable/lang-reference.html
@@ -214,14 +205,10 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, 
              * Futhermore, making prefix an isolated group breaks highlighting for some languages.
              * Following these considerations, prefixes and suffixes are taken in their original form.
              */
-            xml.readNext();
-            kwPrefix = xml.text().toString();
-            xml.readNext();
+            kwPrefix = xml.readElementText();
         }
         if(xml.name() == "suffix") {
-            xml.readNext();
-            kwSuffix = xml.text().toString();
-            xml.readNext();
+            kwSuffix = xml.readElementText();
         }
         if(xml.name() == "keyword") {
             if(!*result.data())
@@ -233,10 +220,8 @@ ContextDPtr LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, 
             applyStyleToContext(inc, styleId);
 
             QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
-            xml.readNext();
-            kw->keyword = resolveRegex(kwPrefix + xml.text().toString() + kwSuffix, options, langId);
+            kw->keyword = resolveRegex(kwPrefix + xml.readElementText() + kwSuffix, options, langId);
             kwContainer->includes.append(inc);
-            xml.readNext();
         }
         if(xml.name() == "include") {
             xml.readNext();
@@ -332,15 +317,13 @@ void LanguageLoader::parseDefaultRegexOptions(QXmlStreamReader &xml, QString lan
 void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml, QString langId) {
     QString id = xml.attributes().value("id").toString();
     QRegularExpression::PatternOptions options = parseRegexOptions(xml, langId);
-    xml.readNext();
-    knownRegexes[id] = applyOptionsToSubRegex(xml.text().toString(), options);
-    xml.readNext();
+    knownRegexes[id] = applyOptionsToSubRegex(xml.readElementText(), options);
 }
 
 void LanguageLoader::parseWordCharClass(QXmlStreamReader &xml, QString langId) {
-    xml.readNext();
-    languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(xml.text().toString());
-    languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(xml.text().toString());
+    QString charClass = xml.readElementText();
+    languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(charClass);
+    languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(charClass);
 }
 
 QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId) {
