@@ -37,18 +37,18 @@ LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyl
 
 LanguageLoader::~LanguageLoader() { }
 
-QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContextById(QString id) {
+QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextById(QString id) {
     qDebug() << "Loading" << id;
     QString path = LanguageManager::pathForId(id);
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
+QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
     QString path = LanguageManager::pathForMimeType(mimeType, filename);
     return loadMainContext(path);
 }
 
-QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString path) {
+QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString path) {
     QFile file(path);
     QString langId;
     if(file.open(QFile::ReadOnly)) {
@@ -78,9 +78,9 @@ QSharedPointer<LanguageContextContainer> LanguageLoader::loadMainContext(QString
     file.close();
     QString contextId = langId + ":" + langId;
     if(knownContexts.keys().contains(contextId))
-        return knownContexts[contextId]->context.staticCast<LanguageContextContainer>();
+        return knownContexts[contextId];
     else
-        return QSharedPointer<LanguageContextContainer>();
+        return QSharedPointer<LanguageContextReference>();
 }
 
 LanguageMetadata LanguageLoader::loadMetadata(QString path) {

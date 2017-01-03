@@ -28,8 +28,7 @@ uint qHash(const HighlightData::ContainerInfo &t, uint seed) {
      * and their hashes are computed with different algorithms,
      * we can simply combine them with xor
      */
-    return qHash(t.container, seed) ^
-           qHash(t.style) ^
-           qHash(t.endRegex) ^
-           qHash(t.forbiddenContexts);
+    return qHash(t.containerRef, seed) ^
+           qHash(t.endRegex, seed) ^
+           qHash(t.forbiddenContexts, seed);
 }

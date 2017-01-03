@@ -35,9 +35,9 @@ public:
     LanguageLoader();
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
-    QSharedPointer<LanguageContextContainer> loadMainContextById(QString id);
-    QSharedPointer<LanguageContextContainer> loadMainContextByMimeType(QMimeType mimeType, QString filename);
-    QSharedPointer<LanguageContextContainer> loadMainContext(QString path);
+    QSharedPointer<LanguageContextReference> loadMainContextById(QString id);
+    QSharedPointer<LanguageContextReference> loadMainContextByMimeType(QMimeType mimeType, QString filename);
+    QSharedPointer<LanguageContextReference> loadMainContext(QString path);
     LanguageMetadata loadMetadata(QString path);
 protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);

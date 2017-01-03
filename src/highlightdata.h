@@ -23,7 +23,7 @@
 #include <QTextBlockUserData>
 #include <QHash>
 #include <QRegularExpressionMatch>
-#include "languagecontextcontainer.h"
+#include "languagecontextreference.h"
 
 class HighlightData : public QTextBlockUserData
 {
@@ -32,10 +32,9 @@ public:
     ~HighlightData();
 
     struct ContainerInfo {
-        QSharedPointer<LanguageContextContainer> container;
-        QSharedPointer<LanguageStyle> style;
+        QSharedPointer<LanguageContextReference> containerRef;
         QRegularExpression endRegex;
-        QList<QSharedPointer<LanguageContext>> forbiddenContexts;
+        QList<QSharedPointer<LanguageContextReference>> forbiddenContexts;
     };
 
     QList<ContainerInfo> containers;
