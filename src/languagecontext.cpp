@@ -22,43 +22,6 @@
 #include "languagecontextsimple.h"
 
 LanguageContext::LanguageContext(LanguageContext::ElementType t) :
-    type(t),
-    style(nullptr) { }
+    type(t) { }
 
 LanguageContext::~LanguageContext() { }
-
-void LanguageContext::resolveCircularDeps(QList<LanguageContext *> stack) {
-    auto current = stack.last();
-    if(current->type == Simple) {
-        auto simple = static_cast<LanguageContextSimple *>(current);
-        resolveCircularDeps(simple, stack);
-    }
-    if(current->type == Container) {
-        auto container = static_cast<LanguageContextContainer *>(current);
-        resolveCircularDeps(container, stack);
-    }
-}
-
-template<class ContextType>
-void LanguageContext::resolveCircularDeps(ContextType *current, QList<LanguageContext *> stack) {
-    for (auto inc : current->includes) {
-        if(stack.contains(inc->data())) {
-            current->includes.removeOne(inc);
-            continue;
-        }
-        auto newStack = stack;
-        newStack.append(inc->data());
-        resolveCircularDeps(newStack);
-    }
-}
-
-template<class ContextType>
-void LanguageContext::resolveCircularDeps(ContextType *current) {
-    resolveCircularDeps(current, QList<LanguageContext *>({current}));
-}
-
-template void LanguageContext::resolveCircularDeps<LanguageContextContainer>(LanguageContextContainer *current, QList<LanguageContext *> stack);
-template void LanguageContext::resolveCircularDeps<LanguageContextSimple>(LanguageContextSimple *current, QList<LanguageContext *> stack);
-
-template void LanguageContext::resolveCircularDeps<LanguageContextContainer>(LanguageContextContainer *current);
-template void LanguageContext::resolveCircularDeps<LanguageContextSimple>(LanguageContextSimple *current);

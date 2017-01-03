@@ -29,6 +29,7 @@ uint qHash(const HighlightData::ContainerInfo &t, uint seed) {
      * we can simply combine them with xor
      */
     return qHash(t.container, seed) ^
+           qHash(t.style) ^
            qHash(t.endRegex) ^
            qHash(t.forbiddenContexts);
 }

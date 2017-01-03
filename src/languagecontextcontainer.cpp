@@ -41,6 +41,4 @@ LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attribut
         onceOnly = attributes.value("once-only") == "true";
 }
 
-LanguageContextContainer::~LanguageContextContainer() {
-    resolveCircularDeps(this);
-}
+LanguageContextContainer::~LanguageContextContainer() { }

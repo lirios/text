@@ -33,6 +33,7 @@ public:
 
     struct ContainerInfo {
         QSharedPointer<LanguageContextContainer> container;
+        QSharedPointer<LanguageStyle> style;
         QRegularExpression endRegex;
         QList<QSharedPointer<LanguageContext>> forbiddenContexts;
     };

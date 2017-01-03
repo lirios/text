@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -17,25 +17,24 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGECONTEXT_H
-#define LANGUAGECONTEXT_H
+#ifndef LANGUAGECONTEXTREFERENCE_H
+#define LANGUAGECONTEXTREFERENCE_H
 
-#include <QSharedPointer>
+#include "languagecontext.h"
+#include "languagestyle.h"
 
-class LanguageContextReference;
-
-class LanguageContext
+class LanguageContextReference
 {
 public:
-    enum ElementType {
-        Simple
-      , Container
-      , SubPattern
-      , Keyword
-    } type;
+    LanguageContextReference();
+    ~LanguageContextReference();
 
-    LanguageContext(ElementType t);
-    virtual ~LanguageContext();
+    QSharedPointer<LanguageContext> context;
+    QSharedPointer<LanguageStyle> style;
+protected:
+    void resolveCircularDeps(QList<LanguageContextReference *> stack);
+    template<class ContextType>
+    void resolveCircularDeps(QList<LanguageContextReference *> stack, QSharedPointer<ContextType> current);
 };
 
-#endif // LANGUAGECONTEXT_H
+#endif // LANGUAGECONTEXTREFERENCE_H

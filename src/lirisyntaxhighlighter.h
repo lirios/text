@@ -39,7 +39,7 @@ public:
 protected:
     struct Match {
         QRegularExpressionMatch match;
-        QSharedPointer<LanguageContext> context;
+        QSharedPointer<LanguageContextReference> contextRef;
 
         inline bool operator <(const Match &other);
     };

@@ -24,6 +24,7 @@
 #include <QSharedPointer>
 #include <QRegularExpression>
 #include "languagecontext.h"
+#include "languagecontextreference.h"
 
 class QXmlStreamAttributes;
 
@@ -35,7 +36,7 @@ public:
     virtual ~LanguageContextSimple();
 
     QRegularExpression match;
-    QList<ContextDPtr> includes;
+    QList<QSharedPointer<LanguageContextReference>> includes;
 
     bool extendParent  = true;
     bool endParent     = false;
