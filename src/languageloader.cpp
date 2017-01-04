@@ -130,21 +130,23 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     QString id = contextAttributes.value("id").toString();
     if(!result && id != "" && knownContexts.keys().contains(langId + ":" + id))
         result = knownContexts[langId + ":" + id];
-    if(xml.attributes().hasAttribute("ref")) {
-        QStringRef refId = xml.attributes().value("ref");
+    else
+        result = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
+    if(contextAttributes.hasAttribute("ref")) {
+        QStringRef refId = contextAttributes.value("ref");
         if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
             loadMainContextById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))
             refIdCopy = langId + ":" + refIdCopy;
-        if(knownContexts.keys().contains(refIdCopy))
-            result = knownContexts[refIdCopy];
-        else
-            result = knownContexts[refIdCopy] = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
+        if(knownContexts.keys().contains(refIdCopy)) {
+            result->context = knownContexts[refIdCopy]->context;
+            result->style = knownContexts[refIdCopy]->style;
+        } else {
+            knownContexts[refIdCopy] = result;
+        }
     }
-    if(!result)
-        result = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
 
     if(id != "")
         knownContexts[langId + ":" + id] = result;
@@ -152,7 +154,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     QString kwPrefix = "\\%[", kwSuffix = "\\%]";
 
     QString styleId = "";
-    if(xml.attributes().hasAttribute("style-ref")) {
+    if(contextAttributes.hasAttribute("style-ref")) {
         QStringRef styleIdRef = xml.attributes().value("style-ref");
         if(styleIdRef.contains(':') && !knownStyles.keys().contains(styleIdRef.toString()))
             loadMainContextById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
@@ -160,8 +162,10 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
     }
+    if(contextAttributes.hasAttribute("ignore-style"))
+        result->style.clear();
 
-    if(xml.attributes().hasAttribute("sub-pattern")) {
+    if(contextAttributes.hasAttribute("sub-pattern")) {
         if(!result->context)
             result->context = QSharedPointer<LanguageContext>(new LanguageContextSubPattern(contextAttributes));
     }
