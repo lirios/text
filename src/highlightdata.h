@@ -34,7 +34,7 @@ public:
     struct ContainerInfo {
         QSharedPointer<LanguageContextReference> containerRef;
         QRegularExpression endRegex;
-        QList<QSharedPointer<LanguageContextReference>> forbiddenContexts;
+        QList<QSharedPointer<LanguageContextReference> > forbiddenContexts;
     };
 
     QList<ContainerInfo> containers;

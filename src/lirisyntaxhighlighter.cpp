@@ -54,13 +54,12 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     if(lang == nullptr)
         return;
 
-    HighlightData *previousStateData = nullptr;
+    QList<HighlightData::ContainerInfo> previousBlockContainers;
     if(currentBlock().previous().isValid())
-        previousStateData = static_cast<HighlightData *>(currentBlock().previous().userData());
-    if(!previousStateData) {
-        previousStateData = new HighlightData();
-        previousStateData->containers = QList<HighlightData::ContainerInfo>({ {lang, QRegularExpression(),
-                                                                               QList<QSharedPointer<LanguageContextReference>>()} });
+        previousBlockContainers = static_cast<HighlightData *>(currentBlock().previous().userData())->containers;
+    else {
+        previousBlockContainers = QList<HighlightData::ContainerInfo>({ {lang, QRegularExpression(),
+                                                                         QList<QSharedPointer<LanguageContextReference>>()} });
     }
 
     HighlightData *currentStateData = static_cast<HighlightData *>(currentBlockUserData());
@@ -71,15 +70,15 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     currentStateData->containers = QList<HighlightData::ContainerInfo>();
 
     int start = 0;
-    for (int i = 0; i < previousStateData->containers.length(); ++i) {
-        auto containerInfo = previousStateData->containers[i];
+    for (int i = 0; i < previousBlockContainers.length(); ++i) {
+        auto containerInfo = previousBlockContainers[i];
 
         int len = highlightTillContainerEnd(text, start, containerInfo, currentStateData);
         start += len;
         if(start <= text.length()) {
             while(containerInfo.containerRef->context.staticCast<LanguageContextContainer>()->endParent) {
                 i++;
-                containerInfo = previousStateData->containers[i];
+                containerInfo = previousBlockContainers[i];
             }
         }
     }
