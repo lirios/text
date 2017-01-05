@@ -47,6 +47,7 @@ protected:
     void parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml, QString langId);
     void parseWordCharClass(QXmlStreamReader &xml, QString langId);
+    void parseReplace(QXmlStreamReader &xml, QString langId);
     QRegularExpression resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId);
     QString escapeNonExtended(QString pattern);
     QString applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options);

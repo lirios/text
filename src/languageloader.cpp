@@ -72,6 +72,8 @@ QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString
                     parseDefaultRegexOptions(xml, langId);
                 if(xml.name() == "keyword-char-class")
                     parseWordCharClass(xml, langId);
+                if(xml.name() == "replace")
+                    parseReplace(xml, langId);
             }
         }
     }
@@ -329,6 +331,19 @@ void LanguageLoader::parseWordCharClass(QXmlStreamReader &xml, QString langId) {
     QString charClass = xml.readElementText();
     languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(charClass);
     languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(charClass);
+}
+
+void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
+    QString id = xml.attributes().value("id").toString();
+    QString refId = xml.attributes().value("ref").toString();
+    if(!id.contains(':'))
+        id.prepend(langId + ":");
+    if(!refId.contains(':'))
+        refId.prepend(langId + ":");
+    if(knownContexts.contains(id) && knownContexts.contains(refId)) {
+        *knownContexts[id].data() = *knownContexts[refId].data();
+    }
+    xml.readNext();
 }
 
 QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId) {
