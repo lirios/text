@@ -21,10 +21,6 @@
 #include <QFile>
 #include <QDebug>
 #include <QRegularExpression>
-#include "languagecontextkeyword.h"
-#include "languagecontextsimple.h"
-#include "languagecontextcontainer.h"
-#include "languagecontextsubpattern.h"
 #include "languagemanager.h"
 
 LanguageLoader::LanguageLoader() { }
@@ -168,39 +164,36 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         result->style.clear();
 
     if(contextAttributes.hasAttribute("sub-pattern")) {
-        if(!result->context)
-            result->context = QSharedPointer<LanguageContext>(new LanguageContextSubPattern(contextAttributes));
+        if(result->context->type != LanguageContext::SubPattern)
+            result->context->init(LanguageContext::SubPattern, contextAttributes);
     }
 
     xml.readNext();
     while (!(xml.name() == "context" && xml.isEndElement())) {
         if(xml.name() == "start") {
-            if(!result->context)
-                result->context = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
+            if(result->context->type != LanguageContext::Container)
+                result->context->init(LanguageContext::Container, contextAttributes);
 
-            auto container = result->context.staticCast<LanguageContextContainer>();
             auto options = parseRegexOptions(xml, langId);
-            container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+            result->context->container->start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
                                                                                             escapeNonExtended( xml.readElementText() ),
                                              options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
         }
         if(xml.name() == "end") {
-            if(!result->context)
-                result->context = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
+            if(result->context->type != LanguageContext::Container)
+                result->context->init(LanguageContext::Container, contextAttributes);
 
-            auto container = result->context.staticCast<LanguageContextContainer>();
             auto options = parseRegexOptions(xml, langId);
-            container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+            result->context->container->end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
                                                                                           escapeNonExtended( xml.readElementText() ),
                                            options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
         }
         if(xml.name() == "match") {
-            if(!result->context)
-                result->context = QSharedPointer<LanguageContext>(new LanguageContextSimple(contextAttributes));
+            if(result->context->type != LanguageContext::Simple)
+                result->context->init(LanguageContext::Simple, contextAttributes);
 
-            auto simple = result->context.staticCast<LanguageContextSimple>();
             auto options = parseRegexOptions(xml, langId);
-            simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
+            result->context->simple->match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
                                                                                          escapeNonExtended( xml.readElementText() ),
                                           options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
         }
@@ -217,41 +210,36 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
             kwSuffix = xml.readElementText();
         }
         if(xml.name() == "keyword") {
-            if(!result->context)
-                result->context = QSharedPointer<LanguageContext>(new LanguageContextContainer());
+            if(result->context->type != LanguageContext::Container)
+                result->context->init(LanguageContext::Container, contextAttributes);
 
-            auto kwContainer = result->context.staticCast<LanguageContextContainer>();
             auto inc = QSharedPointer<LanguageContextReference>(new LanguageContextReference);
-            inc->context = QSharedPointer<LanguageContext>(new LanguageContextKeyword(contextAttributes));
-            auto kw = inc->context.staticCast<LanguageContextKeyword>();
+            inc->context->init(LanguageContext::Keyword, contextAttributes);
             applyStyleToContext(inc, styleId);
 
             auto options = parseRegexOptions(xml, langId);
-            kw->keyword = resolveRegex(kwPrefix + xml.readElementText() + kwSuffix, options, langId);
-            kwContainer->includes.append(inc);
+            inc->context->keyword->keyword = resolveRegex(kwPrefix + xml.readElementText() + kwSuffix, options, langId);
+            result->context->container->includes.append(inc);
         }
         if(xml.name() == "include") {
             xml.readNext();
             while (!(xml.name() == "include" && xml.isEndElement())) {
                 if(xml.name() == "context") {
-                    if(!result->context)
-                        result->context = QSharedPointer<LanguageContext>(new LanguageContextContainer(contextAttributes));
+                    if(result->context->type == LanguageContext::Undefined)
+                        result->context->init(LanguageContext::Container, contextAttributes);
 
                     if(result->context->type == LanguageContext::Simple) {
-                        auto simple = result->context.staticCast<LanguageContextSimple>();
                         auto inc = parseContext(xml, langId);
                         if(inc)
-                            simple->includes.append(inc);
+                            result->context->simple->includes.append(inc);
                     } else if(result->context->type == LanguageContext::Container) {
-                        auto container = result->context.staticCast<LanguageContextContainer>();
-
                         QXmlStreamAttributes childrenAttributes;
-                        if(container->start.pattern() == "" && contextAttributes.hasAttribute("once-only"))
+                        if(result->context->container->start.pattern() == "" && contextAttributes.hasAttribute("once-only"))
                             childrenAttributes += QXmlStreamAttribute("once-only", contextAttributes.value("once-only").toString());
                         auto inc = parseContext(xml, langId, childrenAttributes);
 
                         if(inc)
-                            container->includes.append(inc);
+                            result->context->container->includes.append(inc);
                     } else {
                         Q_ASSERT(false);
                     }

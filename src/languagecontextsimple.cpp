@@ -18,15 +18,13 @@
  */
 
 #include "languagecontextsimple.h"
+#include "languagecontextreference.h"
 
 #include <QXmlStreamAttributes>
 
-LanguageContextSimple::LanguageContextSimple() :
-    LanguageContext(LanguageContext::Simple) { }
+LanguageContextSimple::LanguageContextSimple() { }
 
-LanguageContextSimple::LanguageContextSimple(QXmlStreamAttributes attributes) :
-    LanguageContextSimple() {
-
+LanguageContextSimple::LanguageContextSimple(QXmlStreamAttributes attributes) {
     if(attributes.hasAttribute("extend-parent"))
         extendParent = attributes.value("extend-parent") == "true";
     if(attributes.hasAttribute("end-parent"))

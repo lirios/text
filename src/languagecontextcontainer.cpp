@@ -18,15 +18,13 @@
  */
 
 #include "languagecontextcontainer.h"
+#include "languagecontextreference.h"
 
 #include <QXmlStreamAttributes>
 
-LanguageContextContainer::LanguageContextContainer() :
-    LanguageContext(LanguageContext::Container) { }
+LanguageContextContainer::LanguageContextContainer() { }
 
-LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attributes) :
-    LanguageContextContainer() {
-
+LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attributes) {
     if(attributes.hasAttribute("style-inside"))
         styleInside  = attributes.value("style-inside") == "true";
     if(attributes.hasAttribute("extend-parent"))

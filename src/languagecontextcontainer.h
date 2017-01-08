@@ -23,12 +23,11 @@
 #include <QList>
 #include <QRegularExpression>
 #include <QSharedPointer>
-#include "languagecontext.h"
-#include "languagecontextreference.h"
 
 class QXmlStreamAttributes;
+class LanguageContextReference;
 
-class LanguageContextContainer : public LanguageContext
+class LanguageContextContainer
 {
 public:
     LanguageContextContainer();

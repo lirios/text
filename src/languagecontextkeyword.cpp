@@ -21,12 +21,9 @@
 
 #include <QXmlStreamAttributes>
 
-LanguageContextKeyword::LanguageContextKeyword() :
-    LanguageContext(ElementType::Keyword) { }
+LanguageContextKeyword::LanguageContextKeyword() { }
 
-LanguageContextKeyword::LanguageContextKeyword(QXmlStreamAttributes attributes) :
-    LanguageContextKeyword() {
-
+LanguageContextKeyword::LanguageContextKeyword(QXmlStreamAttributes attributes) {
     if(attributes.hasAttribute("extend-parent"))
         extendParent = attributes.value("extend-parent") == "true";
     if(attributes.hasAttribute("end-parent"))

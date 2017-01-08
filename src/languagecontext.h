@@ -20,9 +20,10 @@
 #ifndef LANGUAGECONTEXT_H
 #define LANGUAGECONTEXT_H
 
-#include <QSharedPointer>
-
-class LanguageContextReference;
+#include "languagecontextsimple.h"
+#include "languagecontextcontainer.h"
+#include "languagecontextsubpattern.h"
+#include "languagecontextkeyword.h"
 
 class LanguageContext
 {
@@ -32,10 +33,20 @@ public:
       , Container
       , SubPattern
       , Keyword
+      , Undefined
     } type;
 
-    LanguageContext(ElementType t);
+    LanguageContext();
     virtual ~LanguageContext();
+    void init(ElementType t);
+    void init(ElementType t, QXmlStreamAttributes attributes);
+
+    union {
+        QSharedPointer<LanguageContextSimple> simple;
+        QSharedPointer<LanguageContextContainer> container;
+        QSharedPointer<LanguageContextSubPattern> subPattern;
+        QSharedPointer<LanguageContextKeyword> keyword;
+    };
 };
 
 #endif // LANGUAGECONTEXT_H

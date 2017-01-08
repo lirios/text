@@ -25,7 +25,7 @@
 #include <QHash>
 #include <QMimeType>
 
-#include "languagecontextcontainer.h"
+#include "languagecontextreference.h"
 #include "languagedefaultstyles.h"
 #include "languagemetadata.h"
 

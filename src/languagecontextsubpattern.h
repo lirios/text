@@ -20,11 +20,11 @@
 #ifndef LANGUAGECONTEXTSUBPATTERN_H
 #define LANGUAGECONTEXTSUBPATTERN_H
 
-#include "languagecontext.h"
+#include <QString>
 
 class QXmlStreamAttributes;
 
-class LanguageContextSubPattern : public LanguageContext
+class LanguageContextSubPattern
 {
 public:
     LanguageContextSubPattern();

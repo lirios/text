@@ -21,7 +21,9 @@
 #include "languagecontextcontainer.h"
 #include "languagecontextsimple.h"
 
-LanguageContextReference::LanguageContextReference() { }
+LanguageContextReference::LanguageContextReference() :
+    context(new LanguageContext()),
+    style() { }
 
 LanguageContextReference::~LanguageContextReference() {
     if(context)
@@ -31,11 +33,11 @@ LanguageContextReference::~LanguageContextReference() {
 void LanguageContextReference::resolveCircularDeps(QList<LanguageContextReference *> stack) {
     auto current = stack.last();
     if(current->context->type == LanguageContext::Simple) {
-        auto simple = current->context.staticCast<LanguageContextSimple>();
+        auto simple = current->context->simple;
         resolveCircularDeps(stack, simple);
     }
     if(current->context->type == LanguageContext::Container) {
-        auto container = current->context.staticCast<LanguageContextContainer>();
+        auto container = current->context->container;
         resolveCircularDeps(stack, container);
     }
 }

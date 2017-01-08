@@ -20,14 +20,13 @@
 #ifndef LANGUAGECONTEXTKEYWORD_H
 #define LANGUAGECONTEXTKEYWORD_H
 
-#include "languagecontext.h"
 #include <QString>
 #include <QList>
 #include <QRegularExpression>
 
 class QXmlStreamAttributes;
 
-class LanguageContextKeyword : public LanguageContext
+class LanguageContextKeyword
 {
 public:
     LanguageContextKeyword();

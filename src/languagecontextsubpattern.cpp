@@ -21,12 +21,9 @@
 
 #include <QXmlStreamAttributes>
 
-LanguageContextSubPattern::LanguageContextSubPattern() :
-    LanguageContext(LanguageContext::SubPattern) { }
+LanguageContextSubPattern::LanguageContextSubPattern() { }
 
-LanguageContextSubPattern::LanguageContextSubPattern(QXmlStreamAttributes attributes) :
-    LanguageContextSubPattern() {
-
+LanguageContextSubPattern::LanguageContextSubPattern(QXmlStreamAttributes attributes) {
     bool isId;
     groupId = attributes.value("sub-pattern").toInt(&isId);
     if(!isId)

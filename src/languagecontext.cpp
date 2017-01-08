@@ -18,10 +18,46 @@
  */
 
 #include "languagecontext.h"
-#include "languagecontextcontainer.h"
-#include "languagecontextsimple.h"
+#include <QXmlStreamAttributes>
 
-LanguageContext::LanguageContext(LanguageContext::ElementType t) :
-    type(t) { }
+LanguageContext::LanguageContext() :
+    type(Undefined),
+    simple() { }
 
 LanguageContext::~LanguageContext() { }
+
+void LanguageContext::init(ElementType t) {
+    type = t;
+    switch (type) {
+    case Simple:
+        simple = QSharedPointer<LanguageContextSimple>(new LanguageContextSimple());
+        break;
+    case Container:
+        container = QSharedPointer<LanguageContextContainer>(new LanguageContextContainer());
+        break;
+    case SubPattern:
+        subPattern = QSharedPointer<LanguageContextSubPattern>(new LanguageContextSubPattern());
+        break;
+    case Keyword:
+        keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword());
+        break;
+    }
+}
+
+void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
+    type = t;
+    switch (type) {
+    case Simple:
+        simple = QSharedPointer<LanguageContextSimple>(new LanguageContextSimple(attributes));
+        break;
+    case Container:
+        container = QSharedPointer<LanguageContextContainer>(new LanguageContextContainer(attributes));
+        break;
+    case SubPattern:
+        subPattern = QSharedPointer<LanguageContextSubPattern>(new LanguageContextSubPattern(attributes));
+        break;
+    case Keyword:
+        keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword(attributes));
+        break;
+    }
+}
