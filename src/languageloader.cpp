@@ -160,6 +160,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
     }
+    applyStyleToContext(result, styleId);
     if(contextAttributes.hasAttribute("ignore-style"))
         result->style.clear();
 
@@ -250,7 +251,6 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         xml.readNext();
     }
 
-    applyStyleToContext(result, styleId);
     return result;
 }
 
