@@ -39,8 +39,12 @@ public:
     QSharedPointer<LanguageContextReference> loadMainContextByMimeType(QMimeType mimeType, QString filename);
     QSharedPointer<LanguageContextReference> loadMainContext(QString path);
     LanguageMetadata loadMetadata(QString path);
+    void loadDefinitionsAndStylesById(QString id);
+    void loadDefinitionsAndStyles(QString path);
 protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
+    void parseStyles(QXmlStreamReader &xml, QString langId);
+    void parseDefinitions(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageContextReference> parseContext(QXmlStreamReader &xml, QString langId, QXmlStreamAttributes additionalAttributes = QXmlStreamAttributes());
     QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
     QRegularExpression::PatternOptions parseRegexOptions(QXmlStreamReader &xml, QString langId);

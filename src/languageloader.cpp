@@ -63,18 +63,14 @@ QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString
                     languageLeftWordBoundary [langId] = "\\b";
                     languageRightWordBoundary[langId] = "\\b";
                 }
-                if(xml.name() == "define-regex")
-                    parseDefineRegex(xml, langId);
-                if(xml.name() == "context")
-                    parseContext(xml, langId);
-                if(xml.name() == "style")
-                    parseStyle(xml, langId);
+                if(xml.name() == "styles")
+                    parseStyles(xml, langId);
                 if(xml.name() == "default-regex-options")
                     parseDefaultRegexOptions(xml, langId);
                 if(xml.name() == "keyword-char-class")
                     parseWordCharClass(xml, langId);
-                if(xml.name() == "replace")
-                    parseReplace(xml, langId);
+                if(xml.name() == "definitions")
+                    parseDefinitions(xml, langId);
             }
         }
     }
@@ -115,6 +111,35 @@ LanguageMetadata LanguageLoader::loadMetadata(QString path) {
     return result;
 }
 
+void LanguageLoader::loadDefinitionsAndStylesById(QString id) {
+    QString path = LanguageManager::pathForId(id);
+    loadDefinitionsAndStyles(path);
+}
+
+void LanguageLoader::loadDefinitionsAndStyles(QString path) {
+    QString langId;
+    QFile file(path);
+    if(file.open(QFile::ReadOnly)) {
+        QXmlStreamReader xml(&file);
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if(xml.isStartElement()) {
+                if(xml.name() == "language")
+                    langId = xml.attributes().value("id").toString();
+                if(xml.name() == "styles")
+                    parseStyles(xml, langId);
+                if(xml.name() == "default-regex-options")
+                    parseDefaultRegexOptions(xml, langId);
+                if(xml.name() == "keyword-char-class")
+                    parseWordCharClass(xml, langId);
+                if(xml.name() == "definitions")
+                    parseDefinitions(xml, langId);
+            }
+        }
+    }
+    file.close();
+}
+
 void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata) {
     while (!(xml.name() == "metadata" && xml.isEndElement())) {
         xml.readNext();
@@ -126,6 +151,26 @@ void LanguageLoader::parseMetadata(QXmlStreamReader &xml, LanguageMetadata &meta
                 metadata.globs = xml.readElementText();
             // Note: metadata can also have line-comment and block-comment properties
         }
+    }
+}
+
+void LanguageLoader::parseStyles(QXmlStreamReader &xml, QString langId) {
+    while (!(xml.name() == "styles" && xml.isEndElement())) {
+        xml.readNext();
+        if(xml.name() == "style")
+            parseStyle(xml, langId);
+    }
+}
+
+void LanguageLoader::parseDefinitions(QXmlStreamReader &xml, QString langId) {
+    while (!(xml.name() == "definitions" && xml.isEndElement())) {
+        xml.readNext();
+        if(xml.name() == "define-regex")
+            parseDefineRegex(xml, langId);
+        if(xml.name() == "context")
+            parseContext(xml, langId);
+        if(xml.name() == "replace")
+            parseReplace(xml, langId);
     }
 }
 
@@ -141,7 +186,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     if(contextAttributes.hasAttribute("ref")) {
         QStringRef refId = contextAttributes.value("ref");
         if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
-            loadMainContextById(refId.left(refId.indexOf(':')).toString());
+            loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))
@@ -163,7 +208,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     if(contextAttributes.hasAttribute("style-ref")) {
         QStringRef styleIdRef = xml.attributes().value("style-ref");
         if(styleIdRef.contains(':') && !knownStyles.keys().contains(styleIdRef.toString()))
-            loadMainContextById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
+            loadDefinitionsAndStylesById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
         styleId = styleIdRef.toString();
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
@@ -268,7 +313,7 @@ QSharedPointer<LanguageStyle> LanguageLoader::parseStyle(QXmlStreamReader &xml, 
     if(xml.attributes().hasAttribute("map-to")) {
         QStringRef refId = xml.attributes().value("map-to");
         if(refId.contains(':') && !knownStyles.keys().contains(refId.toString())) {
-            loadMainContextById(refId.left(refId.indexOf(':')).toString());
+            loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))
