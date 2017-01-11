@@ -94,12 +94,12 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     int innerStart = offset + startLength;
     int end;
     // Highlight whole received text
-    if(containerInfo.containerRef->style)
+    if(!containerInfo.containerRef->style->defaultId.isEmpty())
         setFormat(container->styleInside ? innerStart : offset, text.length(), defStyles->styles[containerInfo.containerRef->style->defaultId]);
     QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, newContainerInfo, stateData);
     // Clear style of block ending
     int highlightEnd = endMatch.hasMatch() ? (container->styleInside ? endMatch.capturedStart() : endMatch.capturedEnd()) : end;
-    if(containerInfo.containerRef->style)
+    if(!containerInfo.containerRef->style->defaultId.isEmpty())
         setFormat(highlightEnd, text.length(), QTextCharFormat());
 
     if(end > text.length()) {
@@ -116,7 +116,7 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
                     if(endStart >= 0) {
                         int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
                                                                       endMatch.capturedLength(subpattern->groupName);
-                        if(inc->style)
+                        if(!inc->style->defaultId.isEmpty())
                             setFormat(offset + endStart,
                                       endLen, defStyles->styles[inc->style->defaultId]);
                     }
@@ -217,7 +217,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                         currentContainerInfo.forbiddenContexts.append(m.contextRef);
                 }
 
-                if(m.contextRef->style)
+                if(!m.contextRef->style->defaultId.isEmpty())
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.contextRef->style->defaultId]);
                 end = m.match.capturedEnd();
@@ -237,7 +237,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                         currentContainerInfo.forbiddenContexts.append(m.contextRef);
                 }
 
-                if(m.contextRef->style)
+                if(!m.contextRef->style->defaultId.isEmpty())
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
                               defStyles->styles[m.contextRef->style->defaultId]);
                 end = m.match.capturedEnd();
@@ -298,7 +298,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                             if(startStart >= 0) {
                                 int startLen = subpattern->groupName.isNull() ? m.match.capturedLength(subpattern->groupId) :
                                                                                 m.match.capturedLength(subpattern->groupName);
-                                if(inc->style)
+                                if(!inc->style->defaultId.isEmpty())
                                     setFormat(offset + startStart,
                                               startLen, defStyles->styles[inc->style->defaultId]);
                             }

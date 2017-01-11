@@ -23,6 +23,6 @@
 
 LanguageContextReference::LanguageContextReference() :
     context(new LanguageContext()),
-    style() { }
+    style(new LanguageStyle()) { }
 
 LanguageContextReference::~LanguageContextReference() { }

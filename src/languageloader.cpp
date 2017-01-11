@@ -202,10 +202,10 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         if(knownContexts.keys().contains(refIdCopy)) {
             if(contextAttributes.hasAttribute("original")) {
                 result->context = originalContexts[refIdCopy]->context;
-                result->style = originalContexts[refIdCopy]->style;
+                *result->style = *originalContexts[refIdCopy]->style;
             } else {
                 result->context = knownContexts[refIdCopy]->context;
-                result->style = knownContexts[refIdCopy]->style;
+                *result->style = *knownContexts[refIdCopy]->style;
             }
         } else {
             // Predefinition
@@ -232,7 +232,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     }
     applyStyleToContext(result, styleId);
     if(contextAttributes.hasAttribute("ignore-style"))
-        result->style.clear();
+        result->style->defaultId.clear();
 
     if(contextAttributes.hasAttribute("sub-pattern")) {
         if(result->context->type != LanguageContext::SubPattern)
@@ -322,10 +322,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     }
 
     *resultCopy->context = *result->context;
-    if(result->style) {
-        resultCopy->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
-        *resultCopy->style = *result->style;
-    }
+    *resultCopy->style = *result->style;
     return result;
 }
 
@@ -406,8 +403,7 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
 
     if(knownContexts.keys().contains(id) && knownContexts.keys().contains(refId)) {
         *knownContexts[id]->context = *knownContexts[refId]->context;
-        if(knownContexts[refId]->style)
-            *knownContexts[id]->style = *knownContexts[refId]->style;
+        *knownContexts[id]->style = *knownContexts[refId]->style;
     }
 
     xml.readNext();
@@ -444,7 +440,6 @@ void LanguageLoader::applyStyleToContext(QSharedPointer<LanguageContextReference
         if(knownStyles[styleId])
             context->style = knownStyles[styleId];
         else {
-            context->style = QSharedPointer<LanguageStyle>(new LanguageStyle());
             context->style->defaultId = styleId;
         }
     }
