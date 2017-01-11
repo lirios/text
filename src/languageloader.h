@@ -58,6 +58,7 @@ protected:
     void applyStyleToContext(QSharedPointer<LanguageContextReference> context, QString styleId);
 
     QHash<QString, QSharedPointer<LanguageContextReference>> knownContexts;
+    QHash<QString, QSharedPointer<LanguageContextReference>> originalContexts;
     QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;
     QHash<QString, QString> knownRegexes;
     QHash<QString, QRegularExpression::PatternOptions> languageDefaultOptions;

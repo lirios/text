@@ -192,15 +192,24 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         if(!refIdCopy.contains(':'))
             refIdCopy = langId + ":" + refIdCopy;
         if(knownContexts.keys().contains(refIdCopy)) {
-            result->context = knownContexts[refIdCopy]->context;
-            result->style = knownContexts[refIdCopy]->style;
+            if(contextAttributes.hasAttribute("original")) {
+                result->context = originalContexts[refIdCopy]->context;
+                result->style = originalContexts[refIdCopy]->style;
+            } else {
+                result->context = knownContexts[refIdCopy]->context;
+                result->style = knownContexts[refIdCopy]->style;
+            }
         } else {
+            // Predefinition
             knownContexts[refIdCopy] = result;
+            originalContexts[refIdCopy] = result;
         }
     }
 
-    if(id != "")
+    if(id != "") {
         knownContexts[langId + ":" + id] = result;
+        originalContexts[langId + ":" + id] = result;
+    }
 
     QString kwPrefix = "\\%[", kwSuffix = "\\%]";
 
