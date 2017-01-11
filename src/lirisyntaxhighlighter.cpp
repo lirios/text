@@ -29,16 +29,17 @@
 
 LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter (parent),
-      lang() { }
+      lang(),
+      defStyles() { }
 
 LiriSyntaxHighlighter::~LiriSyntaxHighlighter() {
     if(lang)
-        lang->~LanguageContextReference();
+        lang->context->prepareForRemoval(true);
 }
 
 void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextReference> l) {
     if(lang)
-        lang->~LanguageContextReference();
+        lang->context->prepareForRemoval(true);
     lang = l;
     if(defStyles)
         rehighlight();

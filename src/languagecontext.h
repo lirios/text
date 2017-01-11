@@ -47,6 +47,12 @@ public:
         QSharedPointer<LanguageContextSubPattern> subPattern;
         QSharedPointer<LanguageContextKeyword> keyword;
     };
+
+    void markAsInUse();
+    inline bool inUse() { return m_inUse; }
+    void prepareForRemoval(bool ignoreUsage = false);
+protected:
+    bool m_inUse;
 };
 
 #endif // LANGUAGECONTEXT_H

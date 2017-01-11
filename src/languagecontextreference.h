@@ -31,10 +31,6 @@ public:
 
     QSharedPointer<LanguageContext> context;
     QSharedPointer<LanguageStyle> style;
-protected:
-    void resolveCircularDeps(QList<LanguageContextReference *> stack);
-    template<class ContextType>
-    void resolveCircularDeps(QList<LanguageContextReference *> stack, QSharedPointer<ContextType> current);
 };
 
 #endif // LANGUAGECONTEXTREFERENCE_H

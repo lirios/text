@@ -31,7 +31,12 @@ LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyl
     }
 }
 
-LanguageLoader::~LanguageLoader() { }
+LanguageLoader::~LanguageLoader() {
+    for (auto contextRef : knownContexts) {
+        if(!contextRef->context->inUse())
+            contextRef->context->prepareForRemoval();
+    }
+}
 
 QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextById(QString id) {
     qDebug() << "Loading" << id;
@@ -75,8 +80,11 @@ QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString
     }
     file.close();
     QString contextId = langId + ":" + langId;
-    if(knownContexts.keys().contains(contextId))
-        return knownContexts[contextId];
+    if(knownContexts.keys().contains(contextId)) {
+        auto mainContext = knownContexts[contextId];
+        mainContext->context->markAsInUse();
+        return mainContext;
+    }
     else
         return QSharedPointer<LanguageContextReference>();
 }
@@ -328,7 +336,7 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
         id.prepend(langId + ":");
     if(!refId.contains(':'))
         refId.prepend(langId + ":");
-    if(knownContexts.contains(id) && knownContexts.contains(refId)) {
+    if(knownContexts.keys().contains(id) && knownContexts.keys().contains(refId)) {
         *knownContexts[id].data() = *knownContexts[refId].data();
     }
     xml.readNext();

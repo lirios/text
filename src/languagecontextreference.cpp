@@ -25,32 +25,4 @@ LanguageContextReference::LanguageContextReference() :
     context(new LanguageContext()),
     style() { }
 
-LanguageContextReference::~LanguageContextReference() {
-    if(context)
-        resolveCircularDeps({this});
-}
-
-void LanguageContextReference::resolveCircularDeps(QList<LanguageContextReference *> stack) {
-    auto current = stack.last();
-    if(current->context->type == LanguageContext::Simple) {
-        auto simple = current->context->simple;
-        resolveCircularDeps(stack, simple);
-    }
-    if(current->context->type == LanguageContext::Container) {
-        auto container = current->context->container;
-        resolveCircularDeps(stack, container);
-    }
-}
-
-template<class ContextType>
-void LanguageContextReference::resolveCircularDeps(QList<LanguageContextReference *> stack, QSharedPointer<ContextType> current) {
-    for (auto inc : current->includes) {
-        if(stack.contains(inc.data())) {
-            current->includes.removeOne(inc);
-            continue;
-        }
-        auto newStack = stack;
-        newStack.append(inc.data());
-        resolveCircularDeps(newStack);
-    }
-}
+LanguageContextReference::~LanguageContextReference() { }

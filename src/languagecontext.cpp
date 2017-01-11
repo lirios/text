@@ -18,13 +18,30 @@
  */
 
 #include "languagecontext.h"
+#include "languagecontextreference.h"
 #include <QXmlStreamAttributes>
 
 LanguageContext::LanguageContext() :
     type(Undefined),
-    simple() { }
+    simple(),
+    m_inUse(false) { }
 
-LanguageContext::~LanguageContext() { }
+LanguageContext::~LanguageContext() {
+    switch (type) {
+    case Simple:
+        simple.clear();
+        break;
+    case Container:
+        container.clear();
+        break;
+    case SubPattern:
+        subPattern.clear();
+        break;
+    case Keyword:
+        keyword.clear();
+        break;
+    }
+}
 
 void LanguageContext::init(ElementType t) {
     type = t;
@@ -59,5 +76,39 @@ void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
     case Keyword:
         keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword(attributes));
         break;
+    }
+}
+
+void LanguageContext::markAsInUse() {
+    if(m_inUse)
+        return;
+
+    m_inUse = true;
+    if(type == Simple) {
+        for (auto inc : simple->includes)
+            inc->context->markAsInUse();
+    }
+    if(type == Container) {
+        for (auto inc : container->includes)
+            inc->context->markAsInUse();
+    }
+}
+
+#define REMOVE_INCLUDES(ctx) \
+    while (!ctx->includes.isEmpty()) { \
+        auto inc = ctx->includes.back(); \
+        ctx->includes.pop_back(); \
+        inc->context->prepareForRemoval(ignoreUsage); \
+    }
+
+void LanguageContext::prepareForRemoval(bool ignoreUsage) {
+    if(!ignoreUsage && inUse())
+        return;
+
+    if(type == Simple) {
+        REMOVE_INCLUDES(simple)
+    }
+    if(type == Container) {
+        REMOVE_INCLUDES(container)
     }
 }
