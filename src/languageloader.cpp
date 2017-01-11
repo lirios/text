@@ -176,15 +176,21 @@ void LanguageLoader::parseDefinitions(QXmlStreamReader &xml, QString langId) {
 
 QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStreamReader &xml, QString langId, QXmlStreamAttributes additionalAttributes) {
     QSharedPointer<LanguageContextReference> result;
-    QSharedPointer<LanguageContextReference> resultCopy;
+    QSharedPointer<LanguageContextReference> resultCopy; // Will be referenced by original references
     QXmlStreamAttributes contextAttributes = xml.attributes();
     contextAttributes += additionalAttributes;
     QString id = contextAttributes.value("id").toString();
-    if(!result && id != "" && knownContexts.keys().contains(langId + ":" + id))
+
+    if(id != "" && knownContexts.keys().contains(langId + ":" + id))
         result = knownContexts[langId + ":" + id];
     else
         result = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
-    resultCopy = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
+
+    if(id != "" && originalContexts.keys().contains(langId + ":" + id))
+        resultCopy = originalContexts[langId + ":" + id];
+    else
+        resultCopy = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
+
     if(contextAttributes.hasAttribute("ref")) {
         QStringRef refId = contextAttributes.value("ref");
         if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
@@ -204,6 +210,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         } else {
             // Predefinition
             knownContexts[refIdCopy] = result;
+            originalContexts[refIdCopy] = resultCopy;
         }
     }
 
@@ -396,11 +403,13 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
         id.prepend(langId + ":");
     if(!refId.contains(':'))
         refId.prepend(langId + ":");
+
     if(knownContexts.keys().contains(id) && knownContexts.keys().contains(refId)) {
         *knownContexts[id]->context = *knownContexts[refId]->context;
         if(knownContexts[refId]->style)
             *knownContexts[id]->style = *knownContexts[refId]->style;
     }
+
     xml.readNext();
 }
 
