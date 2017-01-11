@@ -37,9 +37,11 @@ public:
     } type;
 
     LanguageContext();
+    LanguageContext(const LanguageContext &parent);
     virtual ~LanguageContext();
     void init(ElementType t);
     void init(ElementType t, QXmlStreamAttributes attributes);
+    LanguageContext& operator =(const LanguageContext &other);
 
     union {
         QSharedPointer<LanguageContextSimple> simple;

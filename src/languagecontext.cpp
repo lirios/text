@@ -26,6 +26,24 @@ LanguageContext::LanguageContext() :
     simple(),
     m_inUse(false) { }
 
+LanguageContext::LanguageContext(const LanguageContext &parent) {
+    type = parent.type;
+    switch (type) {
+    case Simple:
+        simple = parent.simple;
+        break;
+    case Container:
+        container = parent.container;
+        break;
+    case SubPattern:
+        subPattern = parent.subPattern;
+        break;
+    case Keyword:
+        keyword = parent.keyword;
+        break;
+    }
+}
+
 LanguageContext::~LanguageContext() {
     switch (type) {
     case Simple:
@@ -77,6 +95,25 @@ void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
         keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword(attributes));
         break;
     }
+}
+
+LanguageContext &LanguageContext::operator =(const LanguageContext &other) {
+    type = other.type;
+    switch (type) {
+    case Simple:
+        simple = other.simple;
+        break;
+    case Container:
+        container = other.container;
+        break;
+    case SubPattern:
+        subPattern = other.subPattern;
+        break;
+    case Keyword:
+        keyword = other.keyword;
+        break;
+    }
+    return *this;
 }
 
 void LanguageContext::markAsInUse() {
