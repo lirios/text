@@ -124,8 +124,12 @@ void LanguageLoader::loadDefinitionsAndStyles(QString path) {
         while (!xml.atEnd()) {
             xml.readNext();
             if(xml.isStartElement()) {
-                if(xml.name() == "language")
+                if(xml.name() == "language") {
                     langId = xml.attributes().value("id").toString();
+                    languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                    languageLeftWordBoundary [langId] = "\\b";
+                    languageRightWordBoundary[langId] = "\\b";
+                }
                 if(xml.name() == "styles")
                     parseStyles(xml, langId);
                 if(xml.name() == "default-regex-options")
