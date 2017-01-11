@@ -27,10 +27,6 @@ class LanguageStyle
 public:
     LanguageStyle();
     QString defaultId;
-    LanguageStyle& operator =(const LanguageStyle &other) {
-        defaultId = other.defaultId;
-        return *this;
-    }
 };
 
 #endif // LANGUAGESTYLE_H
