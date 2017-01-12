@@ -57,7 +57,7 @@ void DocumentHandler::setTarget(QQuickItem *target) {
             if(m_highlighter != nullptr)
                 delete m_highlighter;
             m_highlighter = new LiriSyntaxHighlighter(m_document);
-            m_highlighter->setDefaultStyle(m_defStyles);
+            m_highlighter->setDefaultStyles(m_defStyles);
         }
     }
     emit targetChanged();

@@ -21,7 +21,6 @@
 #define LANGUAGECONTEXTREFERENCE_H
 
 #include "languagecontext.h"
-#include "languagestyle.h"
 
 class LanguageContextReference
 {

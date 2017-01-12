@@ -60,14 +60,14 @@ protected:
     QString applyOptionsToSubRegex(QString pattern, QRegularExpression::PatternOptions options);
     void applyStyleToContext(QSharedPointer<LanguageContextReference> context, QString styleId);
 
-    QHash<QString, QSharedPointer<LanguageContextReference>> knownContexts;
-    QHash<QString, QSharedPointer<LanguageContextReference>> originalContexts;
-    QHash<QString, QString> knownRegexes;
-    QHash<QString, QRegularExpression::PatternOptions> languageDefaultOptions;
-    QHash<QString, QString> languageLeftWordBoundary;
-    QHash<QString, QString> languageRightWordBoundary;
+    QHash<QString, QSharedPointer<LanguageContextReference>> m_knownContexts;
+    QHash<QString, QSharedPointer<LanguageContextReference>> m_originalContexts;
+    QHash<QString, QString> m_knownRegexes;
+    QHash<QString, QRegularExpression::PatternOptions> m_languageDefaultOptions;
+    QHash<QString, QString> m_languageLeftWordBoundary;
+    QHash<QString, QString> m_languageRightWordBoundary;
     QHash<QString, QString> m_styleMap;
-    QList<QString> themeStyles;
+    QList<QString> m_themeStyles;
 };
 
 #endif // LANGUAGELOADER_H

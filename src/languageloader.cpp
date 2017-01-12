@@ -27,13 +27,13 @@ LanguageLoader::LanguageLoader() { }
 
 LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) {
     for (auto styleId : defaultStyles->styles.keys()) {
-        themeStyles += styleId;
+        m_themeStyles += styleId;
         m_styleMap[styleId] = styleId;
     }
 }
 
 LanguageLoader::~LanguageLoader() {
-    for (auto contextRef : knownContexts) {
+    for (auto contextRef : m_knownContexts) {
         if(!contextRef->context->inUse())
             contextRef->context->prepareForRemoval();
     }
@@ -60,9 +60,9 @@ QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString
             if(xml.isStartElement()) {
                 if(xml.name() == "language") {
                     langId = xml.attributes().value("id").toString();
-                    languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
-                    languageLeftWordBoundary [langId] = "\\b";
-                    languageRightWordBoundary[langId] = "\\b";
+                    m_languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                    m_languageLeftWordBoundary [langId] = "\\b";
+                    m_languageRightWordBoundary[langId] = "\\b";
                 }
                 if(xml.name() == "styles")
                     parseStyles(xml, langId);
@@ -77,8 +77,8 @@ QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContext(QString
     }
     file.close();
     QString contextId = langId + ":" + langId;
-    if(knownContexts.keys().contains(contextId)) {
-        auto mainContext = knownContexts[contextId];
+    if(m_knownContexts.keys().contains(contextId)) {
+        auto mainContext = m_knownContexts[contextId];
         mainContext->context->markAsInUse();
         return mainContext;
     }
@@ -127,9 +127,9 @@ void LanguageLoader::loadDefinitionsAndStyles(QString path) {
             if(xml.isStartElement()) {
                 if(xml.name() == "language") {
                     langId = xml.attributes().value("id").toString();
-                    languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
-                    languageLeftWordBoundary [langId] = "\\b";
-                    languageRightWordBoundary[langId] = "\\b";
+                    m_languageDefaultOptions   [langId] = QRegularExpression::OptimizeOnFirstUsageOption;
+                    m_languageLeftWordBoundary [langId] = "\\b";
+                    m_languageRightWordBoundary[langId] = "\\b";
                 }
                 if(xml.name() == "styles")
                     parseStyles(xml, langId);
@@ -186,42 +186,42 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     contextAttributes += additionalAttributes;
     QString id = contextAttributes.value("id").toString();
 
-    if(id != "" && knownContexts.keys().contains(langId + ":" + id))
-        result = knownContexts[langId + ":" + id];
+    if(id != "" && m_knownContexts.keys().contains(langId + ":" + id))
+        result = m_knownContexts[langId + ":" + id];
     else
         result = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
 
-    if(id != "" && originalContexts.keys().contains(langId + ":" + id))
-        resultCopy = originalContexts[langId + ":" + id];
+    if(id != "" && m_originalContexts.keys().contains(langId + ":" + id))
+        resultCopy = m_originalContexts[langId + ":" + id];
     else
         resultCopy = QSharedPointer<LanguageContextReference>(new LanguageContextReference());
 
     if(contextAttributes.hasAttribute("ref")) {
         QStringRef refId = contextAttributes.value("ref");
-        if(refId.contains(':') && !knownContexts.keys().contains(refId.toString())) {
+        if(refId.contains(':') && !m_knownContexts.keys().contains(refId.toString())) {
             loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')).toString());
         }
         QString refIdCopy = refId.toString();
         if(!refIdCopy.contains(':'))
             refIdCopy = langId + ":" + refIdCopy;
-        if(knownContexts.keys().contains(refIdCopy)) {
+        if(m_knownContexts.keys().contains(refIdCopy)) {
             if(contextAttributes.hasAttribute("original")) {
-                result->context = originalContexts[refIdCopy]->context;
-                result->styleId = originalContexts[refIdCopy]->styleId;
+                result->context = m_originalContexts[refIdCopy]->context;
+                result->styleId = m_originalContexts[refIdCopy]->styleId;
             } else {
-                result->context = knownContexts[refIdCopy]->context;
-                result->styleId = knownContexts[refIdCopy]->styleId;
+                result->context = m_knownContexts[refIdCopy]->context;
+                result->styleId = m_knownContexts[refIdCopy]->styleId;
             }
         } else {
             // Predefinition
-            knownContexts[refIdCopy] = result;
-            originalContexts[refIdCopy] = resultCopy;
+            m_knownContexts[refIdCopy] = result;
+            m_originalContexts[refIdCopy] = resultCopy;
         }
     }
 
     if(id != "") {
-        knownContexts[langId + ":" + id] = result;
-        originalContexts[langId + ":" + id] = resultCopy;
+        m_knownContexts[langId + ":" + id] = result;
+        m_originalContexts[langId + ":" + id] = resultCopy;
     }
 
     QString kwPrefix = "\\%[", kwSuffix = "\\%]";
@@ -337,7 +337,7 @@ void LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
     QString mapId;
     if(xml.attributes().hasAttribute("map-to")) {
         QString refId = xml.attributes().value("map-to").toString();
-        if(refId.contains(':') && !m_styleMap.keys().contains(refId) && !themeStyles.contains(refId)) {
+        if(refId.contains(':') && !m_styleMap.keys().contains(refId) && !m_themeStyles.contains(refId)) {
             loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')));
         }
         if(!refId.contains(':'))
@@ -358,7 +358,7 @@ void LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
 }
 
 QRegularExpression::PatternOptions LanguageLoader::parseRegexOptions(QXmlStreamReader &xml, QString langId) {
-    auto result = languageDefaultOptions[langId];
+    auto result = m_languageDefaultOptions[langId];
     if(xml.attributes().hasAttribute("case-sensitive")) {
         bool caseInsensitive = xml.attributes().value("case-sensitive") == "false";
         if(caseInsensitive)
@@ -380,20 +380,20 @@ QRegularExpression::PatternOptions LanguageLoader::parseRegexOptions(QXmlStreamR
 }
 
 void LanguageLoader::parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId) {
-    languageDefaultOptions[langId] = parseRegexOptions(xml, langId);
+    m_languageDefaultOptions[langId] = parseRegexOptions(xml, langId);
     xml.readNext();
 }
 
 void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml, QString langId) {
     QString id = xml.attributes().value("id").toString();
     auto options = parseRegexOptions(xml, langId);
-    knownRegexes[id] = applyOptionsToSubRegex(xml.readElementText(), options);
+    m_knownRegexes[id] = applyOptionsToSubRegex(xml.readElementText(), options);
 }
 
 void LanguageLoader::parseWordCharClass(QXmlStreamReader &xml, QString langId) {
     QString charClass = xml.readElementText();
-    languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(charClass);
-    languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(charClass);
+    m_languageLeftWordBoundary [langId] = QStringLiteral("(?<!%1)(?=%1)").arg(charClass);
+    m_languageRightWordBoundary[langId] = QStringLiteral("(?<=%1)(?!%1)").arg(charClass);
 }
 
 void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
@@ -404,9 +404,9 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
     if(!refId.contains(':'))
         refId.prepend(langId + ":");
 
-    if(knownContexts.keys().contains(id) && knownContexts.keys().contains(refId)) {
-        *knownContexts[id]->context = *knownContexts[refId]->context;
-        knownContexts[id]->styleId = knownContexts[refId]->styleId;
+    if(m_knownContexts.keys().contains(id) && m_knownContexts.keys().contains(refId)) {
+        *m_knownContexts[id]->context = *m_knownContexts[refId]->context;
+        m_knownContexts[id]->styleId = m_knownContexts[refId]->styleId;
     }
 
     xml.readNext();
@@ -415,11 +415,11 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
 QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId) {
     QString resultPattern = pattern;
 
-    for (QString id : knownRegexes.keys()) {
-        resultPattern = resultPattern.replace("\\%{" + id + "}", knownRegexes[id]);
+    for (QString id : m_knownRegexes.keys()) {
+        resultPattern = resultPattern.replace("\\%{" + id + "}", m_knownRegexes[id]);
     }
-    resultPattern = resultPattern.replace("\\%[", languageLeftWordBoundary [langId]);
-    resultPattern = resultPattern.replace("\\%]", languageRightWordBoundary[langId]);
+    resultPattern = resultPattern.replace("\\%[", m_languageLeftWordBoundary [langId]);
+    resultPattern = resultPattern.replace("\\%]", m_languageRightWordBoundary[langId]);
     return QRegularExpression(resultPattern, options);
 }
 
