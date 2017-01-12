@@ -26,7 +26,7 @@ LanguageContext::LanguageContext() :
     m_inUse(false) { }
 
 LanguageContext::LanguageContext(const LanguageContext &parent) {
-    init(type);
+    init(parent.type);
     switch (type) {
     case Simple:
         simple = parent.simple;
@@ -90,7 +90,7 @@ void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
 }
 
 LanguageContext &LanguageContext::operator =(const LanguageContext &other) {
-    init(type);
+    init(other.type);
     switch (type) {
     case Simple:
         simple = other.simple;
