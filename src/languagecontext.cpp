@@ -23,11 +23,10 @@
 
 LanguageContext::LanguageContext() :
     type(Undefined),
-    simple(),
     m_inUse(false) { }
 
 LanguageContext::LanguageContext(const LanguageContext &parent) {
-    type = parent.type;
+    init(type);
     switch (type) {
     case Simple:
         simple = parent.simple;
@@ -45,60 +44,53 @@ LanguageContext::LanguageContext(const LanguageContext &parent) {
 }
 
 LanguageContext::~LanguageContext() {
-    switch (type) {
-    case Simple:
-        simple.clear();
-        break;
-    case Container:
-        container.clear();
-        break;
-    case SubPattern:
-        subPattern.clear();
-        break;
-    case Keyword:
-        keyword.clear();
-        break;
-    }
+    deinit();
 }
 
 void LanguageContext::init(ElementType t) {
+    if(type != Undefined)
+        deinit();
+
     type = t;
     switch (type) {
     case Simple:
-        simple = QSharedPointer<LanguageContextSimple>(new LanguageContextSimple());
+        new (&simple) LanguageContextSimple();
         break;
     case Container:
-        container = QSharedPointer<LanguageContextContainer>(new LanguageContextContainer());
+        new (&container) LanguageContextContainer();
         break;
     case SubPattern:
-        subPattern = QSharedPointer<LanguageContextSubPattern>(new LanguageContextSubPattern());
+        new (&subPattern) LanguageContextSubPattern();
         break;
     case Keyword:
-        keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword());
+        new (&keyword) LanguageContextKeyword();
         break;
     }
 }
 
 void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
+    if(type != Undefined)
+        deinit();
+
     type = t;
     switch (type) {
     case Simple:
-        simple = QSharedPointer<LanguageContextSimple>(new LanguageContextSimple(attributes));
+        new (&simple) LanguageContextSimple(attributes);
         break;
     case Container:
-        container = QSharedPointer<LanguageContextContainer>(new LanguageContextContainer(attributes));
+        new (&container) LanguageContextContainer(attributes);
         break;
     case SubPattern:
-        subPattern = QSharedPointer<LanguageContextSubPattern>(new LanguageContextSubPattern(attributes));
+        new (&subPattern) LanguageContextSubPattern(attributes);
         break;
     case Keyword:
-        keyword = QSharedPointer<LanguageContextKeyword>(new LanguageContextKeyword(attributes));
+        new (&keyword) LanguageContextKeyword(attributes);
         break;
     }
 }
 
 LanguageContext &LanguageContext::operator =(const LanguageContext &other) {
-    type = other.type;
+    init(type);
     switch (type) {
     case Simple:
         simple = other.simple;
@@ -122,19 +114,19 @@ void LanguageContext::markAsInUse() {
 
     m_inUse = true;
     if(type == Simple) {
-        for (auto inc : simple->includes)
+        for (auto inc : simple.includes)
             inc->context->markAsInUse();
     }
     if(type == Container) {
-        for (auto inc : container->includes)
+        for (auto inc : container.includes)
             inc->context->markAsInUse();
     }
 }
 
 #define REMOVE_INCLUDES(ctx) \
-    while (!ctx->includes.isEmpty()) { \
-        auto inc = ctx->includes.back(); \
-        ctx->includes.pop_back(); \
+    while (!ctx.includes.isEmpty()) { \
+        auto inc = ctx.includes.back(); \
+        ctx.includes.pop_back(); \
         inc->context->prepareForRemoval(ignoreUsage); \
     }
 
@@ -147,5 +139,22 @@ void LanguageContext::prepareForRemoval(bool ignoreUsage) {
     }
     if(type == Container) {
         REMOVE_INCLUDES(container)
+    }
+}
+
+void LanguageContext::deinit() {
+    switch (type) {
+    case Simple:
+        (&simple)->~LanguageContextSimple();
+        break;
+    case Container:
+        (&container)->~LanguageContextContainer();
+        break;
+    case SubPattern:
+        (&subPattern)->~LanguageContextSubPattern();
+        break;
+    case Keyword:
+        (&keyword)->~LanguageContextKeyword();
+        break;
     }
 }

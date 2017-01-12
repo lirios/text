@@ -44,16 +44,17 @@ public:
     LanguageContext& operator =(const LanguageContext &other);
 
     union {
-        QSharedPointer<LanguageContextSimple> simple;
-        QSharedPointer<LanguageContextContainer> container;
-        QSharedPointer<LanguageContextSubPattern> subPattern;
-        QSharedPointer<LanguageContextKeyword> keyword;
+        LanguageContextSimple simple;
+        LanguageContextContainer container;
+        LanguageContextSubPattern subPattern;
+        LanguageContextKeyword keyword;
     };
 
     void markAsInUse();
     inline bool inUse() { return m_inUse; }
     void prepareForRemoval(bool ignoreUsage = false);
 protected:
+    void deinit();
     bool m_inUse;
 };
 
