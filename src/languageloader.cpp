@@ -27,7 +27,8 @@ LanguageLoader::LanguageLoader() { }
 
 LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) {
     for (auto styleId : defaultStyles->styles.keys()) {
-        knownStyles[styleId] = QSharedPointer<LanguageStyle>();
+        themeStyles += styleId;
+        m_styleMap[styleId] = styleId;
     }
 }
 
@@ -206,10 +207,10 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
         if(knownContexts.keys().contains(refIdCopy)) {
             if(contextAttributes.hasAttribute("original")) {
                 result->context = originalContexts[refIdCopy]->context;
-                *result->style = *originalContexts[refIdCopy]->style;
+                result->styleId = originalContexts[refIdCopy]->styleId;
             } else {
                 result->context = knownContexts[refIdCopy]->context;
-                *result->style = *knownContexts[refIdCopy]->style;
+                result->styleId = knownContexts[refIdCopy]->styleId;
             }
         } else {
             // Predefinition
@@ -225,18 +226,18 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
     QString kwPrefix = "\\%[", kwSuffix = "\\%]";
 
-    QString styleId = "";
+    QString styleId = result->styleId;
     if(contextAttributes.hasAttribute("style-ref")) {
         QStringRef styleIdRef = xml.attributes().value("style-ref");
-        if(styleIdRef.contains(':') && !knownStyles.keys().contains(styleIdRef.toString()))
+        if(styleIdRef.contains(':') && !m_styleMap.keys().contains(styleIdRef.toString()))
             loadDefinitionsAndStylesById(styleIdRef.left(styleIdRef.indexOf(':')).toString());
         styleId = styleIdRef.toString();
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
     }
-    applyStyleToContext(result, styleId);
     if(contextAttributes.hasAttribute("ignore-style"))
-        result->style->defaultId.clear();
+        styleId.clear();
+    applyStyleToContext(result, styleId);
 
     if(contextAttributes.hasAttribute("sub-pattern")) {
         if(result->context->type != LanguageContext::SubPattern)
@@ -326,36 +327,34 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     }
 
     *resultCopy->context = *result->context;
-    *resultCopy->style = *result->style;
+    resultCopy->styleId = result->styleId;
     return result;
 }
 
-QSharedPointer<LanguageStyle> LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
-    auto result = QSharedPointer<LanguageStyle>();
-    QString id = xml.attributes().value("id").toString();
+void LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
+    QString id = langId + ":" + xml.attributes().value("id").toString();
+
+    QString mapId;
     if(xml.attributes().hasAttribute("map-to")) {
-        QStringRef refId = xml.attributes().value("map-to");
-        if(refId.contains(':') && !knownStyles.keys().contains(refId.toString())) {
-            loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')).toString());
+        QString refId = xml.attributes().value("map-to").toString();
+        if(refId.contains(':') && !m_styleMap.keys().contains(refId) && !themeStyles.contains(refId)) {
+            loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')));
         }
-        QString refIdCopy = refId.toString();
-        if(!refIdCopy.contains(':'))
-            refIdCopy = langId + ":" + refIdCopy;
-        if(knownStyles.keys().contains(refIdCopy)) {
-            if(knownStyles[refIdCopy])
-                result = knownStyles[refIdCopy];
-            else {
-                result = QSharedPointer<LanguageStyle>(new LanguageStyle());
-                result->defaultId = refIdCopy;
-                knownStyles[langId + ":" + id] = result;
-            }
-        }
-    }
-    if(result && id != "") {
-        knownStyles[langId + ":" + id] = result;
-    }
+        if(!refId.contains(':'))
+            refId = langId + ":" + refId;
+        if(m_styleMap.keys().contains(refId))
+            mapId = m_styleMap[refId];
+        else
+            mapId = refId;
+    } else
+        mapId = id;
+
+    for (QString key : m_styleMap.keys())
+        if(m_styleMap[key] == id)
+            m_styleMap[key] = mapId;
+    m_styleMap[id] = mapId;
+
     xml.skipCurrentElement();
-    return result;
 }
 
 QRegularExpression::PatternOptions LanguageLoader::parseRegexOptions(QXmlStreamReader &xml, QString langId) {
@@ -407,7 +406,7 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
 
     if(knownContexts.keys().contains(id) && knownContexts.keys().contains(refId)) {
         *knownContexts[id]->context = *knownContexts[refId]->context;
-        *knownContexts[id]->style = *knownContexts[refId]->style;
+        knownContexts[id]->styleId = knownContexts[refId]->styleId;
     }
 
     xml.readNext();
@@ -440,11 +439,5 @@ QString LanguageLoader::applyOptionsToSubRegex(QString pattern, QRegularExpressi
 }
 
 void LanguageLoader::applyStyleToContext(QSharedPointer<LanguageContextReference> context, QString styleId) {
-    if(knownStyles.keys().contains(styleId)) {
-        if(knownStyles[styleId])
-            context->style = knownStyles[styleId];
-        else {
-            context->style->defaultId = styleId;
-        }
-    }
+    context->styleId = styleId;
 }

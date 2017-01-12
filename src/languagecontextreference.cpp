@@ -23,6 +23,6 @@
 
 LanguageContextReference::LanguageContextReference() :
     context(new LanguageContext()),
-    style(new LanguageStyle()) { }
+    styleId() { }
 
 LanguageContextReference::~LanguageContextReference() { }

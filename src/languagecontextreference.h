@@ -30,7 +30,7 @@ public:
     ~LanguageContextReference();
 
     QSharedPointer<LanguageContext> context;
-    QSharedPointer<LanguageStyle> style;
+    QString styleId;
 };
 
 #endif // LANGUAGECONTEXTREFERENCE_H

@@ -37,10 +37,11 @@ LiriSyntaxHighlighter::~LiriSyntaxHighlighter() {
         lang->context->prepareForRemoval(true);
 }
 
-void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextReference> l) {
+void LiriSyntaxHighlighter::setLanguage(QSharedPointer<LanguageContextReference> l, const QHash<QString, QString> &map) {
     if(lang)
         lang->context->prepareForRemoval(true);
     lang = l;
+    styleMap = map;
     if(defStyles)
         rehighlight();
 }
@@ -94,12 +95,12 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
     int innerStart = offset + startLength;
     int end;
     // Highlight whole received text
-    if(!containerInfo.containerRef->style->defaultId.isEmpty())
-        setFormat(container->styleInside ? innerStart : offset, text.length(), defStyles->styles[containerInfo.containerRef->style->defaultId]);
+    if(styleMap.keys().contains(containerInfo.containerRef->styleId))
+        setFormat(container->styleInside ? innerStart : offset, text.length(), defStyles->styles[styleMap[containerInfo.containerRef->styleId]]);
     QRegularExpressionMatch endMatch = highlightPart(end, text, innerStart, newContainerInfo, stateData);
     // Clear style of block ending
     int highlightEnd = endMatch.hasMatch() ? (container->styleInside ? endMatch.capturedStart() : endMatch.capturedEnd()) : end;
-    if(!containerInfo.containerRef->style->defaultId.isEmpty())
+    if(styleMap.keys().contains(containerInfo.containerRef->styleId))
         setFormat(highlightEnd, text.length(), QTextCharFormat());
 
     if(end > text.length()) {
@@ -116,9 +117,9 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
                     if(endStart >= 0) {
                         int endLen = subpattern->groupName.isNull() ? endMatch.capturedLength(subpattern->groupId) :
                                                                       endMatch.capturedLength(subpattern->groupName);
-                        if(!inc->style->defaultId.isEmpty())
+                        if(styleMap.keys().contains(inc->styleId))
                             setFormat(offset + endStart,
-                                      endLen, defStyles->styles[inc->style->defaultId]);
+                                      endLen, defStyles->styles[styleMap[inc->styleId]]);
                     }
                 }
             }
@@ -217,9 +218,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                         currentContainerInfo.forbiddenContexts.append(m.contextRef);
                 }
 
-                if(!m.contextRef->style->defaultId.isEmpty())
+                if(styleMap.keys().contains(m.contextRef->styleId))
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
-                              defStyles->styles[m.contextRef->style->defaultId]);
+                              defStyles->styles[styleMap[m.contextRef->styleId]]);
                 end = m.match.capturedEnd();
                 if(kw->endParent)
                     return QRegularExpressionMatch();
@@ -237,9 +238,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                         currentContainerInfo.forbiddenContexts.append(m.contextRef);
                 }
 
-                if(!m.contextRef->style->defaultId.isEmpty())
+                if(styleMap.keys().contains(m.contextRef->styleId))
                     setFormat(m.match.capturedStart(), m.match.capturedLength(),
-                              defStyles->styles[m.contextRef->style->defaultId]);
+                              defStyles->styles[styleMap[m.contextRef->styleId]]);
                 end = m.match.capturedEnd();
                 for (auto inc : simple->includes) {
                     if(inc->context->type == LanguageContext::SubPattern) {
@@ -248,8 +249,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                                                                       m.match.capturedStart(subpattern->groupName);
                         int mLen = subpattern->groupName.isNull() ? m.match.capturedLength(subpattern->groupId) :
                                                                     m.match.capturedLength(subpattern->groupName);
-                        setFormat(mStart,
-                                  mLen, defStyles->styles[inc->style->defaultId]);
+                        if(styleMap.keys().contains(inc->styleId))
+                            setFormat(mStart,
+                                      mLen, defStyles->styles[styleMap[inc->styleId]]);
                     }
                 }
                 if(simple->endParent)
@@ -298,9 +300,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                             if(startStart >= 0) {
                                 int startLen = subpattern->groupName.isNull() ? m.match.capturedLength(subpattern->groupId) :
                                                                                 m.match.capturedLength(subpattern->groupName);
-                                if(!inc->style->defaultId.isEmpty())
+                                if(styleMap.keys().contains(inc->styleId))
                                     setFormat(offset + startStart,
-                                              startLen, defStyles->styles[inc->style->defaultId]);
+                                              startLen, defStyles->styles[styleMap[inc->styleId]]);
                             }
                         }
                     }

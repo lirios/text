@@ -33,7 +33,7 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
     ~LiriSyntaxHighlighter();
-    void setLanguage(QSharedPointer<LanguageContextReference> l);
+    void setLanguage(QSharedPointer<LanguageContextReference> l, const QHash<QString, QString> &map);
     void setDefaultStyle(QSharedPointer<LanguageDefaultStyles> def);
 
 protected:
@@ -57,6 +57,7 @@ protected:
 
     QSharedPointer<LanguageContextReference> lang;
     QSharedPointer<LanguageDefaultStyles> defStyles;
+    QHash<QString, QString> styleMap;
 };
 
 #endif // LIRISYNTAXHIGHLIGHTER_H

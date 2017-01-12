@@ -35,18 +35,21 @@ public:
     LanguageLoader();
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
     ~LanguageLoader();
+
     QSharedPointer<LanguageContextReference> loadMainContextById(QString id);
     QSharedPointer<LanguageContextReference> loadMainContextByMimeType(QMimeType mimeType, QString filename);
     QSharedPointer<LanguageContextReference> loadMainContext(QString path);
     LanguageMetadata loadMetadata(QString path);
     void loadDefinitionsAndStylesById(QString id);
     void loadDefinitionsAndStyles(QString path);
+
+    inline QHash<QString, QString> styleMap() { return m_styleMap; }
 protected:
     void parseMetadata(QXmlStreamReader &xml, LanguageMetadata &metadata);
     void parseStyles(QXmlStreamReader &xml, QString langId);
     void parseDefinitions(QXmlStreamReader &xml, QString langId);
     QSharedPointer<LanguageContextReference> parseContext(QXmlStreamReader &xml, QString langId, QXmlStreamAttributes additionalAttributes = QXmlStreamAttributes());
-    QSharedPointer<LanguageStyle> parseStyle(QXmlStreamReader &xml, QString langId);
+    void parseStyle(QXmlStreamReader &xml, QString langId);
     QRegularExpression::PatternOptions parseRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefaultRegexOptions(QXmlStreamReader &xml, QString langId);
     void parseDefineRegex(QXmlStreamReader &xml, QString langId);
@@ -59,11 +62,12 @@ protected:
 
     QHash<QString, QSharedPointer<LanguageContextReference>> knownContexts;
     QHash<QString, QSharedPointer<LanguageContextReference>> originalContexts;
-    QHash<QString, QSharedPointer<LanguageStyle>> knownStyles;
     QHash<QString, QString> knownRegexes;
     QHash<QString, QRegularExpression::PatternOptions> languageDefaultOptions;
     QHash<QString, QString> languageLeftWordBoundary;
     QHash<QString, QString> languageRightWordBoundary;
+    QHash<QString, QString> m_styleMap;
+    QList<QString> themeStyles;
 };
 
 #endif // LANGUAGELOADER_H
