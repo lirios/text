@@ -118,7 +118,7 @@ int LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int of
                         int endLen = subPattern.groupName.isNull() ? endMatch.capturedLength(subPattern.groupId) :
                                                                      endMatch.capturedLength(subPattern.groupName);
                         if(m_styleMap.keys().contains(inc->styleId))
-                            setFormat(offset + endStart,
+                            setFormat(endStart,
                                       endLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
                     }
                 }
@@ -264,9 +264,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(inc->context->type == LanguageContext::SubPattern) {
                 auto subPattern = inc->context->subPattern;
                 int mStart = subPattern.groupName.isNull() ? bestMatch.match.capturedStart(subPattern.groupId) :
-                                                              bestMatch.match.capturedStart(subPattern.groupName);
+                                                             bestMatch.match.capturedStart(subPattern.groupName);
                 int mLen = subPattern.groupName.isNull() ? bestMatch.match.capturedLength(subPattern.groupId) :
-                                                            bestMatch.match.capturedLength(subPattern.groupName);
+                                                           bestMatch.match.capturedLength(subPattern.groupName);
                 if(m_styleMap.keys().contains(inc->styleId))
                     setFormat(mStart,
                               mLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
@@ -321,7 +321,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                         int startLen = subPattern.groupName.isNull() ? bestMatch.match.capturedLength(subPattern.groupId) :
                                                                        bestMatch.match.capturedLength(subPattern.groupName);
                         if(m_styleMap.keys().contains(inc->styleId))
-                            setFormat(offset + startStart,
+                            setFormat(startStart,
                                       startLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
                     }
                 }
