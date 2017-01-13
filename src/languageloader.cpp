@@ -33,14 +33,14 @@ LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyl
 }
 
 LanguageLoader::~LanguageLoader() {
-//    for (auto contextRef : m_knownContexts) {
-//        if(!contextRef->context->inUse())
-//            contextRef->context->prepareForRemoval();
-//    }
-//    for (auto contextRef : m_originalContexts) {
-//        if(!contextRef->context->inUse())
-//            contextRef->context->prepareForRemoval();
-//    }
+    for (auto contextRef : m_knownContexts) {
+        if(!contextRef->context->inUse())
+            contextRef->context->prepareForRemoval();
+    }
+    for (auto contextRef : m_originalContexts) {
+        if(!contextRef->context->inUse())
+            contextRef->context->prepareForRemoval();
+    }
 }
 
 QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextById(QString id) {
@@ -339,9 +339,9 @@ void LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
     QString id = langId + ":" + xml.attributes().value("id").toString();
 
     QString mapId;
-    if(xml.attributes().hasAttribute("map-to")) {
+    if(!m_themeStyles.contains(id) && xml.attributes().hasAttribute("map-to")) {
         QString refId = xml.attributes().value("map-to").toString();
-        if(refId.contains(':') && !m_styleMap.keys().contains(refId) && !m_themeStyles.contains(refId)) {
+        if(refId.contains(':') && !m_styleMap.keys().contains(refId)) {
             loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')));
         }
         if(!refId.contains(':'))
