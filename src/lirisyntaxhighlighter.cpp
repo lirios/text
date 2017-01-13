@@ -134,9 +134,12 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                                                              HighlightData *stateData) {
     auto currentContainer = currentContainerInfo.containerRef->context->container;
     QList<Match> matches;
-    QRegularExpressionMatchIterator containerEndIter;
+    QRegularExpressionMatch containerEndMatch;
     if(currentContainerInfo.endRegex.pattern() != "")
-        containerEndIter = currentContainerInfo.endRegex.globalMatch(text, offset);
+        containerEndMatch = currentContainerInfo.endRegex.match(text, offset);
+    if(!containerEndMatch.hasMatch() && currentContainer.endAtLineEnd)
+        containerEndMatch = QRegularExpression("$").match(text, offset);
+
     auto extendedContainer = currentContainer.includes;
     for (int i = 0; i < extendedContainer.length(); ++i) {
         QSharedPointer<LanguageContext> context = extendedContainer[i]->context;
@@ -151,11 +154,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                 break;
 
             QRegularExpression keyword = context->keyword.keyword;
-            QRegularExpressionMatchIterator kwI = keyword.globalMatch(text, offset);
-            while (kwI.hasNext()) {
-                QRegularExpressionMatch kwMatch = kwI.next();
+            QRegularExpressionMatch kwMatch = keyword.match(text, offset);
+            if(kwMatch.hasMatch())
                 matches.append({kwMatch, extendedContainer[i]});
-            }
             break;
         }
         case LanguageContext::Simple: {
@@ -164,11 +165,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
                 break;
 
-            QRegularExpressionMatchIterator matchI = context->simple.match.globalMatch(text, offset);
-            while (matchI.hasNext()) {
-                QRegularExpressionMatch match = matchI.next();
+            QRegularExpressionMatch match = context->simple.match.match(text, offset);
+            if(match.hasMatch())
                 matches.append({match, extendedContainer[i]});
-            }
             break;
         }
         case LanguageContext::Container: {
@@ -182,22 +181,15 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             } else {
                 if(!context->container.start.isValid())
                     qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
-                QRegularExpressionMatchIterator matchI = context->container.start.globalMatch(text, offset);
-                while (matchI.hasNext()) {
-                    QRegularExpressionMatch startMatch = matchI.next();
+                QRegularExpressionMatch startMatch = context->container.start.match(text, offset);
+                if(startMatch.hasMatch())
                     matches.append({startMatch, extendedContainer[i]});
-                }
             }
             break;
         }
         }
     }
 
-    QRegularExpressionMatch containerEndMatch;
-    if(containerEndIter.hasNext())
-        containerEndMatch = containerEndIter.next();
-    else if(currentContainer.endAtLineEnd)
-        containerEndMatch = QRegularExpression("$").match(text, offset);
 
     Match bestMatch;
     for (Match m : matches) {
@@ -214,7 +206,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             end = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedStart()) {
+    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() <= bestMatch.match.capturedStart()) {
         end = containerEndMatch.capturedEnd();
         return containerEndMatch;
     }
