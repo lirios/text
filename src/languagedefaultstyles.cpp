@@ -34,6 +34,7 @@ LanguageDefaultStyles::LanguageDefaultStyles() {
       , {"def:warning", QTextCharFormat()}
       , {"def:note", QTextCharFormat()}
       , {"def:underlined", QTextCharFormat()}
+      , {"xml:namespace", QTextCharFormat()}
     };
 
     styles["def:comment"].setFontItalic(true);
@@ -58,7 +59,7 @@ LanguageDefaultStyles::LanguageDefaultStyles() {
 
     styles["def:identifier"].setFontItalic(false);
     styles["def:identifier"].setFontWeight(QFont::Normal);
-    styles["def:identifier"].setForeground(palette["cyan"]);
+    styles["def:identifier"].setForeground(palette["deepPurple"]);
 
     styles["def:statement"].setFontItalic(false);
     styles["def:statement"].setFontWeight(QFont::Medium);
@@ -87,6 +88,10 @@ LanguageDefaultStyles::LanguageDefaultStyles() {
     styles["def:underlined"].setFontItalic(true);
     styles["def:underlined"].setFontWeight(QFont::Normal);
     styles["def:underlined"].setUnderlineStyle(QTextCharFormat::SingleUnderline);
+
+    styles["xml:namespace"].setFontItalic(false);
+    styles["xml:namespace"].setFontWeight(QFont::Medium);
+    styles["xml:namespace"].setForeground(palette["purple"]);
 }
 
 const QHash<QString, QColor> LanguageDefaultStyles::palette = {
