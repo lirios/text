@@ -153,8 +153,11 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
                 break;
 
+            QStringRef allowedText = QStringRef(&text);
+            if(!context->keyword.extendParent && containerEndMatch.hasMatch())
+                allowedText = allowedText.left(containerEndMatch.capturedStart());
             QRegularExpression keyword = context->keyword.keyword;
-            QRegularExpressionMatch kwMatch = keyword.match(text, offset);
+            QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
             if(kwMatch.hasMatch())
                 matches.append({kwMatch, extendedContainer[i]});
             break;
@@ -165,7 +168,10 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
                 break;
 
-            QRegularExpressionMatch match = context->simple.match.match(text, offset);
+            QStringRef allowedText = QStringRef(&text);
+            if(!context->simple.extendParent && containerEndMatch.hasMatch())
+                allowedText = allowedText.left(containerEndMatch.capturedStart());
+            QRegularExpressionMatch match = context->simple.match.match(allowedText, offset);
             if(match.hasMatch())
                 matches.append({match, extendedContainer[i]});
             break;
@@ -181,7 +187,10 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             } else {
                 if(!context->container.start.isValid())
                     qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
-                QRegularExpressionMatch startMatch = context->container.start.match(text, offset);
+                QStringRef allowedText = QStringRef(&text);
+                if(!context->container.extendParent && containerEndMatch.hasMatch())
+                    allowedText = allowedText.left(containerEndMatch.capturedStart());
+                QRegularExpressionMatch startMatch = context->container.start.match(allowedText, offset);
                 if(startMatch.hasMatch())
                     matches.append({startMatch, extendedContainer[i]});
             }
@@ -189,7 +198,6 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         }
     }
-
 
     Match bestMatch;
     for (Match m : matches) {
@@ -215,10 +223,6 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
     case LanguageContext::Keyword: {
         auto kw = bestMatch.contextRef->context->keyword;
 
-        if(!kw.extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedEnd()) {
-            end = containerEndMatch.capturedEnd();
-            return containerEndMatch;
-        }
         if(kw.onceOnly) {
             currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
         }
@@ -234,10 +238,6 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
     case LanguageContext::Simple: {
         auto simple = bestMatch.contextRef->context->simple;
 
-        if(!simple.extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedEnd()) {
-            end = containerEndMatch.capturedEnd();
-            return containerEndMatch;
-        }
         if(simple.onceOnly) {
             currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
         }
@@ -265,10 +265,6 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
     case LanguageContext::Container: {
         auto container = bestMatch.contextRef->context->container;
 
-        if(!container.extendParent && containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedEnd()) {
-            end = containerEndMatch.capturedEnd();
-            return containerEndMatch;
-        }
         if(container.onceOnly) {
             currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
         }
