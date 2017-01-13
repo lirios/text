@@ -4,7 +4,7 @@ Liri Text
 [![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
-[![Maintenance](https://img.shields.io/maintenance/yes/2016.svg)](https://github.com/lirios/text/commits/develop)
+[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/develop)
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.  
 
