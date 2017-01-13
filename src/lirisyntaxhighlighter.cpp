@@ -183,7 +183,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                 break;
 
             if(context->container.start.pattern() == "") {
-                extendedContainer.append(context->container.includes);
+                for (int incIdx = 0; incIdx < context->container.includes.length(); ++incIdx)
+                    extendedContainer.insert(i + incIdx + 1, context->container.includes[incIdx]);
             } else {
                 if(!context->container.start.isValid())
                     qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
@@ -214,7 +215,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             end = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() <= bestMatch.match.capturedStart()) {
+    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedStart()) {
         end = containerEndMatch.capturedEnd();
         return containerEndMatch;
     }
