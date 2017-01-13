@@ -192,7 +192,11 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
         }
         }
     }
-    std::sort(matches.begin(), matches.end());
+    // Temporary bubble sorting
+    for (int i = 0; i < matches.length() - 1; ++i)
+        for (int j = 1; j < matches.length() - i; ++j)
+            if(matches[j] < matches[j - 1])
+                std::swap(matches[j], matches[j - 1]);
 
     QRegularExpressionMatch containerEndMatch;
     if(containerEndIter.hasNext())
@@ -335,8 +339,5 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
 }
 
 bool LiriSyntaxHighlighter::Match::operator <(const LiriSyntaxHighlighter::Match &other) {
-    if(this->match.capturedStart() == other.match.capturedStart())
-        return this->match.capturedEnd() > other.match.capturedEnd();
-    else
-        return this->match.capturedStart() < other.match.capturedStart();
+    return this->match.capturedStart() < other.match.capturedStart();
 }
