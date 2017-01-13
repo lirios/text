@@ -227,12 +227,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             end = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-//        if(kw.onceOnly) {
-//            if(currentContainerInfo.forbiddenContexts.contains(bestMatch.contextRef))
-//                continue;
-//            else
-//                currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
-//        }
+        if(kw.onceOnly) {
+            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
+        }
 
         if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
             setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
@@ -249,12 +246,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             end = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-//        if(simple.onceOnly) {
-//            if(currentContainerInfo.forbiddenContexts.contains(m.contextRef))
-//                continue;
-//            else
-//                currentContainerInfo.forbiddenContexts.append(m.contextRef);
-//        }
+        if(simple.onceOnly) {
+            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
+        }
 
         if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
             setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
@@ -283,12 +277,9 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             end = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-//        if(container.onceOnly) {
-//            if(currentContainerInfo.forbiddenContexts.contains(m.contextRef))
-//                continue;
-//            else
-//                currentContainerInfo.forbiddenContexts.append(m.contextRef);
-//        }
+        if(container.onceOnly) {
+            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
+        }
 
         int start = bestMatch.match.capturedStart();
 
