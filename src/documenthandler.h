@@ -55,6 +55,8 @@ public:
 
     inline bool modified() { return m_document->isModified(); }
 
+    Q_INVOKABLE QString textFragment(int position, int blockCount);
+
 signals:
     void targetChanged();
     void fileUrlChanged();

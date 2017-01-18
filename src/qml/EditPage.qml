@@ -52,28 +52,9 @@ Page {
         saveAsDialog.open()
     }
 
-    function getTextAroundLine(lineNum, height) {
-        var lines = mainArea.text.split('\n')
-        var start = lineNum - Math.floor(height/2)
-        if(start < 0)
-            start = 0
-        var end = start + height - 1
-        if(end >= lines.length) {
-            start -= end - lines.length + 1
-            if(start < 0)
-                start = 0
-            end = lines.length - 1
-        }
-        var res = []
-        for(var i = start; i <= end; i++) {
-            res.push(lines[i])
-        }
-        return res
-    }
-
     function touchFileOnCursorPosition() {
         history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
-                          getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 7))
+                          document.textFragment(mainArea.cursorPosition, 7))
     }
 
     Component.onCompleted: {

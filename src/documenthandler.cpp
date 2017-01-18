@@ -22,6 +22,7 @@
 #include <QTextDocument>
 #include <QFileInfo>
 #include <QMimeDatabase>
+#include <QTextDocumentFragment>
 #include <QDebug>
 #include "languageloader.h"
 #include "languagemanager.h"
@@ -109,6 +110,18 @@ void DocumentHandler::setDocumentTitle(QString title) {
     if(title != m_documentTitle) {
         m_documentTitle = title;
         emit documentTitleChanged();
+    }
+}
+
+QString DocumentHandler::textFragment(int position, int blockCount) {
+    if(m_highlighter) {
+        return m_highlighter->highlightedFragment(position, blockCount);
+    } else {
+        QTextCursor cursor(m_document->findBlock(position));
+        cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, blockCount / 2);
+        cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, blockCount);
+        QTextDocumentFragment fragment = cursor.selection();
+        return fragment.toHtml();
     }
 }
 
