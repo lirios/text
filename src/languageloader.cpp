@@ -256,8 +256,9 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
             auto options = parseRegexOptions(xml, langId);
             result->context->container.start = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
-                                                                                            escapeNonExtended( xml.readElementText() ),
-                                             options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
+                                                                                                            escapeNonExtended( xml.readElementText() ),
+                                                             options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
+            result->context->container.includesOnly = false;
         }
         if(xml.name() == "end") {
             if(result->context->type != LanguageContext::Container)
@@ -265,8 +266,8 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
             auto options = parseRegexOptions(xml, langId);
             result->context->container.end = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
-                                                                                          escapeNonExtended( xml.readElementText() ),
-                                           options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
+                                                                                                          escapeNonExtended( xml.readElementText() ),
+                                                           options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
         }
         if(xml.name() == "match") {
             if(result->context->type != LanguageContext::Simple)
@@ -274,8 +275,8 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
             auto options = parseRegexOptions(xml, langId);
             result->context->simple.match = resolveRegex((options & QRegularExpression::ExtendedPatternSyntaxOption) != 0 ? xml.readElementText() :
-                                                                                         escapeNonExtended( xml.readElementText() ),
-                                          options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
+                                                                                                         escapeNonExtended( xml.readElementText() ),
+                                                          options | QRegularExpression::ExtendedPatternSyntaxOption, langId);
         }
         if(xml.name() == "prefix") {
             /* According to https://developer.gnome.org/gtksourceview/stable/lang-reference.html

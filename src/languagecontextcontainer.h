@@ -44,6 +44,7 @@ public:
     bool endParent     = false;
     bool firstLineOnly = false;
     bool onceOnly      = false;
+    bool includesOnly  = true;
 };
 
 #endif // LANGUAGECONTEXTCONTAINER_H

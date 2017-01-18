@@ -183,7 +183,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
                 break;
 
-            if(context->container.start.pattern() == "") {
+            if(context->container.includesOnly) {
                 for (int incIdx = 0; incIdx < context->container.includes.length(); ++incIdx)
                     extendedContainer.insert(i + incIdx + 1, context->container.includes[incIdx]);
             } else {
