@@ -32,7 +32,7 @@ public:
     LanguageContextKeyword();
     LanguageContextKeyword(QXmlStreamAttributes attributes);
 
-    QRegularExpression keyword;
+    QList<QRegularExpression> keywords;
 
     bool extendParent  = true;
     bool endParent     = false;

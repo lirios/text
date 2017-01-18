@@ -290,16 +290,11 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
             kwSuffix = xml.readElementText();
         }
         if(xml.name() == "keyword") {
-            if(result->context->type != LanguageContext::Container)
-                result->context->init(LanguageContext::Container, contextAttributes);
-
-            auto inc = QSharedPointer<LanguageContextReference>(new LanguageContextReference);
-            inc->context->init(LanguageContext::Keyword, contextAttributes);
-            applyStyleToContext(inc, styleId);
+            if(result->context->type != LanguageContext::Keyword)
+                result->context->init(LanguageContext::Keyword, contextAttributes);
 
             auto options = parseRegexOptions(xml, langId);
-            inc->context->keyword.keyword = resolveRegex(kwPrefix + xml.readElementText() + kwSuffix, options, langId);
-            result->context->container.includes.append(inc);
+            result->context->keyword.keywords += resolveRegex(kwPrefix + xml.readElementText() + kwSuffix, options, langId);
         }
         if(xml.name() == "include") {
             xml.readNext();

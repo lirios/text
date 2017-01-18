@@ -156,10 +156,11 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
             QStringRef allowedText = QStringRef(&text);
             if(!context->keyword.extendParent && containerEndMatch.hasMatch())
                 allowedText = allowedText.left(containerEndMatch.capturedStart());
-            QRegularExpression keyword = context->keyword.keyword;
-            QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
-            if(kwMatch.hasMatch())
-                matches.append({kwMatch, extendedContainer[i]});
+            for (QRegularExpression keyword : context->keyword.keywords) {
+                QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
+                if(kwMatch.hasMatch())
+                    matches.append({kwMatch, extendedContainer[i]});
+            }
             break;
         }
         case LanguageContext::Simple: {
