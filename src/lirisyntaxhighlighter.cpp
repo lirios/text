@@ -133,79 +133,14 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
                                                              HighlightData::ContainerInfo &currentContainerInfo,
                                                              HighlightData *stateData) {
     auto currentContainer = currentContainerInfo.containerRef->context->container;
-    QList<Match> matches;
     QRegularExpressionMatch containerEndMatch;
     if(currentContainerInfo.endRegex.pattern() != "")
         containerEndMatch = currentContainerInfo.endRegex.match(text, offset);
     if(!containerEndMatch.hasMatch() && currentContainer.endAtLineEnd)
         containerEndMatch = QRegularExpression("$").match(text, offset);
 
-    auto extendedContainer = currentContainer.includes;
-    for (int i = 0; i < extendedContainer.length(); ++i) {
-        QSharedPointer<LanguageContext> context = extendedContainer[i]->context;
-        if(!context)
-            continue;
-
-        switch (context->type) {
-        case LanguageContext::Keyword: {
-            if(context->keyword.firstLineOnly && currentBlock().position() != 0)
-                break;
-            if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
-                break;
-
-            QStringRef allowedText = QStringRef(&text);
-            if(!context->keyword.extendParent && containerEndMatch.hasMatch())
-                allowedText = allowedText.left(containerEndMatch.capturedStart());
-            for (QRegularExpression keyword : context->keyword.keywords) {
-                QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
-                if(kwMatch.hasMatch())
-                    matches.append({kwMatch, extendedContainer[i]});
-            }
-            break;
-        }
-        case LanguageContext::Simple: {
-            if(context->simple.firstLineOnly && currentBlock().position() != 0)
-                break;
-            if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
-                break;
-
-            QStringRef allowedText = QStringRef(&text);
-            if(!context->simple.extendParent && containerEndMatch.hasMatch())
-                allowedText = allowedText.left(containerEndMatch.capturedStart());
-            QRegularExpressionMatch match = context->simple.match.match(allowedText, offset);
-            if(match.hasMatch())
-                matches.append({match, extendedContainer[i]});
-            break;
-        }
-        case LanguageContext::Container: {
-            if(context->container.firstLineOnly && currentBlock().position() != 0)
-                break;
-            if(currentContainerInfo.forbiddenContexts.contains(extendedContainer[i]))
-                break;
-
-            if(context->container.includesOnly) {
-                for (int incIdx = 0; incIdx < context->container.includes.length(); ++incIdx)
-                    extendedContainer.insert(i + incIdx + 1, context->container.includes[incIdx]);
-            } else {
-                if(!context->container.start.isValid())
-                    qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
-                QStringRef allowedText = QStringRef(&text);
-                if(!context->container.extendParent && containerEndMatch.hasMatch())
-                    allowedText = allowedText.left(containerEndMatch.capturedStart());
-                QRegularExpressionMatch startMatch = context->container.start.match(allowedText, offset);
-                if(startMatch.hasMatch())
-                    matches.append({startMatch, extendedContainer[i]});
-            }
-            break;
-        }
-        }
-    }
-
-    Match bestMatch;
-    for (Match m : matches) {
-        if(m < bestMatch)
-            bestMatch = m;
-    }
+    Match bestMatch = findMatch(text, offset, containerEndMatch.hasMatch() ? containerEndMatch.capturedStart() : text.length(),
+                                currentContainerInfo.containerRef, currentContainerInfo);
 
     end = offset;
     if(!bestMatch.match.hasMatch()) {
@@ -317,7 +252,74 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(int &end, const QSt
     return highlightPart(end, text, end, currentContainerInfo, stateData);
 }
 
-bool LiriSyntaxHighlighter::Match::operator <(const LiriSyntaxHighlighter::Match &other) {
+LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &text, int offset, int potentialEnd,
+                                                              QSharedPointer<LanguageContextReference> contextRef,
+                                                              HighlightData::ContainerInfo &currentContainerInfo, bool rootContext) {
+    QSharedPointer<LanguageContext> context = contextRef->context;
+
+    switch (context->type) {
+    case LanguageContext::Keyword: {
+        if(context->keyword.firstLineOnly && currentBlock().position() != 0)
+            break;
+        if(currentContainerInfo.forbiddenContexts.contains(contextRef))
+            break;
+
+        QStringRef allowedText = QStringRef(&text);
+        if(!context->keyword.extendParent)
+            allowedText = allowedText.left(potentialEnd);
+        Match bestMatch;
+        for (QRegularExpression keyword : context->keyword.keywords) {
+            QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
+            if(kwMatch.hasMatch()) {
+                Match match = {kwMatch, contextRef};
+                if(match < bestMatch)
+                    bestMatch = match;
+            }
+        }
+        return bestMatch;
+    }
+    case LanguageContext::Simple: {
+        if(context->simple.firstLineOnly && currentBlock().position() != 0)
+            break;
+        if(currentContainerInfo.forbiddenContexts.contains(contextRef))
+            break;
+
+        QStringRef allowedText = QStringRef(&text);
+        if(!context->simple.extendParent)
+            allowedText = allowedText.left(potentialEnd);
+        QRegularExpressionMatch match = context->simple.match.match(allowedText, offset);
+        return {match, contextRef};
+    }
+    case LanguageContext::Container: {
+        if(context->container.firstLineOnly && currentBlock().position() != 0)
+            break;
+        if(currentContainerInfo.forbiddenContexts.contains(contextRef))
+            break;
+
+        if(context->container.includesOnly || rootContext) {
+            Match bestMatch;
+            for (auto inc : context->container.includes) {
+                Match match = findMatch(text, offset, potentialEnd, inc, currentContainerInfo, false);
+                if(match < bestMatch)
+                    bestMatch = match;
+            }
+            return bestMatch;
+        } else {
+            if(!context->container.start.isValid())
+                qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
+            QStringRef allowedText = QStringRef(&text);
+            if(!context->container.extendParent)
+                allowedText = allowedText.left(potentialEnd);
+            QRegularExpressionMatch startMatch = context->container.start.match(allowedText, offset);
+            return {startMatch, contextRef};
+        }
+    }
+    }
+
+    return {QRegularExpressionMatch(), QSharedPointer<LanguageContextReference>()};
+}
+
+bool LiriSyntaxHighlighter::Match::operator <(const Match &other) {
     if(!this->match.hasMatch())
         return false;
     if(!other.match.hasMatch())

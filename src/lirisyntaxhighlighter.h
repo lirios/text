@@ -55,6 +55,10 @@ protected:
     QRegularExpressionMatch highlightPart(int &end, const QString &text, int offset,
                                           HighlightData::ContainerInfo &currentContainerInfo, HighlightData *stateData);
 
+    Match findMatch(const QString &text, int offset, int potentialEnd,
+                    QSharedPointer<LanguageContextReference> contextRef,
+                    HighlightData::ContainerInfo &currentContainerInfo, bool rootContext = true);
+
     QSharedPointer<LanguageContextReference> m_lang;
     QSharedPointer<LanguageDefaultStyles> m_defStyles;
     QHash<QString, QString> m_styleMap;
