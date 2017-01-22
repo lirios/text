@@ -197,7 +197,7 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(const QString &text
             offset = containerEndMatch.capturedEnd();
             return containerEndMatch;
         }
-    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() < bestMatch.match.capturedStart()) {
+    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() <= bestMatch.match.capturedStart()) {
         offset = containerEndMatch.capturedEnd();
         return containerEndMatch;
     }
