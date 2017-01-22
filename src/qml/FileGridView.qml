@@ -66,7 +66,7 @@ Flickable {
                         anchors.margins: dp(8)
                         anchors.rightMargin: dp(4)
                         clip: true
-                        font.family: "Roboto"
+                        font.family: defaultFont.family
                         font.pixelSize: dp(13)
                         font.weight: Font.Medium
                         textFormat: Text.RichText
