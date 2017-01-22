@@ -44,7 +44,6 @@ Flickable {
         columns: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing))
         width: columns * (cardWidth+spacing)
         anchors.horizontalCenter: parent.horizontalCenter
-        //height: childrenRect.height
 
         Repeater {
             id: fileGridContents

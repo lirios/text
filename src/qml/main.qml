@@ -31,6 +31,9 @@ FluidWindow {
     minimumWidth: 384
     minimumHeight: 256
 
+    width: 960
+    height: 640
+
     initialPage: RecentFilesPage { }
 
     Material.primary: Material.Purple
