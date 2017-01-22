@@ -18,18 +18,21 @@
  */
 
 import QtQuick 2.5
-import Material 0.3
+import Fluid.Controls 1.0
+import Fluid.Material 1.0
+import QtQuick.Controls 2.0 as Controls
+import QtQuick.Controls.Material 2.0
 import QtQuick.Dialogs 1.2
 
 Page {
     id: page
 
-    actionBar.title: qsTr("Recent Files")
+    appBar.title: qsTr("Recent Files")
     actions: [
         Action {
             id: openFile
             iconName: "file/folder_open"
-            name: qsTr("Open")
+            tooltip: qsTr("Open")
             onTriggered: openFileDialog.open()
         }
     ]
@@ -58,12 +61,9 @@ Page {
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: dp(24)
+        anchors.margins: 24
 
         iconName: "content/create"
-    }
-
-    Scrollbar {
-        flickableItem: recentFilesView
+        Material.background: Material.accent
     }
 }

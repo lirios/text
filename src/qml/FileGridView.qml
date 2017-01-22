@@ -18,39 +18,44 @@
  */
 
 import QtQuick 2.5
-import Material 0.3
+import Fluid.Controls 1.0
+import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
 Flickable {
     id: rootFlickable
 
-    property alias model: fileGrid.model
-    property int margins: dp(24)
-    property int spacing: dp(8)
-    property int cardWidth: dp(240)
-    property int cardHeight: dp(194)
+    property alias model: fileGridContents.model
+    property int margins: 24
+    property int spacing: 8
+    property int cardWidth: 240
+    property int cardHeight: 194
 
     anchors.fill: parent
     contentHeight: fileGrid.height + spacing
 
-    GridView {
+    ScrollBar.vertical: ScrollBar { }
+
+    GridLayout {
         id: fileGrid
 
         y: spacing/2
-        width: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing)) * (cardWidth+spacing)
+        columns: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing))
+        width: columns * (cardWidth+spacing)
         anchors.horizontalCenter: parent.horizontalCenter
-        height: childrenRect.height
-        cellWidth: cardWidth + spacing
-        cellHeight: cardHeight + spacing
+        //height: childrenRect.height
 
-        delegate: Item {
-            width: fileGrid.cellWidth
-            height: fileGrid.cellHeight
+        Repeater {
+            id: fileGridContents
 
-            Card {
+            delegate: Card {
                 id: fileCard
-                anchors.fill: parent
-                anchors.margins: spacing / 2
+
+                contentWidth: cardWidth
+                contentHeight: cardHeight
+                Layout.preferredWidth: cardWidth + spacing
+                Layout.preferredHeight: cardHeight + spacing
 
                 Rectangle {
                     color: "white"
@@ -63,11 +68,11 @@ Flickable {
                     Text {
                         id: filePreview
                         anchors.fill: parent
-                        anchors.margins: dp(8)
-                        anchors.rightMargin: dp(4)
+                        anchors.margins: 8
+                        anchors.rightMargin: 4
                         clip: true
                         font.family: defaultFont.family
-                        font.pixelSize: dp(13)
+                        font.pixelSize: 13
                         font.weight: Font.Medium
                         textFormat: Text.RichText
                         text: previewText
@@ -75,7 +80,7 @@ Flickable {
 
                     LinearGradient {
                         anchors.fill: parent
-                        start: Qt.point(parent.width - dp(28), 0)
+                        start: Qt.point(parent.width - 28, 0)
                         end: Qt.point(filePreview.width + filePreview.x, 0)
                         gradient: Gradient {
                             GradientStop {position: 0.0; color: "transparent"}
@@ -90,7 +95,7 @@ Flickable {
                     opacity: 0.7
                     anchors.bottom: parent.bottom
                     width: parent.width
-                    height: dp(72)
+                    height: 72
                 }
 
                 Label {
@@ -99,13 +104,13 @@ Flickable {
                     anchors.top: nameBackground.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: dp(8)
-                    anchors.leftMargin: dp(16)
-                    anchors.rightMargin: dp(16)
+                    anchors.topMargin: 8
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
 
                     text: name
                     color: "white"
-                    font.pixelSize: dp(20)
+                    font.pixelSize: 20
                     font.weight: Font.Medium
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
@@ -114,37 +119,37 @@ Flickable {
                 Label {
                     id: docUrl
 
-                    property int symbolCount: (parent.width - dp(16)) / dp(8)
+                    property int symbolCount: (parent.width - 16) / 8
 
                     anchors.top: docName.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: dp(4)
-                    anchors.leftMargin: dp(16)
-                    anchors.rightMargin: dp(16)
+                    anchors.topMargin: 4
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
 
                     text: history.prettifyPath(fileUrl)
                     color: "white"
-                    font.pixelSize: dp(16)
+                    font.pixelSize: 16
                     font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideMiddle
                 }
 
-                Ink {
-                    id: animation
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    //                Ink {
+    //                    id: animation
+    //                    anchors.fill: parent
+    //                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-                    onClicked: {
-                        if(mouse.button === Qt.LeftButton) {
-                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
-                        } else {
-                            // Rightclicking deletes item for debugging
-                            //history.removeFile(fileUrl)
-                        }
-                    }
-                }
+    //                    onClicked: {
+    //                        if(mouse.button === Qt.LeftButton) {
+    //                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
+    //                        } else {
+    //                            // Rightclicking deletes item for debugging
+    //                            //history.removeFile(fileUrl)
+    //                        }
+    //                    }
+    //                }
             }
         }
     }

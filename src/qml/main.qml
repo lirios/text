@@ -18,23 +18,23 @@
  */
 
 import QtQuick 2.5
-import Material 0.3
+import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
+import Fluid.Controls 1.0
 
-ApplicationWindow {
+FluidWindow {
     id: app
 
     visible: true
     title: qsTr("Liri Text")
 
-    minimumWidth: dp(384)
-    minimumHeight: dp(256)
+    minimumWidth: 384
+    minimumHeight: 256
 
     initialPage: RecentFilesPage { }
 
-    theme {
-        primaryColor: "purple"
-        accentColor: "deepOrange"
-    }
+    Material.primary: Material.Purple
+    Material.accent: Material.DeepOrange
 
     Component.onCompleted: {
         console.log("app completed")
