@@ -26,6 +26,7 @@
 #include <QSortFilterProxyModel>
 #include <QCommandLineParser>
 #include <QFontDatabase>
+#include <QDir>
 #include <QDebug>
 
 #include "material/src/plugin.h"
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("newDoc", nf);
     if(args.length() > 0)
-        engine.rootContext()->setContextProperty("givenPath", QUrl::fromLocalFile(args[0]));
+        engine.rootContext()->setContextProperty("givenPath", QUrl::fromUserInput(args[0], QDir::currentPath()));
     else
         engine.rootContext()->setContextProperty("givenPath", nullptr);
 
