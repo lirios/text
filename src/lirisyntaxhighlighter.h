@@ -48,13 +48,21 @@ protected:
 
     void highlightBlock(const QString &text);
 
-    // Returns container length
-    int highlightTillContainerEnd(const QString &text, int offset, HighlightData::ContainerInfo containerInfo,
-                                  HighlightData *stateData, int startLength = 0);
+    /*
+     * This function is responsible for setting text format inside container and for maintaining stateData
+     * It calls highlightPart to highlight container internals
+     * Returns match for container end or an empty match if it wasn't found
+     * offset is reset to the end of highlighted region
+     */
+    QRegularExpressionMatch highlightTillContainerEnd(const QString &text, int &offset, HighlightData::ContainerInfo containerInfo,
+                                                      HighlightData *stateData, int startLength = 0);
 
-    // Returns match for context end or empty match if it wasn't found
-    // end is set to ending position of the context or to text.length + 1 if context doesn't end in current block
-    QRegularExpressionMatch highlightPart(int &end, const QString &text, int offset,
+    /*
+     * Highlights container internals and finds it's end. Doesn't change stateData.
+     * Returns match for container end or an empty match if it wasn't found
+     * offset is reset to the end of highlighted region
+     */
+    QRegularExpressionMatch highlightPart(const QString &text, int &offset,
                                           HighlightData::ContainerInfo &currentContainerInfo, HighlightData *stateData);
 
     Match findMatch(const QString &text, int offset, int potentialEnd,
