@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick sql
+QT += qml quick quickcontrols2 sql
 CONFIG += c++11
 
 SOURCES += \
@@ -20,10 +20,7 @@ SOURCES += \
     src/languagecontextreference.cpp
 
 RESOURCES += \
-    src/qml.qrc \
-    icons/icons.qrc
-
-include(material/material.pri)
+    src/qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
