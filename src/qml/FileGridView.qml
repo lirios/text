@@ -19,6 +19,7 @@
 
 import QtQuick 2.5
 import Fluid.Controls 1.0
+import Fluid.Material 1.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
@@ -135,20 +136,17 @@ Flickable {
                     elide: Text.ElideMiddle
                 }
 
-    //                Ink {
-    //                    id: animation
-    //                    anchors.fill: parent
-    //                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                Ripple {
+                    id: animation
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-    //                    onClicked: {
-    //                        if(mouse.button === Qt.LeftButton) {
-    //                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
-    //                        } else {
-    //                            // Rightclicking deletes item for debugging
-    //                            //history.removeFile(fileUrl)
-    //                        }
-    //                    }
-    //                }
+                    onClicked: {
+                        if(mouse.button === Qt.LeftButton) {
+                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
+                        }
+                    }
+                }
             }
         }
     }
