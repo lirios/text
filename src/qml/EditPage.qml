@@ -18,12 +18,12 @@
  */
 
 import QtQuick 2.5
-import Fluid.Controls 1.0
-import QtQuick.Controls 2.0 as Controls
+import Fluid.Controls 1.0 as FluidControls
+import QtQuick.Controls 2.0
 import QtQuick.Dialogs 1.2 as Dialogs
 import io.liri.text 1.0
 
-Page {
+FluidControls.Page {
     id: page
 
     property url documentUrl
@@ -71,7 +71,7 @@ Page {
     appBar.maxActionCount: 2
 
     actions: [
-        Action {
+        FluidControls.Action {
             id: saveAction
             iconName: "content/save"
             tooltip: qsTr("Save")
@@ -79,14 +79,14 @@ Page {
             onTriggered: save()
         },
 
-        Action {
+        FluidControls.Action {
             id: saveAsAction
             text: qsTr("Save As")
             shortcut: "Ctrl+Shift+S"
             onTriggered: saveAs()
         },
 
-        Action {
+        FluidControls.Action {
             id: closeAction
             text: qsTr("Close")
             shortcut: "Ctrl+W"
@@ -182,7 +182,7 @@ Page {
         }
     }
 
-    Dialog {
+    FluidControls.Dialog {
         id: exitDialog
         title: qsTr("Save changes before closing?")
         text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
@@ -210,7 +210,7 @@ Page {
         }
     }
 
-    Dialog {
+    FluidControls.Dialog {
         id: askForReloadDialog
 
         title: qsTr("Reload file content?")
@@ -230,15 +230,20 @@ Page {
         }
     }
 
-    Controls.TextArea {
-        id: mainArea
-
+    Flickable {
+        id: flickable
         anchors.fill: parent
-        textMargin: 8
-        focus: true
-        font: defaultFont
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        text: document.text
+
+        TextArea.flickable: TextArea {
+            id: mainArea
+            textMargin: 8
+            focus: true
+            font: defaultFont
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            text: document.text
+        }
+
+        ScrollBar.vertical: ScrollBar { }
     }
 
     DocumentHandler {
@@ -257,7 +262,7 @@ Page {
         }
     }
 
-    Dialog {
+    FluidControls.Dialog {
         id: errDiag
         title: qsTr("File operation error")
 
