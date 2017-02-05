@@ -56,7 +56,7 @@ public:
 signals:
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList previewLines);
+    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview);
 
 protected:
     QHash<int, QByteArray> roleNames() const;
@@ -68,7 +68,7 @@ private:
         QString name;
         QUrl url;
         QDateTime viewTime;
-        QStringList preview;
+        QString preview;
         int cursorPosition;
     };
     QList<FileData> history;
