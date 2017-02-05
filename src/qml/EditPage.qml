@@ -18,9 +18,8 @@
  */
 
 import QtQuick 2.5
-import Material 0.3
-import Material.ListItems 0.1 as ListItems
-import QtQuick.Controls 1.4 as Controls
+import Fluid.Controls 1.0
+import QtQuick.Controls 2.0 as Controls
 import QtQuick.Dialogs 1.2 as Dialogs
 import io.liri.text 1.0
 
@@ -68,26 +67,30 @@ Page {
         }
     }
 
-    actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
-    actionBar.maxActionCount: 2
+    title: anonymous ? qsTr("New Document") : document.documentTitle
+    appBar.maxActionCount: 2
+
     actions: [
         Action {
             id: saveAction
             iconName: "content/save"
-            name: qsTr("Save")
+            tooltip: qsTr("Save")
+            shortcut: "Ctrl+S"
             onTriggered: save()
         },
 
         Action {
             id: saveAsAction
-            name: qsTr("Save As")
+            text: qsTr("Save As")
+            shortcut: "Ctrl+Shift+S"
             onTriggered: saveAs()
         },
 
         Action {
             id: closeAction
-            name: qsTr("Close")
-            onTriggered: page.backAction.trigger()
+            text: qsTr("Close")
+            shortcut: "Ctrl+W"
+            onTriggered: page.pop()
         }
     ]
 
@@ -102,7 +105,7 @@ Page {
                 ioSuccess.disconnect(forcedClose)
                 ioFailure.disconnect(disc)
             })
-            saveAction.trigger()
+            save()
         }
 
         function onRejected() {
@@ -121,12 +124,11 @@ Page {
 
         if(page.document.modified) {
             event.accepted = true
-            if(exitDialog.showing)
-                exitDialog.close()
+            exitDialog.close()
             exitDialog.accepted.connect(onAccepted)
             exitDialog.rejected.connect(onRejected)
             exitDialog.closed.connect(onClosed)
-            exitDialog.show()
+            exitDialog.open()
         } else {
             touchFileOnCursorPosition()
         }
@@ -149,7 +151,7 @@ Page {
                         ioSuccess.disconnect(forcedClose)
                         ioFailure.disconnect(disc)
                     })
-                    saveAction.trigger()
+                    save()
                 }
 
                 function onRejected() {
@@ -168,12 +170,11 @@ Page {
 
                 if(page.document.modified) {
                     close.accepted = false
-                    if(exitDialog.showing)
-                        exitDialog.close()
+                    exitDialog.close()
                     exitDialog.accepted.connect(onAccepted)
                     exitDialog.rejected.connect(onRejected)
                     exitDialog.closed.connect(onClosed)
-                    exitDialog.show()
+                    exitDialog.open()
                 } else {
                     touchFileOnCursorPosition()
                 }
@@ -181,14 +182,14 @@ Page {
         }
     }
 
-    ThreeButtonDialog {
+    Dialog {
         id: exitDialog
         title: qsTr("Save changes before closing?")
         text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
 
-        positiveButtonText: qsTr("YES")
-        negativeButtonText: qsTr("NO")
-        cancelButtonText: qsTr("CANCEL")
+        positiveButtonText: qsTr("Yes")
+        negativeButtonText: qsTr("No")
+        //cancelButtonText: qsTr("Cancel")
     }
 
     Dialogs.FileDialog {
@@ -209,29 +210,14 @@ Page {
         }
     }
 
-    Shortcut {
-        sequence: "Ctrl+S"
-        onActivated: saveAction.trigger()
-    }
-
-    Shortcut {
-        sequence: "Ctrl+Shift+S"
-        onActivated: saveAsAction.trigger()
-    }
-
-    Shortcut {
-        sequence: "Ctrl+W"
-        onActivated: closeAction.trigger()
-    }
-
     Dialog {
         id: askForReloadDialog
 
         title: qsTr("Reload file content?")
         text: qsTr("The file was changed from outside. Do you wish to reload its content?")
 
-        positiveButtonText: qsTr("RELOAD")
-        negativeButtonText: qsTr("IGNORE")
+        positiveButtonText: qsTr("Reload")
+        negativeButtonText: qsTr("Ignore")
 
         onAccepted: {
             var cp = mainArea.cursorPosition
@@ -248,12 +234,9 @@ Page {
         id: mainArea
 
         anchors.fill: parent
-        textMargin: dp(8)
+        textMargin: 8
         focus: true
         font: defaultFont
-//        font.family: "Roboto"
-//        font.pixelSize: dp(16)
-//        font.weight: Font.Normal
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: document.text
     }
@@ -264,13 +247,13 @@ Page {
 
         onFileChangedOnDisk: {
             console.log("file changed on disk")
-            askForReloadDialog.show()
+            askForReloadDialog.open()
         }
 
         onError: {
             //app.showError(qsTr("File operation error"), description)
             errDiag.text = description
-            errDiag.show()
+            errDiag.open()
         }
     }
 
@@ -278,7 +261,7 @@ Page {
         id: errDiag
         title: qsTr("File operation error")
 
-        positiveButtonText: qsTr("OK")
+        positiveButtonText: qsTr("Ok")
         negativeButton.visible: false
     }
 }
