@@ -17,7 +17,7 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
+import QtQuick 2.6
 import Fluid.Controls 1.0
 import Fluid.Material 1.0
 import QtQuick.Controls 2.0
@@ -27,23 +27,21 @@ Flickable {
     id: rootFlickable
 
     property alias model: fileGridContents.model
-    property int margins: 24
     property int cardWidth: 240
     property int cardHeight: 122 + 68
 
     anchors.fill: parent
-    contentHeight: fileGrid.height + 2*margins
+    contentHeight: fileGrid.height
 
     ScrollBar.vertical: ScrollBar { }
 
     Grid {
         id: fileGrid
 
-        y: margins
-        columnSpacing: 4
-        rowSpacing: 4
-        columns: ~~((parent.width - 2*margins) / (cardWidth + columnSpacing))
-        width: columns * (cardWidth + columnSpacing)
+        padding: 24
+        spacing: 4
+        columns: ~~((parent.width - 2*padding + spacing) / (cardWidth + spacing))
+        width: columns * (cardWidth + spacing) - spacing + 2*padding
         anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
