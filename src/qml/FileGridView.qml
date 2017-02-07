@@ -29,9 +29,9 @@ Flickable {
 
     property alias model: fileGridContents.model
     property int margins: 24
-    property int spacing: 8
+    property int spacing: 4
     property int cardWidth: 240
-    property int cardHeight: 194
+    property int cardHeight: 122 + 68
 
     anchors.fill: parent
     contentHeight: fileGrid.height + spacing
@@ -60,10 +60,7 @@ Flickable {
                 Rectangle {
                     color: "white"
                     clip: true
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: nameBackground.top
+                    anchors.fill: parent
 
                     Text {
                         id: filePreview
@@ -92,10 +89,10 @@ Flickable {
                 Rectangle {
                     id: nameBackground
                     color: "black"
-                    opacity: 0.7
+                    opacity: 0.5
                     anchors.bottom: parent.bottom
                     width: parent.width
-                    height: 72
+                    height: 68
                 }
 
                 Label {
@@ -104,35 +101,31 @@ Flickable {
                     anchors.top: nameBackground.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: 8
+                    anchors.topMargin: 16
                     anchors.leftMargin: 16
                     anchors.rightMargin: 16
 
                     text: name
                     color: "white"
-                    font.pixelSize: 20
+                    font.pixelSize: 16
                     font.weight: Font.Medium
-                    horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                 }
 
                 Label {
                     id: docUrl
 
-                    property int symbolCount: (parent.width - 16) / 8
-
-                    anchors.top: docName.bottom
+                    anchors.bottom: nameBackground.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: 4
+                    anchors.bottomMargin: 16
                     anchors.leftMargin: 16
                     anchors.rightMargin: 16
 
                     text: history.prettifyPath(fileUrl)
                     color: "white"
-                    font.pixelSize: 16
+                    font.pixelSize: 12
                     font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideMiddle
                 }
 
