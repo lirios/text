@@ -21,7 +21,6 @@ import QtQuick 2.5
 import Fluid.Controls 1.0
 import Fluid.Material 1.0
 import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
 Flickable {
@@ -29,21 +28,22 @@ Flickable {
 
     property alias model: fileGridContents.model
     property int margins: 24
-    property int spacing: 4
     property int cardWidth: 240
     property int cardHeight: 122 + 68
 
     anchors.fill: parent
-    contentHeight: fileGrid.height + spacing
+    contentHeight: fileGrid.height + 2*margins
 
     ScrollBar.vertical: ScrollBar { }
 
-    GridLayout {
+    Grid {
         id: fileGrid
 
-        y: spacing/2
-        columns: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing))
-        width: columns * (cardWidth+spacing)
+        y: margins
+        columnSpacing: 4
+        rowSpacing: 4
+        columns: ~~((parent.width - 2*margins) / (cardWidth + columnSpacing))
+        width: columns * (cardWidth + columnSpacing)
         anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
@@ -54,8 +54,6 @@ Flickable {
 
                 contentWidth: cardWidth
                 contentHeight: cardHeight
-                Layout.preferredWidth: cardWidth + spacing
-                Layout.preferredHeight: cardHeight + spacing
 
                 Rectangle {
                     color: "white"
