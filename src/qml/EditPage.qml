@@ -240,6 +240,7 @@ FluidControls.Page {
             id: mainArea
             textMargin: 8
             focus: true
+            selectByMouse: true
             font: defaultFont
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: document.text
