@@ -19,7 +19,7 @@
 
 import QtQuick 2.5
 import Fluid.Controls 1.0 as FluidControls
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2 as Dialogs
 import io.liri.text 1.0
 
@@ -238,15 +238,69 @@ FluidControls.Page {
 
         TextArea.flickable: TextArea {
             id: mainArea
-            textMargin: 8
             focus: true
+            persistentSelection: true
             selectByMouse: true
+            textMargin: 8
             font: defaultFont
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: document.text
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+                onClicked: contextMenu.openAt(mouse.x, mouse.y)
+            }
         }
 
         ScrollBar.vertical: ScrollBar { }
+    }
+
+    Menu {
+        id: contextMenu
+
+        function openAt(x, y) {
+            contextMenu.x = x
+            contextMenu.y = y
+            contextMenu.open()
+        }
+
+        MenuItem {
+            text: qsTr("Copy")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.copy()
+        }
+        MenuItem {
+            text: qsTr("Cut")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.cut()
+        }
+        MenuItem {
+            text: qsTr("Paste")
+            enabled: mainArea.canPaste
+            onTriggered: mainArea.paste()
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: qsTr("Select All")
+            onTriggered: mainArea.selectAll()
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: qsTr("Undo")
+            enabled: mainArea.canUndo
+            onTriggered: mainArea.undo()
+        }
+        MenuItem {
+            text: qsTr("Redo")
+            enabled: mainArea.canRedo
+            onTriggered: mainArea.redo()
+        }
     }
 
     DocumentHandler {
