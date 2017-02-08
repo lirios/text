@@ -64,9 +64,7 @@ Flickable {
                         anchors.margins: 8
                         anchors.rightMargin: 4
                         clip: true
-                        font.family: defaultFont.family
                         font.pixelSize: 13
-                        font.weight: Font.Medium
                         textFormat: Text.RichText
                         text: previewText
                     }

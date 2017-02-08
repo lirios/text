@@ -115,7 +115,7 @@ void DocumentHandler::setDocumentTitle(QString title) {
 
 QString DocumentHandler::textFragment(int position, int blockCount) {
     if(m_highlighter) {
-        return m_highlighter->highlightedFragment(position, blockCount);
+        return m_highlighter->highlightedFragment(position, blockCount, m_document->defaultFont());
     } else {
         QTextCursor cursor(m_document->findBlock(position));
         cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, blockCount / 2);
