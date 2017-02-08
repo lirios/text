@@ -68,7 +68,7 @@ FluidControls.Page {
     }
 
     title: anonymous ? qsTr("New Document") : document.documentTitle
-    appBar.maxActionCount: 2
+    appBar.maxActionCount: 1
 
     actions: [
         FluidControls.Action {
@@ -81,6 +81,7 @@ FluidControls.Page {
 
         FluidControls.Action {
             id: saveAsAction
+            iconName: "content/save"
             text: qsTr("Save As")
             shortcut: "Ctrl+Shift+S"
             onTriggered: saveAs()
@@ -88,6 +89,7 @@ FluidControls.Page {
 
         FluidControls.Action {
             id: closeAction
+            iconName: "navigation/close"
             text: qsTr("Close")
             shortcut: "Ctrl+W"
             onTriggered: page.pop()
