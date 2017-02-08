@@ -238,6 +238,7 @@ FluidControls.Page {
 
         TextArea.flickable: TextArea {
             id: mainArea
+
             focus: true
             persistentSelection: true
             selectByMouse: true
@@ -245,6 +246,15 @@ FluidControls.Page {
             font: defaultFont
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: document.text
+
+            Keys.onPressed: {
+                if(event.key === Qt.Key_PageUp)
+                    // Scrolls by approximately page height
+                    flickable.flick(0,  60*Math.sqrt(flickable.height))
+                if(event.key === Qt.Key_PageDown)
+                    flickable.flick(0, -60*Math.sqrt(flickable.height))
+                // TODO: Move cursor
+            }
 
             MouseArea {
                 anchors.fill: parent
