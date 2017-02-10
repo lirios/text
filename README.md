@@ -6,13 +6,15 @@ Liri Text
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
 [![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/develop)
 
-Liri Text is a cross-platform text editor made in accordance with Material Design.  
+Liri Text is a cross-platform text editor made in accordance with Material Design.
 
 ## Dependencies
-* Qt >= 5.5.0 with at least the following modules is required:
+* Qt >= 5.8.0 with at least the following modules is required:
  * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
  * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
- * [qtquickcontrols](http://code.qt.io/cgit/qt/qtquickcontrols.git)
+ * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
+* [Fluid](https://github.com/lirios/fluid) from develop branch
+* [SQLite](https://www.sqlite.org/) >= 3.7.15
 
 ## Build
   ```sh
