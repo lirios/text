@@ -111,17 +111,17 @@ FluidControls.Page {
         }
 
         function onRejected() {
-            forcedClose()
+            disconnectAll()
         }
 
-        function onClosed() {
-            disconnectAll()
+        function onRefused() {
+            forcedClose()
         }
 
         function disconnectAll() {
             exitDialog.accepted.disconnect(onAccepted)
             exitDialog.rejected.disconnect(onRejected)
-            exitDialog.closed.disconnect(onClosed)
+            exitDialog.refused.disconnect(onRefused)
         }
 
         if(page.document.modified) {
@@ -129,7 +129,7 @@ FluidControls.Page {
             exitDialog.close()
             exitDialog.accepted.connect(onAccepted)
             exitDialog.rejected.connect(onRejected)
-            exitDialog.closed.connect(onClosed)
+            exitDialog.refused.connect(onRefused)
             exitDialog.open()
         } else {
             touchFileOnCursorPosition()
@@ -157,17 +157,17 @@ FluidControls.Page {
                 }
 
                 function onRejected() {
-                    forcedClose()
+                    disconnectAll()
                 }
 
-                function onClosed() {
-                    disconnectAll()
+                function onRefused() {
+                    forcedClose()
                 }
 
                 function disconnectAll() {
                     exitDialog.accepted.disconnect(onAccepted)
                     exitDialog.rejected.disconnect(onRejected)
-                    exitDialog.closed.disconnect(onClosed)
+                    exitDialog.refused.disconnect(onRefused)
                 }
 
                 if(page.document.modified) {
@@ -175,7 +175,7 @@ FluidControls.Page {
                     exitDialog.close()
                     exitDialog.accepted.connect(onAccepted)
                     exitDialog.rejected.connect(onRejected)
-                    exitDialog.closed.connect(onClosed)
+                    exitDialog.refused.connect(onRefused)
                     exitDialog.open()
                 } else {
                     touchFileOnCursorPosition()
@@ -184,14 +184,30 @@ FluidControls.Page {
         }
     }
 
-    FluidControls.Dialog {
+    Dialog {
         id: exitDialog
-        title: qsTr("Save changes before closing?")
-        text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+        signal refused
 
-        positiveButtonText: qsTr("Yes")
-        negativeButtonText: qsTr("No")
-        //cancelButtonText: qsTr("Cancel")
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        title: qsTr("Save changes before closing?")
+
+        Label {
+            text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+        }
+
+        footer: DialogButtonBox {
+            standardButtons: DialogButtonBox.Yes | DialogButtonBox.No | DialogButtonBox.Cancel
+            onClicked: {
+                if(button === standardButton(DialogButtonBox.Yes))
+                    exitDialog.accept()
+                if(button === standardButton(DialogButtonBox.No))
+                    exitDialog.refused()
+                if(button === standardButton(DialogButtonBox.Cancel))
+                    exitDialog.reject()
+            }
+        }
     }
 
     Dialogs.FileDialog {
@@ -212,14 +228,12 @@ FluidControls.Page {
         }
     }
 
-    FluidControls.Dialog {
+    Dialog {
         id: askForReloadDialog
 
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
         title: qsTr("Reload file content?")
-        text: qsTr("The file was changed from outside. Do you wish to reload its content?")
-
-        positiveButtonText: qsTr("Reload")
-        negativeButtonText: qsTr("Ignore")
 
         onAccepted: {
             var cp = mainArea.cursorPosition
@@ -229,6 +243,25 @@ FluidControls.Page {
                 ioFailure()
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
+        }
+
+        Label {
+            text: qsTr("The file was changed from outside. Do you wish to reload its content?")
+        }
+
+        footer: DialogButtonBox {
+            Button {
+                flat: true
+                text: qsTr("Reload")
+                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+                onClicked: askForReloadDialog.accept()
+            }
+            Button {
+                flat: true
+                text: qsTr("Ignore")
+                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
+                onClicked: askForReloadDialog.reject()
+            }
         }
     }
 
@@ -324,16 +357,22 @@ FluidControls.Page {
 
         onError: {
             //app.showError(qsTr("File operation error"), description)
-            errDiag.text = description
+            errDiag.description = description
             errDiag.open()
         }
     }
 
-    FluidControls.Dialog {
+    Dialog {
         id: errDiag
-        title: qsTr("File operation error")
 
-        positiveButtonText: qsTr("Ok")
-        negativeButton.visible: false
+        property alias description: descLabel.text
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        title: qsTr("File operation error")
+        standardButtons: Dialog.Ok
+        Label {
+            id: descLabel
+        }
     }
 }
