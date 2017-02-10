@@ -17,24 +17,27 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
-import Material 0.3
+import QtQuick 2.8
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
+import Fluid.Controls 1.0 as FluidControls
 
-ApplicationWindow {
+FluidControls.FluidWindow {
     id: app
 
     visible: true
     title: qsTr("Liri Text")
 
-    minimumWidth: dp(384)
-    minimumHeight: dp(256)
+    minimumWidth: 384
+    minimumHeight: 256
+
+    width: 960
+    height: 640
 
     initialPage: RecentFilesPage { }
 
-    theme {
-        primaryColor: "purple"
-        accentColor: "deepOrange"
-    }
+    Material.primary: Material.Purple
+    Material.accent: Material.DeepOrange
 
     Component.onCompleted: {
         console.log("app completed")

@@ -1,3 +1,0 @@
-[submodule "material"]
-	path = material
-	url = git@github.com:papyros/qml-material.git

@@ -17,19 +17,22 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
-import Material 0.3
+import QtQuick 2.8
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.2
+import Fluid.Controls 1.0 as FluidControls
+import Fluid.Material 1.0 as FluidMaterial
 
-Page {
+FluidControls.Page {
     id: page
 
-    actionBar.title: qsTr("Recent Files")
+    appBar.title: qsTr("Recent Files")
     actions: [
-        Action {
+        FluidControls.Action {
             id: openFile
             iconName: "file/folder_open"
-            name: qsTr("Open")
+            tooltip: qsTr("Open")
             onTriggered: openFileDialog.open()
         }
     ]
@@ -51,19 +54,16 @@ Page {
         model: sortedHistory
     }
 
-    ActionButton {
+    FluidMaterial.ActionButton {
         id: newFile
 
         onClicked: pageStack.push(Qt.resolvedUrl("EditPage.qml"), { anonymous: true })
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: dp(24)
+        anchors.margins: 24
 
         iconName: "content/create"
-    }
-
-    Scrollbar {
-        flickableItem: recentFilesView
+        Material.background: Material.accent
     }
 }

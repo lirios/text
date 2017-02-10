@@ -74,7 +74,7 @@ bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, in
     } else if(role == LastViewTimeRole) {
         history[index.row()].viewTime = value.toDateTime();
     } else if(role == PreviewRole) {
-        history[index.row()].preview = value.toStringList();
+        history[index.row()].preview = value.toString();
     } else if(role == CursorPositionRole) {
         history[index.row()].cursorPosition = value.toInt();
     } else {
@@ -153,7 +153,7 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
 }
 
-void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList previewLines) {
+void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview) {
     int fileIndex;
     for(fileIndex = 0; fileIndex < rowCount(); fileIndex++) {
         if(data(index(fileIndex), FileUrlRole).toUrl() == fileUrl) {
@@ -177,7 +177,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
     file.name = name;
     file.url = fileUrl;
     file.viewTime = QDateTime::currentDateTime();
-    file.preview = previewLines;
+    file.preview = preview;
     file.cursorPosition = cursorPosition;
     if(fileIndex >= rowCount()) {
         emit beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -209,7 +209,7 @@ void HistoryManager::loadHistory() {
         file.name = historyStorage->value(NAME_KEY).toString();
         file.url = historyStorage->value(URL_KEY).toUrl();
         file.viewTime = historyStorage->value(LAST_VIEW_KEY).toDateTime();
-        file.preview = historyStorage->value(PREVIEW_KEY).toStringList();
+        file.preview = historyStorage->value(PREVIEW_KEY).toString();
         file.cursorPosition = historyStorage->value(CURSOR_POSITION_KEY).toInt();
         history.append(file);
     }

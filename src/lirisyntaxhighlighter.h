@@ -36,7 +36,7 @@ public:
     void setLanguage(QSharedPointer<LanguageContextReference> lang, const QHash<QString, QString> &styleMap);
     void setDefaultStyles(QSharedPointer<LanguageDefaultStyles> defStyles);
 
-    QString highlightedFragment(int position, int blockCount);
+    QString highlightedFragment(int position, int blockCount, QFont font);
 
 protected:
     struct Match {

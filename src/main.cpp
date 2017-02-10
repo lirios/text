@@ -21,6 +21,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickView>
+#include <QtQuickControls2/QQuickStyle>
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QSortFilterProxyModel>
@@ -29,13 +30,14 @@
 #include <QDir>
 #include <QDebug>
 
-#include "material/src/plugin.h"
 #include "documenthandler.h"
 #include "historymanager.h"
 #include "languagemanager.h"
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Material");
     QGuiApplication app(argc, argv);
 
     // Set app info
@@ -69,11 +71,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<DocumentHandler>("io.liri.text", 1, 0, "DocumentHandler");
 
     QQmlApplicationEngine engine;
-
-    // Material for QtQuick
-    MaterialPlugin material;
-    material.registerTypes("Material");
-    engine.addImportPath("qrc:/");
 
     HistoryManager *history = new HistoryManager();
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();

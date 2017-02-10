@@ -53,7 +53,7 @@ void LiriSyntaxHighlighter::setDefaultStyles(QSharedPointer<LanguageDefaultStyle
         rehighlight();
 }
 
-QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount) {
+QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount, QFont font) {
     QTextCursor cursor(document()->findBlock(position));
     cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, blockCount / 2);
     cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, blockCount);
@@ -63,6 +63,10 @@ QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount)
 
     tempCursor.insertFragment(cursor.selection());
     tempCursor.select(QTextCursor::Document);
+    // Set preview font
+    QTextCharFormat textfmt = tempCursor.charFormat();
+    textfmt.setFontFamily(font.family());
+    tempCursor.setCharFormat(textfmt);
 
     // Apply the formats set by the syntax highlighter
     QTextBlock start = document()->findBlock(cursor.selectionStart());
@@ -80,7 +84,9 @@ QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount)
                 continue;
             tempCursor.setPosition(qMax(start, 0));
             tempCursor.setPosition(qMin(end, endOfDocument), QTextCursor::KeepAnchor);
-            tempCursor.setCharFormat(range.format);
+            textfmt = range.format;
+            textfmt.setFontFamily(font.family());
+            tempCursor.setCharFormat(textfmt);
         }
     }
 
