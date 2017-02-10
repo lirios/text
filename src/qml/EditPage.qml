@@ -17,10 +17,10 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
-import Fluid.Controls 1.0 as FluidControls
+import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2 as Dialogs
+import Fluid.Controls 1.0 as FluidControls
 import io.liri.text 1.0
 
 FluidControls.Page {

@@ -17,11 +17,11 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.6
-import Fluid.Controls 1.0
-import Fluid.Material 1.0
-import QtQuick.Controls 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.0
+import Fluid.Controls 1.0 as FluidControls
+import Fluid.Material 1.0 as FluidMaterial
 
 Flickable {
     id: rootFlickable
@@ -47,7 +47,7 @@ Flickable {
         Repeater {
             id: fileGridContents
 
-            delegate: Card {
+            delegate: FluidControls.Card {
                 id: fileCard
 
                 contentWidth: cardWidth
@@ -123,7 +123,7 @@ Flickable {
                     elide: Text.ElideMiddle
                 }
 
-                Ripple {
+                FluidMaterial.Ripple {
                     id: animation
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
