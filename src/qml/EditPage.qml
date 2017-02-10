@@ -310,6 +310,19 @@ FluidControls.Page {
         }
 
         MenuItem {
+            text: qsTr("Undo")
+            enabled: mainArea.canUndo
+            onTriggered: mainArea.undo()
+        }
+        MenuItem {
+            text: qsTr("Redo")
+            enabled: mainArea.canRedo
+            onTriggered: mainArea.redo()
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
             text: qsTr("Copy")
             enabled: mainArea.selectedText
             onTriggered: mainArea.copy()
@@ -324,25 +337,17 @@ FluidControls.Page {
             enabled: mainArea.canPaste
             onTriggered: mainArea.paste()
         }
+        MenuItem {
+            text: qsTr("Delete")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.remove(mainArea.selectionStart, mainArea.selectionEnd)
+        }
 
         MenuSeparator { }
 
         MenuItem {
             text: qsTr("Select All")
             onTriggered: mainArea.selectAll()
-        }
-
-        MenuSeparator { }
-
-        MenuItem {
-            text: qsTr("Undo")
-            enabled: mainArea.canUndo
-            onTriggered: mainArea.undo()
-        }
-        MenuItem {
-            text: qsTr("Redo")
-            enabled: mainArea.canRedo
-            onTriggered: mainArea.redo()
         }
     }
 
