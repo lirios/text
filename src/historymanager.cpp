@@ -94,6 +94,7 @@ bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
     history.removeAt(row);
     saveHistory();
     emit endRemoveRows();
+    emit countChanged();
     return true;
 }
 
@@ -184,6 +185,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
         history.append(file);
         saveHistory();
         emit endInsertRows();
+        emit countChanged();
     } else {
         history[fileIndex] = file;
         saveHistory();
@@ -214,6 +216,7 @@ void HistoryManager::loadHistory() {
         history.append(file);
     }
     historyStorage->endArray();
+    emit countChanged();
 }
 
 void HistoryManager::saveHistory() {

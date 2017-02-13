@@ -42,6 +42,9 @@ public:
     HistoryManager();
     ~HistoryManager();
 
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+
+    inline int count() { return rowCount(); }
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
@@ -54,6 +57,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 signals:
+    void countChanged();
 
 public slots:
     void touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview);
