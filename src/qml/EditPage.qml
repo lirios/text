@@ -75,7 +75,7 @@ FluidControls.Page {
             id: saveAction
             iconName: "content/save"
             tooltip: qsTr("Save")
-            shortcut: "Ctrl+S"
+            shortcut: StandardKey.Save
             onTriggered: save()
         },
 
@@ -83,7 +83,7 @@ FluidControls.Page {
             id: saveAsAction
             iconName: "content/save"
             text: qsTr("Save As")
-            shortcut: "Ctrl+Shift+S"
+            shortcut: StandardKey.SaveAs
             onTriggered: saveAs()
         },
 
@@ -91,7 +91,7 @@ FluidControls.Page {
             id: closeAction
             iconName: "navigation/close"
             text: qsTr("Close")
-            shortcut: "Ctrl+W"
+            shortcut: StandardKey.Close
             onTriggered: page.pop()
         }
     ]
