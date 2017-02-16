@@ -4,6 +4,7 @@
         <file>qml/RecentFilesPage.qml</file>
         <file>qml/EditPage.qml</file>
         <file>qml/FileGridView.qml</file>
+        <file>qml/SearchOverlay.qml</file>
         <file>translations/ru_RU.qm</file>
     </qresource>
 </RCC>

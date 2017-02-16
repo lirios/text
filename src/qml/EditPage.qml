@@ -68,7 +68,7 @@ FluidControls.Page {
     }
 
     title: anonymous ? qsTr("New Document") : document.documentTitle
-    appBar.maxActionCount: 1
+    appBar.maxActionCount: 2
 
     actions: [
         FluidControls.Action {
@@ -77,6 +77,14 @@ FluidControls.Page {
             tooltip: qsTr("Save")
             shortcut: StandardKey.Save
             onTriggered: save()
+        },
+
+        FluidControls.Action {
+            id: findAction
+            iconName: "action/search"
+            tooltip: qsTr("Find")
+            shortcut: StandardKey.Find
+            onTriggered: searchOverlay.open()
         },
 
         FluidControls.Action {
@@ -95,6 +103,18 @@ FluidControls.Page {
             onTriggered: page.pop()
         }
     ]
+
+    SearchOverlay {
+        id: searchOverlay
+        anchors.right: parent.right
+        anchors.top: parent.top
+        z: 1
+
+        onActivated: {
+            var start = mainArea.text.indexOf(query, mainArea.cursorPosition)
+            mainArea.select(start, start + query.length)
+        }
+    }
 
     onGoBack: {
         function forcedClose() {
