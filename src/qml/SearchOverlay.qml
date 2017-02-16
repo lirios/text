@@ -11,6 +11,7 @@ FluidControls.Card {
     function open() {
         state = "exposed"
         searchField.forceActiveFocus()
+        searchField.selectAll()
     }
 
     function close() {
