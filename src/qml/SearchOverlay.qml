@@ -38,7 +38,7 @@ FluidControls.Card {
             name: "hidden"
             PropertyChanges {
                 target: overlay
-                y: -searchField.height
+                y: -height
                 visible: false
             }
         },
