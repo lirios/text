@@ -107,13 +107,13 @@ FluidControls.Page {
     SearchOverlay {
         id: searchOverlay
         anchors.right: parent.right
-        anchors.top: parent.top
         z: 1
 
         onActivated: {
             var start = mainArea.text.indexOf(query, mainArea.cursorPosition)
             mainArea.select(start, start + query.length)
         }
+        onClosed: mainArea.forceActiveFocus()
     }
 
     onGoBack: {

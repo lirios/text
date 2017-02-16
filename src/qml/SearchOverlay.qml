@@ -4,19 +4,22 @@ import QtQuick.Controls.Material 2.1
 import Fluid.Controls 1.0 as FluidControls
 
 FluidControls.Card {
+    id: overlay
     signal activated(string query)
+    signal closed
 
     function open() {
-        visible = true
+        state = "exposed"
         searchField.forceActiveFocus()
     }
 
     function close() {
-        visible = false
+        state = "hidden"
+        searchField.focus = false
+        closed()
     }
 
-    visible: false
-
+    state: "hidden"
     width: 256
     height: searchField.height
     Material.elevation: 2
@@ -26,5 +29,59 @@ FluidControls.Card {
         width: parent.width - 2*8
         anchors.centerIn: parent
         Keys.onReturnPressed: activated(text)
+        Keys.onEscapePressed: close()
     }
+
+    states: [
+        State {
+            name: "hidden"
+            PropertyChanges {
+                target: overlay
+                y: -searchField.height
+                visible: false
+            }
+        },
+        State {
+            name: "exposed"
+            PropertyChanges {
+                target: overlay
+                y: 0
+                visible: true
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            to: "exposed"
+            SequentialAnimation {
+                PropertyAction {
+                    target: overlay
+                    property: "visible"
+                }
+                NumberAnimation {
+                    target: overlay
+                    property: "y"
+                    easing.type: Easing.OutQuad
+                    duration: 200
+                }
+            }
+        },
+
+        Transition {
+            to: "hidden"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: overlay
+                    property: "y"
+                    easing.type: Easing.InQuad
+                    duration: 200
+                }
+                PropertyAction {
+                    target: overlay
+                    property: "visible"
+                }
+            }
+        }
+    ]
 }
