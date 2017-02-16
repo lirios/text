@@ -34,6 +34,7 @@ FluidControls.Page {
             id: openFile
             iconName: "file/folder_open"
             tooltip: qsTr("Open")
+            shortcut: StandardKey.Open
             onTriggered: openFileDialog.open()
         }
     ]
