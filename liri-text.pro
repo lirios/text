@@ -52,9 +52,6 @@ lupdate_only{
         src/qml/*
 }
 
-DISTFILES += \
-    icons.yml
-
 unix {
     isEmpty(PREFIX) {
         PREFIX = /usr/local
