@@ -5,7 +5,9 @@
 #include <QStandardPaths>
 #include "languageloader.h"
 
-LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QObject *parent) : QObject(parent) {
+LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QString connId, QObject *parent) :
+    m_connId(connId),
+    QObject(parent) {
     // List of language specification directories, ascending by priority
     specsDirs = QStringList({
                 #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
@@ -13,6 +15,7 @@ LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QObject *parent) : QObjec
                 #endif
                                              QString(LIRI_LANGUAGE_SPECS)
                                                          });
+    initDB();
 }
 
 LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
@@ -20,9 +23,7 @@ LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
     QSqlDatabase::removeDatabase(m_connId);
 }
 
-void LanguageDatabaseMaintainer::init(QString connId) {
-    m_connId = connId;
-    initDB();
+void LanguageDatabaseMaintainer::init() {
     updateDB();
     watcher = new QFileSystemWatcher(specsDirs);
     connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageDatabaseMaintainer::updateDB);

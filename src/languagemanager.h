@@ -25,7 +25,7 @@
 #include <QMimeType>
 #include "languagedatabasemaintainer.h"
 
-class QDir;
+class QThread;
 class LanguageManager : public QObject
 {
     Q_OBJECT
@@ -37,7 +37,7 @@ private:
     explicit LanguageManager(QObject *parent = 0);
     ~LanguageManager();
     static LanguageManager *m_instance;
-    LanguageDatabaseMaintainer *m_dbMaintainer;
+    QThread *m_thread;
     const QString m_connId;
 };
 

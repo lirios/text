@@ -9,17 +9,16 @@ class LanguageDatabaseMaintainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit LanguageDatabaseMaintainer(QObject *parent = 0);
+    explicit LanguageDatabaseMaintainer(QString connId, QObject *parent = 0);
     ~LanguageDatabaseMaintainer();
 
 signals:
     void dbUpdated();
 protected:
     void initDB();
-protected slots:
-    void updateDB();
 public slots:
-    void init(QString connId);
+    void init();
+    void updateDB();
 private:
     QStringList specsDirs;
     QFileSystemWatcher *watcher;

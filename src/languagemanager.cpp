@@ -22,13 +22,18 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QRegularExpression>
+#include <QThread>
 
 LanguageManager::LanguageManager(QObject *parent) :
     QObject(parent),
     m_connId("languages") {
 
-    m_dbMaintainer = new LanguageDatabaseMaintainer;
-    m_dbMaintainer->init(m_connId);
+    m_thread = new QThread;
+    LanguageDatabaseMaintainer *dbMaintainer = new LanguageDatabaseMaintainer(m_connId);
+    dbMaintainer->moveToThread(m_thread);
+    connect(m_thread, &QThread::started, dbMaintainer, &LanguageDatabaseMaintainer::init);
+    connect(m_thread, &QThread::finished, dbMaintainer, &LanguageDatabaseMaintainer::deleteLater);
+    m_thread->start();
 }
 
 LanguageManager *LanguageManager::getInstance() {
@@ -105,7 +110,9 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
 }
 
 LanguageManager::~LanguageManager() {
-    delete m_dbMaintainer;
+    m_thread->quit();
+    m_thread->wait();
+    delete m_thread;
 }
 
 LanguageManager *LanguageManager::m_instance = nullptr;
