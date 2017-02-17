@@ -1,13 +1,14 @@
 unix:!android {
-    isEmpty(target.path) {
-        qnx {
-            target.path = /tmp/$${TARGET}/bin
-        } else {
-            target.path = /opt/$${TARGET}/bin
-        }
-        export(target.path)
+    isEmpty(PREFIX) {
+        PREFIX = /usr/local
     }
-    INSTALLS += target
+    INSTALLS += target desktop
+
+    desktop.path = $$PREFIX/share/applications
+    desktop.files += liri-text.desktop
+
+    target.path = $$PREFIX/bin
+    target.files += liri-text
 }
 
 export(INSTALLS)

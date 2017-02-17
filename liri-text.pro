@@ -28,6 +28,7 @@ QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
+include(syntax-config.pri)
 
 HEADERS += \
     src/documenthandler.h \
@@ -55,21 +56,4 @@ lupdate_only{
 }
 
 unix {
-    isEmpty(PREFIX) {
-        PREFIX = /usr/local
-    }
-    INSTALLS += target desktop
-    desktop.path = $$PREFIX/share/applications
-    desktop.files += liri-text.desktop
-    target.path = $$PREFIX/bin
-    target.files += liri-text
-
-    CONFIG += use_gtksourceview_language_specs
-    use_gtksourceview_language_specs {
-        DEFINES += GTKSOURCEVIEW_LANGUAGE_SPECS=\\\"/usr/share/gtksourceview-3.0/language-specs/\\\"
-    }
-
-    DATA_PREFIX = $$PREFIX/share/liri-text
 }
-
-DEFINES += LIRI_LANGUAGE_SPECS=\\\"$$DATA_PREFIX/language-specs/\\\"

@@ -22,18 +22,25 @@
 #include <QSqlQuery>
 #include <QDir>
 #include <QStandardPaths>
+#include <QCoreApplication>
+#include <QFileInfo>
 #include "languageloader.h"
 
 LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QString connId, QObject *parent) :
     m_connId(connId),
     QObject(parent) {
     // List of language specification directories, ascending by priority
-    specsDirs = QStringList({
-                #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
-                                             QString(GTKSOURCEVIEW_LANGUAGE_SPECS),
-                #endif
-                                             QString(LIRI_LANGUAGE_SPECS)
-                                                         });
+#ifdef GTKSOURCEVIEW_LANGUAGE_PATH
+    specsDirs.append(QString(GTKSOURCEVIEW_LANGUAGE_PATH));
+#endif
+#ifdef ABSOLUTE_LANGUAGE_PATH
+    specsDirs.append(QString(ABSOLUTE_LANGUAGE_PATH));
+#endif
+#ifdef RELATIVE_LANGUAGE_PATH
+    specsDirs.append(QCoreApplication::applicationDirPath() + QString(RELATIVE_LANGUAGE_PATH));
+#endif
+    specsDirs.append(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QString(USER_LANGUAGE_PATH));
+
     initDB();
 }
 
