@@ -19,27 +19,16 @@
 
 #include "languagemanager.h"
 
-#include <QDir>
-#include <QStandardPaths>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QRegularExpression>
 
-#include "languageloader.h"
+LanguageManager::LanguageManager(QObject *parent) :
+    QObject(parent),
+    m_connId("languages") {
 
-LanguageManager::LanguageManager(QObject *parent) : QObject(parent) {
-    // List of language specification directories, ascending by priority
-    specsDirs = QStringList({
-                #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
-                                             QString(GTKSOURCEVIEW_LANGUAGE_SPECS),
-                #endif
-                                             QString(LIRI_LANGUAGE_SPECS)
-                                                         });
-
-    initDB();
-    updateDB();
-    watcher = new QFileSystemWatcher(specsDirs);
-    connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageManager::updateDB);
+    m_dbMaintainer = new LanguageDatabaseMaintainer;
+    m_dbMaintainer->init(m_connId);
 }
 
 LanguageManager *LanguageManager::getInstance() {
@@ -51,7 +40,7 @@ LanguageManager *LanguageManager::getInstance() {
 QString LanguageManager::pathForId(QString id) {
     QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
                                    "WHERE id = '%1'").arg(id),
-                    QSqlDatabase::database("languages"));
+                    QSqlDatabase::database(m_connId));
     if(query.next())
         return query.value(0).toString();
     else
@@ -63,7 +52,7 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     {
         QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
                                        "WHERE instr(mime_types, '%1') > 0").arg(mimeType.name()),
-                        QSqlDatabase::database("languages"));
+                        QSqlDatabase::database(m_connId));
         if(query.next())
             return query.value(0).toString();
     }
@@ -72,7 +61,7 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     for (QString aType : mimeType.aliases()) {
         QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
                                        "WHERE instr(mime_types, '%1') > 0").arg(aType),
-                        QSqlDatabase::database("languages"));
+                        QSqlDatabase::database(m_connId));
         if(query.next())
             return query.value(0).toString();
     }
@@ -81,7 +70,7 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     for (QString pType : mimeType.allAncestors()) {
         QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
                                        "WHERE instr(mime_types, '%1') > 0").arg(pType),
-                        QSqlDatabase::database("languages"));
+                        QSqlDatabase::database(m_connId));
         if(query.next())
             return query.value(0).toString();
     }
@@ -90,7 +79,7 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     // Search for glob fitting the filename
     {
         QSqlQuery query(QStringLiteral("SELECT globs, spec_path FROM languages"),
-                        QSqlDatabase::database("languages"));
+                        QSqlDatabase::database(m_connId));
         while (query.next()) {
             QString globs = query.value(0).toString();
             for (QString glob : globs.split(';')) {
@@ -115,55 +104,8 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     return QString();
 }
 
-void LanguageManager::initDB() {
-    QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    if(!dataDir.exists())
-        dataDir.mkpath(".");
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "languages");
-    db.setDatabaseName(dataDir.filePath("languages.db"));
-    db.open();
-    QSqlQuery("CREATE TABLE IF NOT EXISTS languages "
-              "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)",
-              db);
-}
-
-void LanguageManager::updateDB() {
-    LanguageLoader ll;
-    for (QDir dir : specsDirs) {
-        for (QFileInfo file : dir.entryInfoList()) {
-            if(file.isFile()) {
-                LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
-                QSqlQuery(QStringLiteral("UPDATE languages SET "
-                                         "id='%1',spec_path='%2',mime_types='%3',globs='%4',display='%5' "
-                                         "WHERE id='%1'").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimeTypes, langData.globs, langData.name),
-                          QSqlDatabase::database("languages"));
-                // If update failed, insert
-                QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, globs, display) "
-                                         "SELECT '%1','%2','%3','%4','%5' "
-                                         "WHERE (SELECT Changes() = 0)").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimeTypes, langData.globs, langData.name),
-                          QSqlDatabase::database("languages"));
-            }
-        }
-    }
-
-    // Search for obsolete entries
-    QSqlQuery query(QStringLiteral("SELECT id, spec_path FROM languages"),
-                    QSqlDatabase::database("languages"));
-    while (query.next()) {
-        QFileInfo file(query.value(1).toString());
-        if(!file.exists())
-            QSqlQuery(QStringLiteral("DELETE FROM languages "
-                                     "WHERE id='%1'").arg(query.value(0).toString()),
-                      QSqlDatabase::database("languages"));
-    }
-}
-
 LanguageManager::~LanguageManager() {
-    delete watcher;
-    QSqlDatabase::removeDatabase("languages");
+    delete m_dbMaintainer;
 }
 
 LanguageManager *LanguageManager::m_instance = nullptr;
