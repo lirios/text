@@ -27,11 +27,25 @@
 
 #include "languageloader.h"
 
-void LanguageManager::init() {
+LanguageManager::LanguageManager(QObject *parent) : QObject(parent) {
+    // List of language specification directories, ascending by priority
+    specsDirs = QStringList({
+                #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
+                                             QString(GTKSOURCEVIEW_LANGUAGE_SPECS),
+                #endif
+                                             QString(LIRI_LANGUAGE_SPECS)
+                                                         });
+
     initDB();
     updateDB();
     watcher = new QFileSystemWatcher(specsDirs);
-    connect(watcher, &QFileSystemWatcher::directoryChanged, updateDB);
+    connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageManager::updateDB);
+}
+
+LanguageManager *LanguageManager::getInstance() {
+    if(!m_instance)
+        m_instance = new LanguageManager;
+    return m_instance;
 }
 
 QString LanguageManager::pathForId(QString id) {
@@ -101,11 +115,6 @@ QString LanguageManager::pathForMimeType(QMimeType mimeType, QString filename) {
     return QString();
 }
 
-void LanguageManager::close() {
-    delete watcher;
-    QSqlDatabase::removeDatabase("languages");
-}
-
 void LanguageManager::initDB() {
     QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     if(!dataDir.exists())
@@ -152,12 +161,9 @@ void LanguageManager::updateDB() {
     }
 }
 
-// List of language specification directories, ascending by priority
-QStringList LanguageManager::specsDirs = QStringList({
-            #ifdef GTKSOURCEVIEW_LANGUAGE_SPECS
-                                         QString(GTKSOURCEVIEW_LANGUAGE_SPECS),
-            #endif
-                                         QString(LIRI_LANGUAGE_SPECS)
-                                                     });
+LanguageManager::~LanguageManager() {
+    delete watcher;
+    QSqlDatabase::removeDatabase("languages");
+}
 
-QFileSystemWatcher *LanguageManager::watcher = nullptr;
+LanguageManager *LanguageManager::m_instance = nullptr;

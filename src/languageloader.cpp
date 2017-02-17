@@ -45,12 +45,12 @@ LanguageLoader::~LanguageLoader() {
 
 QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextById(QString id) {
     qDebug() << "Loading" << id;
-    QString path = LanguageManager::pathForId(id);
+    QString path = LanguageManager::getInstance()->pathForId(id);
     return loadMainContext(path);
 }
 
 QSharedPointer<LanguageContextReference> LanguageLoader::loadMainContextByMimeType(QMimeType mimeType, QString filename) {
-    QString path = LanguageManager::pathForMimeType(mimeType, filename);
+    QString path = LanguageManager::getInstance()->pathForMimeType(mimeType, filename);
     return loadMainContext(path);
 }
 
@@ -117,7 +117,7 @@ LanguageMetadata LanguageLoader::loadMetadata(QString path) {
 }
 
 void LanguageLoader::loadDefinitionsAndStylesById(QString id) {
-    QString path = LanguageManager::pathForId(id);
+    QString path = LanguageManager::getInstance()->pathForId(id);
     loadDefinitionsAndStyles(path);
 }
 

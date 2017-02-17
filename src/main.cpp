@@ -90,8 +90,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     // Init languages database
-    LanguageManager::init();
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed, LanguageManager::close);
+    LanguageManager *lManager = LanguageManager::getInstance();
+
+    // Clean up on exiting application
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager, &LanguageManager::deleteLater);
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, proxyModel, &QSortFilterProxyModel::deleteLater);
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, history, &HistoryManager::deleteLater);
 
     // Start with main.qml
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));

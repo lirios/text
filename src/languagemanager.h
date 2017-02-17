@@ -30,18 +30,19 @@ class LanguageManager : public QObject
 {
     Q_OBJECT
 public:
-    static void init();
-    static QString pathForId(QString id);
-    static QString pathForMimeType(QMimeType mimeType, QString filename);
-public slots:
-    static void close();
+    static LanguageManager *getInstance();
+    QString pathForId(QString id);
+    QString pathForMimeType(QMimeType mimeType, QString filename);
 protected:
-    static void initDB();
+    void initDB();
 protected slots:
-    static void updateDB();
+    void updateDB();
 private:
-    static QStringList specsDirs;
-    static QFileSystemWatcher *watcher;
+    explicit LanguageManager(QObject *parent = 0);
+    ~LanguageManager();
+    static LanguageManager *m_instance;
+    QStringList specsDirs;
+    QFileSystemWatcher *watcher;
 };
 
 #endif // LANGUAGEMANAGER_H
