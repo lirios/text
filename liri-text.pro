@@ -26,7 +26,6 @@ RESOURCES += \
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
-# Default rules for deployment.
 include(deployment.pri)
 include(syntax-config.pri)
 
@@ -53,7 +52,4 @@ TRANSLATIONS = \
 lupdate_only{
     SOURCES = \
         src/qml/*
-}
-
-unix {
 }
