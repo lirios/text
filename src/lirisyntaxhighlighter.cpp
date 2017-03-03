@@ -121,45 +121,122 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         currentStateData = new HighlightData();
         setCurrentBlockUserData(currentStateData);
     }
-    currentStateData->containers = QList<HighlightData::ContainerInfo>();
+    auto containerStack = previousBlockContainers;
 
     int start = 0;
-    for (int i = 0; i < previousBlockContainers.length(); ++i) {
-        auto containerInfo = previousBlockContainers[i];
+    bool highlightingProgresses = true;
+    startContainer(containerStack, containerStack.first().containerRef, start, text.length());
 
-        QRegularExpressionMatch endMatch = highlightTillContainerEnd(text, start, containerInfo, currentStateData);
-        if(endMatch.hasMatch()) {
-            while(containerInfo.containerRef->context->container.endParent) {
-                i++;
-                containerInfo = previousBlockContainers[i];
+    while (highlightingProgresses) {
+        auto& containerInfo = containerStack.first();
+        int containerIdx = 0;
+
+        QRegularExpressionMatch containerEndMatch;
+        for (int i = 0; i < containerStack.size(); ++i) {
+            QRegularExpressionMatch tmp;
+            if(containerStack[i].endRegex.pattern() != "")
+                tmp = containerStack[i].endRegex.match(text, start);
+            if(!tmp.hasMatch() && containerStack[i].containerRef->context->container.endAtLineEnd)
+                tmp = QRegularExpression("$").match(text, start);
+            if(tmp.hasMatch() && (!containerEndMatch.hasMatch() || tmp.capturedStart() <= containerEndMatch.capturedStart())) {
+                containerIdx = i;
+                containerEndMatch = tmp;
             }
+            if(containerStack[i].containerRef->context->container.extendParent)
+                break;
+        }
+
+        Match bestMatch = findMatch(text, start, containerEndMatch.hasMatch() ? containerEndMatch.capturedStart() : text.length(),
+                                    containerInfo.containerRef, containerInfo);
+
+        if(!bestMatch.match.hasMatch()) {
+            if(!containerEndMatch.hasMatch()) {
+                start = text.length();
+                highlightingProgresses = false;
+                continue;
+            } else {
+                start = containerEndMatch.capturedEnd();
+                endNthContainer(containerStack, containerIdx, start, text.length(), containerEndMatch);
+                continue;
+            }
+        } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() <= bestMatch.match.capturedStart()) {
+            start = containerEndMatch.capturedEnd();
+            endNthContainer(containerStack, containerIdx, start, text.length(), containerEndMatch);
+            continue;
+        }
+
+        switch (bestMatch.contextRef->context->type) {
+        case LanguageContext::Keyword: {
+            auto kw = bestMatch.contextRef->context->keyword;
+
+            if(kw.onceOnly) {
+                containerInfo.forbiddenContexts.append(bestMatch.contextRef);
+            }
+
+            if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
+                setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
+                          m_defStyles->styles[m_styleMap[bestMatch.contextRef->styleId]]);
+
+            start = bestMatch.match.capturedEnd();
+
+            if(kw.endParent)
+                endNthContainer(containerStack, 0, start, text.length());
+            break;
+        }
+        case LanguageContext::Simple: {
+            auto simple = bestMatch.contextRef->context->simple;
+
+            if(simple.onceOnly) {
+                containerInfo.forbiddenContexts.append(bestMatch.contextRef);
+            }
+
+            if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
+                setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
+                          m_defStyles->styles[m_styleMap[bestMatch.contextRef->styleId]]);
+
+            start = bestMatch.match.capturedEnd();
+
+            for (auto inc : simple.includes) {
+                if(inc->context->type == LanguageContext::SubPattern) {
+                    auto subPattern = inc->context->subPattern;
+                    int mStart = subPattern.groupName.isNull() ? bestMatch.match.capturedStart(subPattern.groupId) :
+                                                                 bestMatch.match.capturedStart(subPattern.groupName);
+                    int mLen = subPattern.groupName.isNull() ? bestMatch.match.capturedLength(subPattern.groupId) :
+                                                               bestMatch.match.capturedLength(subPattern.groupName);
+                    if(m_styleMap.keys().contains(inc->styleId))
+                        setFormat(mStart,
+                                  mLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
+                }
+            }
+            if(simple.endParent)
+                endNthContainer(containerStack, 0, start, text.length());
+            break;
+        }
+        case LanguageContext::Container: {
+            auto container = bestMatch.contextRef->context->container;
+
+            if(container.onceOnly) {
+                containerInfo.forbiddenContexts.append(bestMatch.contextRef);
+            }
+
+            start = bestMatch.match.capturedEnd();
+            startContainer(containerStack, bestMatch.contextRef, start, text.length(), bestMatch.match);
+            break;
+        }
         }
     }
 
+    currentStateData->containers = containerStack;
     setCurrentBlockState(qHash(currentStateData->containers));
 }
 
-QRegularExpressionMatch LiriSyntaxHighlighter::highlightTillContainerEnd(const QString &text, int &offset, HighlightData::ContainerInfo containerInfo,
-                                                                         HighlightData *stateData, int startLength) {
-    auto container = containerInfo.containerRef->context->container;
-    HighlightData::ContainerInfo newContainerInfo = containerInfo;
-    int innerStart = offset + startLength;
-    // Highlight whole received text
-    if(m_styleMap.keys().contains(containerInfo.containerRef->styleId))
-        setFormat(container.styleInside ? innerStart : offset, text.length(), m_defStyles->styles[m_styleMap[containerInfo.containerRef->styleId]]);
-    offset = innerStart;
-    QRegularExpressionMatch endMatch = highlightPart(text, offset, newContainerInfo, stateData);
-    // Clear style of block ending
-    int highlightEnd = endMatch.hasMatch() ? (container.styleInside ? endMatch.capturedStart() : endMatch.capturedEnd()) : offset;
-    if(m_styleMap.keys().contains(containerInfo.containerRef->styleId))
-        setFormat(highlightEnd, text.length(), QTextCharFormat());
-
-    if(!endMatch.hasMatch()) {
-        stateData->containers.append(newContainerInfo);
-    }
+void LiriSyntaxHighlighter::endNthContainer(QList<HighlightData::ContainerInfo> &containers,
+                                            int n, int offset, int length, QRegularExpressionMatch endMatch) {
+    for (int i = 0; i < n; ++i)
+        containers.removeFirst();
 
     if(endMatch.hasMatch()) {
-        for (auto inc : container.includes) {
+        for (auto inc : containers.first().containerRef->context->container.includes) {
             if(inc->context->type == LanguageContext::SubPattern) {
                 auto subPattern = inc->context->subPattern;
                 if(subPattern.where == LanguageContextSubPattern::End && endMatch.hasMatch()) {
@@ -177,91 +254,32 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightTillContainerEnd(const Q
         }
     }
 
-    return endMatch;
+    while (containers.first().containerRef->context->container.endParent)
+        containers.removeFirst();
+    containers.removeFirst();
+    startContainer(containers, containers.first().containerRef, offset, length);
 }
 
-QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(const QString &text, int &offset,
-                                                             HighlightData::ContainerInfo &currentContainerInfo,
-                                                             HighlightData *stateData) {
-    auto currentContainer = currentContainerInfo.containerRef->context->container;
-    QRegularExpressionMatch containerEndMatch;
-    if(currentContainerInfo.endRegex.pattern() != "")
-        containerEndMatch = currentContainerInfo.endRegex.match(text, offset);
-    if(!containerEndMatch.hasMatch() && currentContainer.endAtLineEnd)
-        containerEndMatch = QRegularExpression("$").match(text, offset);
-    if(offset >= text.length())
-        return containerEndMatch;
-
-    Match bestMatch = findMatch(text, offset, containerEndMatch.hasMatch() ? containerEndMatch.capturedStart() : text.length(),
-                                currentContainerInfo.containerRef, currentContainerInfo);
-
-    if(!bestMatch.match.hasMatch()) {
-        if(!containerEndMatch.hasMatch()) {
-            offset = text.length();
-            return containerEndMatch;
-        } else {
-            offset = containerEndMatch.capturedEnd();
-            return containerEndMatch;
-        }
-    } else if(containerEndMatch.hasMatch() && containerEndMatch.capturedStart() <= bestMatch.match.capturedStart()) {
-        offset = containerEndMatch.capturedEnd();
-        return containerEndMatch;
-    }
-
-    switch (bestMatch.contextRef->context->type) {
-    case LanguageContext::Keyword: {
-        auto kw = bestMatch.contextRef->context->keyword;
-
-        if(kw.onceOnly) {
-            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
-        }
-
-        if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
-            setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
-                      m_defStyles->styles[m_styleMap[bestMatch.contextRef->styleId]]);
-        offset = bestMatch.match.capturedEnd();
-        if(kw.endParent)
-            return bestMatch.match;
-        break;
-    }
-    case LanguageContext::Simple: {
-        auto simple = bestMatch.contextRef->context->simple;
-
-        if(simple.onceOnly) {
-            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
-        }
-
-        if(m_styleMap.keys().contains(bestMatch.contextRef->styleId))
-            setFormat(bestMatch.match.capturedStart(), bestMatch.match.capturedLength(),
-                      m_defStyles->styles[m_styleMap[bestMatch.contextRef->styleId]]);
-        offset = bestMatch.match.capturedEnd();
-        for (auto inc : simple.includes) {
-            if(inc->context->type == LanguageContext::SubPattern) {
-                auto subPattern = inc->context->subPattern;
-                int mStart = subPattern.groupName.isNull() ? bestMatch.match.capturedStart(subPattern.groupId) :
-                                                             bestMatch.match.capturedStart(subPattern.groupName);
-                int mLen = subPattern.groupName.isNull() ? bestMatch.match.capturedLength(subPattern.groupId) :
-                                                           bestMatch.match.capturedLength(subPattern.groupName);
-                if(m_styleMap.keys().contains(inc->styleId))
-                    setFormat(mStart,
-                              mLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
+void LiriSyntaxHighlighter::startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContextReference> container,
+                                           int offset, int length, QRegularExpressionMatch startMatch) {
+    int start = startMatch.hasMatch() ? startMatch.capturedStart() : offset;
+    // Highlight the whole text
+    QTextCharFormat containerFormat;
+    if(m_styleMap.keys().contains(container->styleId))
+        containerFormat = m_defStyles->styles[m_styleMap[container->styleId]];
+    else {
+        for (int i = 0; i < containers.size(); ++i) {
+            if(m_styleMap.keys().contains(containers[i].containerRef->styleId)) {
+                containerFormat = m_defStyles->styles[m_styleMap[containers[i].containerRef->styleId]];
+                break;
             }
         }
-        if(simple.endParent)
-            return bestMatch.match;
-        break;
     }
-    case LanguageContext::Container: {
-        auto container = bestMatch.contextRef->context->container;
+    setFormat(container->context->container.styleInside ? offset : start, length, containerFormat);
 
-        if(container.onceOnly) {
-            currentContainerInfo.forbiddenContexts.append(bestMatch.contextRef);
-        }
-
-        offset = bestMatch.match.capturedStart();
-
+    if(startMatch.hasMatch()) {
         // Resolve references to start subpatterns from end regex
-        QRegularExpression endRegex = container.end;
+        QRegularExpression endRegex = container->context->container.end;
         QString endPattern = endRegex.pattern();
         QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+)@start}");
         QRegularExpressionMatch startRefMatch;
@@ -270,23 +288,21 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(const QString &text
             bool isId;
             int id = groupName.toInt(&isId);
             endPattern.replace(startRefMatch.capturedStart(), startRefMatch.capturedLength(),
-                               QRegularExpression::escape(isId ? bestMatch.match.captured(id) : bestMatch.match.captured(groupName)));
+                               QRegularExpression::escape(isId ? startMatch.captured(id) : startMatch.captured(groupName)));
         }
         if(endRegex.pattern() != endPattern) // Don't make regex dirty if there were no changes
             endRegex.setPattern(endPattern);
 
-        QRegularExpressionMatch endMatch = highlightTillContainerEnd(text, offset, {bestMatch.contextRef, endRegex, {}}, stateData, bestMatch.match.capturedLength());
-
         // Highlight start subpatterns
-        for (auto inc : container.includes) {
+        for (auto inc : container->context->container.includes) {
             if(inc->context->type == LanguageContext::SubPattern) {
                 auto subPattern = inc->context->subPattern;
                 if(subPattern.where == LanguageContextSubPattern::Start) {
-                    int startStart = subPattern.groupName.isNull() ? bestMatch.match.capturedStart(subPattern.groupId) :
-                                                                     bestMatch.match.capturedStart(subPattern.groupName);
+                    int startStart = subPattern.groupName.isNull() ? startMatch.capturedStart(subPattern.groupId) :
+                                                                     startMatch.capturedStart(subPattern.groupName);
                     if(startStart >= 0) {
-                        int startLen = subPattern.groupName.isNull() ? bestMatch.match.capturedLength(subPattern.groupId) :
-                                                                       bestMatch.match.capturedLength(subPattern.groupName);
+                        int startLen = subPattern.groupName.isNull() ? startMatch.capturedLength(subPattern.groupId) :
+                                                                       startMatch.capturedLength(subPattern.groupName);
                         if(m_styleMap.keys().contains(inc->styleId))
                             setFormat(startStart,
                                       startLen, m_defStyles->styles[m_styleMap[inc->styleId]]);
@@ -294,15 +310,8 @@ QRegularExpressionMatch LiriSyntaxHighlighter::highlightPart(const QString &text
                 }
             }
         }
-
-        if(container.endParent)
-            return endMatch;
-        if(container.extendParent && !endMatch.hasMatch())
-            return QRegularExpressionMatch();
-        break;
+        containers.prepend({container, endRegex, QList<QSharedPointer<LanguageContextReference>>()});
     }
-    }
-    return highlightPart(text, offset, currentContainerInfo, stateData);
 }
 
 LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &text, int offset, int potentialEnd,
