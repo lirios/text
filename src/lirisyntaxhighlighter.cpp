@@ -281,7 +281,7 @@ void LiriSyntaxHighlighter::startContainer(QList<HighlightData::ContainerInfo> &
         // Resolve references to start subpatterns from end regex
         QRegularExpression endRegex = container->context->container.end;
         QString endPattern = endRegex.pattern();
-        QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+)@start}");
+        QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+?)@start}");
         QRegularExpressionMatch startRefMatch;
         while((startRefMatch = startRefRegex.match(endPattern)).hasMatch()) {
             QString groupName = startRefMatch.captured(1);
