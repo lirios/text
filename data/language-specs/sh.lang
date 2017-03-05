@@ -123,14 +123,14 @@
     </context>
 
     <context id="here-doc">
-      <start extended="true" dupnames="true">
+      <start extended="true">
         # (?&lt;!&lt;) and [^\s&lt;] are for not matching
         # here-word (&lt;&lt;&lt;)
         (?&lt;!&lt;)
         &lt;&lt;-?\s*\\?(
-          \"(?P&lt;HDB&gt;[^\s&lt;]+)\" | # "EOF"
-          \'(?P&lt;HDB&gt;[^\s&lt;]+)\' | # 'EOF'
-          (?P&lt;HDB&gt;[^\s&lt;]+)       # EOF
+          (?P&lt;border&gt;[\"\']?)
+            (?P&lt;HDB&gt;[^\s&lt;]+)
+          (?P=border)
         )$
       </start>
       <end>^\t*\%{HDB@start}$</end>
