@@ -331,6 +331,8 @@ LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &tex
             allowedText = allowedText.left(potentialEnd);
         Match bestMatch;
         for (QRegularExpression keyword : context->keyword.keywords) {
+            if(keyword.pattern().isEmpty() && offset >= text.length())
+                continue;
             QRegularExpressionMatch kwMatch = keyword.match(allowedText, offset);
             if(kwMatch.hasMatch()) {
                 Match match = {kwMatch, contextRef};
@@ -345,6 +347,8 @@ LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &tex
             break;
         if(currentContainerInfo.forbiddenContexts.contains(contextRef))
             break;
+        if(context->simple.match.pattern().isEmpty() && offset >= text.length())
+            break;
 
         QStringRef allowedText = QStringRef(&text);
         if(!context->simple.extendParent)
@@ -357,6 +361,8 @@ LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &tex
             break;
         if(currentContainerInfo.forbiddenContexts.contains(contextRef))
             break;
+        if(context->container.start.pattern().isEmpty() && offset >= text.length())
+            break;
 
         if(context->container.includesOnly || rootContext) {
             Match bestMatch;
@@ -367,8 +373,6 @@ LiriSyntaxHighlighter::Match LiriSyntaxHighlighter::findMatch(const QString &tex
             }
             return bestMatch;
         } else {
-            if(!context->container.start.isValid())
-                qDebug() << "Regular expression error during highlighting:" << context->container.start.errorString();
             QStringRef allowedText = QStringRef(&text);
             if(!context->container.extendParent)
                 allowedText = allowedText.left(potentialEnd);
