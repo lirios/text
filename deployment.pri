@@ -3,7 +3,10 @@ unix:!android {
     isEmpty(PREFIX) {
         PREFIX = /usr/local
     }
-    INSTALLS += target desktop
+    INSTALLS += target desktop icons
+
+    icons.path = $$PREFIX/share/icons/hicolor
+    icons.files += data/icons/*
 
     desktop.path = $$PREFIX/share/applications
     desktop.files += data/io.liri.Text.desktop

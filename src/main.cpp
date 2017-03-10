@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("liri.io");
     app.setApplicationName("Text");
     app.setDesktopFileName("io.liri.Text.desktop");
+    app.setWindowIcon(QIcon(":/resources/icon.png"));
 
     // Load Translations
     QTranslator qtTranslator;

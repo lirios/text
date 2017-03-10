@@ -1,9 +1,9 @@
 [Desktop Entry]
 Name=Liri Text
-Comment=Material Design text editor
+Comment=Edit text files
 Exec=liri-text %U
 Terminal=false
 Type=Application
 Categories=Qt;Utility;TextEditor;
 Keywords=Text;Editor;
-Icon=accessories-text-editor
+Icon=io.liri.Text
