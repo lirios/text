@@ -101,6 +101,7 @@ QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount,
 
     // Finally retreive the syntax higlighted html
     return tempCursor.selection().toHtml();
+    tempDocument->deleteLater();
 }
 
 void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
