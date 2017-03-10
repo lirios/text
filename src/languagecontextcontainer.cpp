@@ -18,11 +18,12 @@
  */
 
 #include "languagecontextcontainer.h"
-#include "languagecontextreference.h"
+#include "languagecontext.h"
 
 #include <QXmlStreamAttributes>
 
-LanguageContextContainer::LanguageContextContainer() { }
+LanguageContextContainer::LanguageContextContainer() :
+    includes({}) { }
 
 LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attributes) {
     if(attributes.hasAttribute("style-inside"))
@@ -39,4 +40,21 @@ LanguageContextContainer::LanguageContextContainer(QXmlStreamAttributes attribut
         onceOnly = attributes.value("once-only") == "true";
 }
 
-LanguageContextContainer::~LanguageContextContainer() { }
+void LanguageContextContainer::markAsInUse() {
+    if(m_inUse)
+        return;
+    LanguageContextBase::markAsInUse();
+    for (auto inc : includes)
+        inc->base->markAsInUse();
+}
+
+void LanguageContextContainer::prepareForRemoval(bool ignoreUsage) {
+    if(!ignoreUsage && inUse())
+        return;
+
+    while (!includes.isEmpty()) {
+        auto inc = includes.back();
+        includes.pop_back();
+        inc->base->prepareForRemoval(ignoreUsage);
+    }
+}

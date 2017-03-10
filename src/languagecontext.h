@@ -20,10 +20,11 @@
 #ifndef LANGUAGECONTEXT_H
 #define LANGUAGECONTEXT_H
 
-#include "languagecontextsimple.h"
-#include "languagecontextcontainer.h"
-#include "languagecontextsubpattern.h"
-#include "languagecontextkeyword.h"
+#include <QString>
+#include <QSharedPointer>
+#include "languagecontextbase.h"
+
+class QXmlStreamAttributes;
 
 class LanguageContext
 {
@@ -36,26 +37,16 @@ public:
       , Undefined
     } type;
 
+    QSharedPointer<LanguageContextBase> base;
+
     LanguageContext();
-    LanguageContext(const LanguageContext &parent);
+    LanguageContext(const LanguageContext &other);
     virtual ~LanguageContext();
     void init(ElementType t);
     void init(ElementType t, QXmlStreamAttributes attributes);
     LanguageContext& operator =(const LanguageContext &other);
 
-    union {
-        LanguageContextSimple simple;
-        LanguageContextContainer container;
-        LanguageContextSubPattern subPattern;
-        LanguageContextKeyword keyword;
-    };
-
-    void markAsInUse();
-    inline bool inUse() { return m_inUse; }
-    void prepareForRemoval(bool ignoreUsage = false);
-protected:
-    void deinit();
-    bool m_inUse;
+    QString styleId;
 };
 
 #endif // LANGUAGECONTEXT_H

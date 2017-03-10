@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 Andrew Penkrat
+ * Copyright © 2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -17,30 +17,17 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGUAGECONTEXTSIMPLE_H
-#define LANGUAGECONTEXTSIMPLE_H
-
-#include <QList>
-#include <QSharedPointer>
-#include <QRegularExpression>
 #include "languagecontextbase.h"
+#include "languagecontextcontainer.h"
 
-class QXmlStreamAttributes;
-class LanguageContext;
+LanguageContextBase::LanguageContextBase() :
+    m_inUse(false) { }
 
-class LanguageContextSimple : public LanguageContextBase
-{
-public:
-    LanguageContextSimple();
-    LanguageContextSimple(QXmlStreamAttributes attributes);
+LanguageContextBase::~LanguageContextBase() { }
 
-    QRegularExpression match;
-    QList<QSharedPointer<LanguageContext> > includes;
+void LanguageContextBase::markAsInUse() {
+    if(m_inUse)
+        return;
 
-    bool extendParent  = true;
-    bool endParent     = false;
-    bool firstLineOnly = false;
-    bool onceOnly      = false;
-};
-
-#endif // LANGUAGECONTEXTSIMPLE_H
+    m_inUse = true;
+}

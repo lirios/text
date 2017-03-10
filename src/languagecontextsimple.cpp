@@ -18,7 +18,7 @@
  */
 
 #include "languagecontextsimple.h"
-#include "languagecontextreference.h"
+#include "languagecontext.h"
 
 #include <QXmlStreamAttributes>
 
@@ -34,5 +34,3 @@ LanguageContextSimple::LanguageContextSimple(QXmlStreamAttributes attributes) {
     if(attributes.hasAttribute("once-only"))
         onceOnly = attributes.value("once-only") == "true";
 }
-
-LanguageContextSimple::~LanguageContextSimple() { }

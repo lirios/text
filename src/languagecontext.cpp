@@ -18,143 +18,65 @@
  */
 
 #include "languagecontext.h"
-#include "languagecontextreference.h"
 #include <QXmlStreamAttributes>
+#include "languagecontextcontainer.h"
+#include "languagecontextkeyword.h"
+#include "languagecontextsimple.h"
+#include "languagecontextsubpattern.h"
+
 
 LanguageContext::LanguageContext() :
-    type(Undefined),
-    m_inUse(false) { }
+    type(Undefined) { }
 
-LanguageContext::LanguageContext(const LanguageContext &parent) {
-    init(parent.type);
-    switch (type) {
-    case Simple:
-        simple = parent.simple;
-        break;
-    case Container:
-        container = parent.container;
-        break;
-    case SubPattern:
-        subPattern = parent.subPattern;
-        break;
-    case Keyword:
-        keyword = parent.keyword;
-        break;
-    }
+LanguageContext::LanguageContext(const LanguageContext &other) :
+    LanguageContext() {
+
+    type = other.type;
+    styleId = other.styleId;
+    base = other.base;
 }
 
-LanguageContext::~LanguageContext() {
-    deinit();
-}
+LanguageContext::~LanguageContext() { }
 
 void LanguageContext::init(ElementType t) {
-    if(type != Undefined)
-        deinit();
-
     type = t;
     switch (type) {
     case Simple:
-        new (&simple) LanguageContextSimple();
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextSimple());
         break;
     case Container:
-        new (&container) LanguageContextContainer();
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextContainer());
         break;
     case SubPattern:
-        new (&subPattern) LanguageContextSubPattern();
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextSubPattern());
         break;
     case Keyword:
-        new (&keyword) LanguageContextKeyword();
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextKeyword());
         break;
     }
 }
 
 void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
-    if(type != Undefined)
-        deinit();
-
     type = t;
     switch (type) {
     case Simple:
-        new (&simple) LanguageContextSimple(attributes);
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextSimple(attributes));
         break;
     case Container:
-        new (&container) LanguageContextContainer(attributes);
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextContainer(attributes));
         break;
     case SubPattern:
-        new (&subPattern) LanguageContextSubPattern(attributes);
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextSubPattern(attributes));
         break;
     case Keyword:
-        new (&keyword) LanguageContextKeyword(attributes);
+        base = QSharedPointer<LanguageContextBase>(new LanguageContextKeyword(attributes));
         break;
     }
 }
 
 LanguageContext &LanguageContext::operator =(const LanguageContext &other) {
-    init(other.type);
-    switch (type) {
-    case Simple:
-        simple = other.simple;
-        break;
-    case Container:
-        container = other.container;
-        break;
-    case SubPattern:
-        subPattern = other.subPattern;
-        break;
-    case Keyword:
-        keyword = other.keyword;
-        break;
-    }
+    type = other.type;
+    styleId = other.styleId;
+    base = other.base;
     return *this;
-}
-
-void LanguageContext::markAsInUse() {
-    if(m_inUse)
-        return;
-
-    m_inUse = true;
-    if(type == Simple) {
-        for (auto inc : simple.includes)
-            inc->context->markAsInUse();
-    }
-    if(type == Container) {
-        for (auto inc : container.includes)
-            inc->context->markAsInUse();
-    }
-}
-
-#define REMOVE_INCLUDES(ctx) \
-    while (!ctx.includes.isEmpty()) { \
-        auto inc = ctx.includes.back(); \
-        ctx.includes.pop_back(); \
-        inc->context->prepareForRemoval(ignoreUsage); \
-    }
-
-void LanguageContext::prepareForRemoval(bool ignoreUsage) {
-    if(!ignoreUsage && inUse())
-        return;
-
-    if(type == Simple) {
-        REMOVE_INCLUDES(simple)
-    }
-    if(type == Container) {
-        REMOVE_INCLUDES(container)
-    }
-}
-
-void LanguageContext::deinit() {
-    switch (type) {
-    case Simple:
-        (&simple)->~LanguageContextSimple();
-        break;
-    case Container:
-        (&container)->~LanguageContextContainer();
-        break;
-    case SubPattern:
-        (&subPattern)->~LanguageContextSubPattern();
-        break;
-    case Keyword:
-        (&keyword)->~LanguageContextKeyword();
-        break;
-    }
 }

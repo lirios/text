@@ -23,20 +23,20 @@
 #include <QList>
 #include <QRegularExpression>
 #include <QSharedPointer>
+#include "languagecontextbase.h"
 
 class QXmlStreamAttributes;
-class LanguageContextReference;
+class LanguageContext;
 
-class LanguageContextContainer
+class LanguageContextContainer : public LanguageContextBase
 {
 public:
     LanguageContextContainer();
     LanguageContextContainer(QXmlStreamAttributes attributes);
-    virtual ~LanguageContextContainer();
 
     QRegularExpression start;
     QRegularExpression end;
-    QList<QSharedPointer<LanguageContextReference>> includes;
+    QList<QSharedPointer<LanguageContext> > includes;
 
     bool styleInside   = false;
     bool extendParent  = true;
@@ -45,6 +45,9 @@ public:
     bool firstLineOnly = false;
     bool onceOnly      = false;
     bool includesOnly  = true;
+
+    void markAsInUse() override;
+    void prepareForRemoval(bool ignoreUsage = false) override;
 };
 
 #endif // LANGUAGECONTEXTCONTAINER_H

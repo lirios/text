@@ -22,8 +22,7 @@
 
 #include <QSyntaxHighlighter>
 #include <QRegularExpressionMatch>
-#include "languagecontextcontainer.h"
-#include "languagecontextsimple.h"
+#include "languagecontext.h"
 #include "highlightdata.h"
 #include "languagedefaultstyles.h"
 
@@ -33,7 +32,7 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 public:
     LiriSyntaxHighlighter(QTextDocument *parent);
     ~LiriSyntaxHighlighter();
-    void setLanguage(QSharedPointer<LanguageContextReference> lang, const QHash<QString, QString> &styleMap);
+    void setLanguage(QSharedPointer<LanguageContext> lang, const QHash<QString, QString> &styleMap);
     void setDefaultStyles(QSharedPointer<LanguageDefaultStyles> defStyles);
 
     QString highlightedFragment(int position, int blockCount, QFont font);
@@ -41,7 +40,7 @@ public:
 protected:
     struct Match {
         QRegularExpressionMatch match;
-        QSharedPointer<LanguageContextReference> contextRef;
+        QSharedPointer<LanguageContext> context;
 
         inline bool operator <(const Match &other);
     };
@@ -51,14 +50,14 @@ protected:
     void endNthContainer(QList<HighlightData::ContainerInfo> &containers,
                          int n, int offset, int length, QRegularExpressionMatch endMatch = QRegularExpressionMatch());
 
-    void startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContextReference> container,
+    void startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContext> container,
                         int offset, int length, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
 
     Match findMatch(const QString &text, int offset, int potentialEnd,
-                    QSharedPointer<LanguageContextReference> contextRef,
+                    QSharedPointer<LanguageContext> context,
                     HighlightData::ContainerInfo &currentContainerInfo, bool rootContext = true);
 
-    QSharedPointer<LanguageContextReference> m_lang;
+    QSharedPointer<LanguageContext> m_lang;
     QSharedPointer<LanguageDefaultStyles> m_defStyles;
     QHash<QString, QString> m_styleMap;
 };

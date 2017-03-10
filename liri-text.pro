@@ -18,7 +18,8 @@ SOURCES += \
     src/languagedefaultstyles.cpp \
     src/languagemanager.cpp \
     src/languagecontextreference.cpp \
-    src/languagedatabasemaintainer.cpp
+    src/languagedatabasemaintainer.cpp \
+    src/languagecontextbase.cpp
 
 RESOURCES += \
     src/qml.qrc
@@ -44,7 +45,8 @@ HEADERS += \
     src/languagemanager.h \
     src/languagemetadata.h \
     src/languagecontextreference.h \
-    src/languagedatabasemaintainer.h
+    src/languagedatabasemaintainer.h \
+    src/languagecontextbase.h
 
 TRANSLATIONS = \
     src/translations/ru_RU.ts

@@ -22,7 +22,11 @@
 #include "languagecontextsimple.h"
 
 LanguageContextReference::LanguageContextReference() :
-    context(new LanguageContext()),
-    styleId() { }
+    context(nullptr),
+    refId(""),
+    originalRef(false),
+    includes(),
+    styleOverwrite(""),
+    ignoreStyle(false) { }
 
 LanguageContextReference::~LanguageContextReference() { }

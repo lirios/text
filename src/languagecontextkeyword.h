@@ -23,10 +23,11 @@
 #include <QString>
 #include <QList>
 #include <QRegularExpression>
+#include "languagecontextbase.h"
 
 class QXmlStreamAttributes;
 
-class LanguageContextKeyword
+class LanguageContextKeyword : public LanguageContextBase
 {
 public:
     LanguageContextKeyword();
