@@ -6,7 +6,7 @@ unix:!android {
     INSTALLS += target desktop
 
     desktop.path = $$PREFIX/share/applications
-    desktop.files += liri-text.desktop
+    desktop.files += data/io.liri.Text.desktop
 
     target.path = $$PREFIX/bin
     target.files += liri-text

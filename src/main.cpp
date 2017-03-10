@@ -41,9 +41,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     // Set app info
-    app.setOrganizationName("liri-project");
+    app.setOrganizationName("Liri");
     app.setOrganizationDomain("liri.io");
-    app.setApplicationName("liri-text");
+    app.setApplicationName("Text");
+    app.setDesktopFileName("io.liri.Text.desktop");
 
     // Load Translations
     QTranslator qtTranslator;
