@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/main.qml</file>
+        <file>qml/Main.qml</file>
         <file>qml/RecentFilesPage.qml</file>
         <file>qml/EditPage.qml</file>
         <file>qml/FileGridView.qml</file>

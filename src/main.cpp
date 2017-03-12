@@ -100,6 +100,6 @@ int main(int argc, char *argv[])
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, history, &HistoryManager::deleteLater);
 
     // Start with main.qml
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
     return app.exec();
 }
