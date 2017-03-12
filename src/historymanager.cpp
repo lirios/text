@@ -40,6 +40,12 @@ HistoryManager::~HistoryManager() {
     historyStorage->deleteLater();
 }
 
+HistoryManager *HistoryManager::getInstance() {
+    if(!m_instance)
+        m_instance = new HistoryManager();
+    return m_instance;
+}
+
 int HistoryManager::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)
     return history.length();
@@ -231,3 +237,5 @@ void HistoryManager::saveHistory() {
     }
     historyStorage->endArray();
 }
+
+HistoryManager *HistoryManager::m_instance = nullptr;

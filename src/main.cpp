@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    HistoryManager *history = new HistoryManager();
+    HistoryManager *history = HistoryManager::getInstance();
     QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();
     proxyModel->setSourceModel(history);
     proxyModel->setSortRole(HistoryManager::LastViewTimeRole);

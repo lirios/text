@@ -39,8 +39,7 @@ public:
         CursorPositionRole
     };
 
-    HistoryManager();
-    ~HistoryManager();
+    static HistoryManager *getInstance();
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
@@ -66,6 +65,10 @@ protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
+    HistoryManager();
+    ~HistoryManager();
+    static HistoryManager *m_instance;
+
     QSettings *historyStorage;
 
     struct FileData {
