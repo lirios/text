@@ -74,4 +74,8 @@ unix:!android:!mac {
     desktop.files = data/io.liri.Text.desktop
     desktop.path = $$LIRI_INSTALL_APPLICATIONSDIR
     INSTALLS += desktop
+
+    appdata.files = data/io.liri.Text.appdata.xml
+    appdata.path = $$LIRI_INSTALL_APPDATADIR
+    INSTALLS += appdata
 }
