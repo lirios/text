@@ -8,12 +8,13 @@ win32|macx {
         message(Using GtkSourceView language specifications.)
     }
 
-    DATA_PREFIX = $$PREFIX/share/liri-text
+    DATA_PREFIX = $$LIRI_INSTALL_DATADIR/liri-text
     DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_PREFIX/language-specs/\\\"
 
-    INSTALLS += syntax
     syntax.path = $$DATA_PREFIX/language-specs
     syntax.files = data/language-specs/*
+    # FIXME: qmake tries to strip shell script resulting in a failure
+    #INSTALLS += syntax
 } else {
     warning(Unsupported platform)
 }
