@@ -12,9 +12,8 @@ win32|macx {
     DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_PREFIX/language-specs/\\\"
 
     syntax.path = $$DATA_PREFIX/language-specs
-    syntax.files = data/language-specs/*
-    # FIXME: qmake tries to strip shell script resulting in a failure
-    #INSTALLS += syntax
+    syntax.files = data/language-specs/*.lang
+    INSTALLS += syntax
 } else {
     warning(Unsupported platform)
 }
