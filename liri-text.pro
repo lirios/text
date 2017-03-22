@@ -1,4 +1,7 @@
+load(liri_deployment)
+
 TEMPLATE = app
+TARGET = liri-text
 
 QT += qml quick quickcontrols2 sql
 CONFIG += c++11
@@ -27,7 +30,6 @@ RESOURCES += \
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
-include(deployment.pri)
 include(syntax-config.pri)
 
 HEADERS += \
@@ -54,4 +56,26 @@ TRANSLATIONS = \
 lupdate_only{
     SOURCES = \
         src/qml/*
+}
+
+unix:!android {
+    target.path = $$LIRI_INSTALL_BINDIR
+    INSTALLS += target
+}
+
+unix:!android:!mac {
+    ICONS_SIZES = 16 32 64 128 192 256
+    for(size, ICONS_SIZES) {
+        eval(icon$${size}.files = data/icons/$${size}x$${size}/io.liri.Text.png)
+        eval(icon$${size}.path = $$LIRI_INSTALL_PREFIX/share/icons/hicolor/$${size}x$${size}/apps)
+        INSTALLS += icon$${size}
+    }
+
+    desktop.files = data/io.liri.Text.desktop
+    desktop.path = $$LIRI_INSTALL_APPLICATIONSDIR
+    INSTALLS += desktop
+
+    appdata.files = data/io.liri.Text.appdata.xml
+    appdata.path = $$LIRI_INSTALL_APPDATADIR
+    INSTALLS += appdata
 }

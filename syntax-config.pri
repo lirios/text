@@ -8,12 +8,12 @@ win32|macx {
         message(Using GtkSourceView language specifications.)
     }
 
-    DATA_PREFIX = $$PREFIX/share/liri-text
+    DATA_PREFIX = $$LIRI_INSTALL_DATADIR/liri-text
     DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_PREFIX/language-specs/\\\"
 
-    INSTALLS += syntax
     syntax.path = $$DATA_PREFIX/language-specs
-    syntax.files = data/language-specs/*
+    syntax.files = data/language-specs/*.lang
+    INSTALLS += syntax
 } else {
     warning(Unsupported platform)
 }
