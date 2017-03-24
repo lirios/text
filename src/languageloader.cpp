@@ -429,10 +429,24 @@ QSharedPointer<LanguageContext> LanguageLoader::buildContextTree(QSharedPointer<
     if(reference->context)
         result = reference->context;
     else {
+        QString refId = reference->refId;
+        if(refId.endsWith(":*")) {
+            refId = refId.left(refId.length() - 2);
+        }
+        QSharedPointer<LanguageContext> refContext;
         if(reference->originalRef)
-            result = QSharedPointer<LanguageContext>(new LanguageContext(*buildContextTree(m_originalContexts[reference->refId])));
+            refContext = buildContextTree(m_originalContexts[refId]);
         else
-            result = QSharedPointer<LanguageContext>(new LanguageContext(*buildContextTree(m_knownContexts[reference->refId])));
+            refContext = buildContextTree(m_knownContexts[refId]);
+
+        if(reference->refId.endsWith(":*")) {
+            result = QSharedPointer<LanguageContext>(new LanguageContext());
+            result->init(LanguageContext::Container);
+            auto container = result->base.staticCast<LanguageContextContainer>();
+            container->includesOnly = true;
+            container->includes = refContext->base.staticCast<LanguageContextContainer>()->includes;
+        } else
+            result = QSharedPointer<LanguageContext>(new LanguageContext(*refContext));
 
         bool styleOverwrite = false;
         QString styleId;
