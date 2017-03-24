@@ -43,10 +43,7 @@ FluidControls.FluidWindow {
     Component.onCompleted: {
         console.log("app completed")
         if(givenPath) {
-            var cp = 0
-            if(History.getFileInfo(givenPath))
-                cp = History.getFileInfo(givenPath).cursorPosition
-            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: givenPath, cursorPos: cp })
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: givenPath })
         }
         if(newDoc) {
             pageStack.push(Qt.resolvedUrl("EditPage.qml"), { anonymous: true })

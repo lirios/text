@@ -130,7 +130,7 @@ Flickable {
 
                     onClicked: {
                         if(mouse.button === Qt.LeftButton) {
-                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
+                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
                         }
                     }
                 }

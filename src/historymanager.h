@@ -51,6 +51,7 @@ public:
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    Q_INVOKABLE QVariantMap getFileEditingInfo(QUrl fileUrl) const;
 
 signals:
     void countChanged();

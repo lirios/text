@@ -29,7 +29,6 @@ FluidControls.Page {
     property url documentUrl
     property bool anonymous: false
     property alias document: document
-    property int cursorPos: 0
 
     signal ioSuccess
     signal ioFailure
@@ -60,7 +59,8 @@ FluidControls.Page {
         console.log("edit page completed")
 
         if(document.setFileUrl(documentUrl)) {
-            mainArea.cursorPosition = cursorPos
+            var editingInfo = History.getFileEditingInfo(documentUrl)
+            mainArea.cursorPosition = editingInfo.cursorPosition ? editingInfo.cursorPosition : 0
             if(!anonymous) {
                 touchFileOnCursorPosition()
             }

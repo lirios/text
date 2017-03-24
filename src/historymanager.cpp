@@ -143,6 +143,19 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
     return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
 }
 
+QVariantMap HistoryManager::getFileEditingInfo(QUrl fileUrl) const {
+    QSqlQuery query(QSqlDatabase::database(m_connId));
+    query.prepare("SELECT cursor_position FROM history "
+                  "WHERE path=?");
+    query.addBindValue(fileUrl.path());
+    query.exec();
+    QVariantMap result;
+    if(query.first()) {
+        result["cursorPosition"] = query.value(0);
+    }
+    return result;
+}
+
 void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview) {
     int currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
@@ -175,7 +188,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
 
         emit endInsertRows();
 
-        int entryCount = count();
+        int entryCount = rowCount();
         if(entryCount > MAX_HISTORY_SIZE) {
             removeRow(entryCount - 1);
             /*
