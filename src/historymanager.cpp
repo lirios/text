@@ -40,7 +40,7 @@ HistoryManager::HistoryManager() :
     db.setDatabaseName(dataDir.filePath("history.db"));
     db.open();
     QSqlQuery("CREATE TABLE IF NOT EXISTS history "
-              "(path TEXT PRIMARY KEY, display_name TEXT, last_view_time INTEGER, preview TEXT, cursor_position INTEGER)",
+              "(path TEXT PRIMARY KEY, display_name TEXT, last_view_time INTEGER, preview TEXT, cursor_position INTEGER, scroll_position REAL)",
               db);
 }
 
@@ -145,30 +145,32 @@ Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
 
 QVariantMap HistoryManager::getFileEditingInfo(QUrl fileUrl) const {
     QSqlQuery query(QSqlDatabase::database(m_connId));
-    query.prepare("SELECT cursor_position FROM history "
+    query.prepare("SELECT cursor_position, scroll_position FROM history "
                   "WHERE path=?");
     query.addBindValue(fileUrl.path());
     query.exec();
     QVariantMap result;
     if(query.first()) {
         result["cursorPosition"] = query.value(0);
+        result["scrollPosition"] = query.value(1);
     }
     return result;
 }
 
-void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview) {
+void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, float scrollPosition, QString preview) {
     int currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
     int row = dbIndexForId(fileUrl.path());
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare("UPDATE history SET "
-                  "path=?, display_name=?, last_view_time=?, preview=?, cursor_position=? "
+                  "path=?, display_name=?, last_view_time=?, preview=?, cursor_position=?, scroll_position=? "
                   "WHERE path=?");
     query.addBindValue(fileUrl.path());
     query.addBindValue(name);
     query.addBindValue(currentTime);
     query.addBindValue(preview);
     query.addBindValue(cursorPosition);
+    query.addBindValue(scrollPosition);
     query.addBindValue(fileUrl.path());
     query.exec();
 
@@ -177,13 +179,14 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
         // If update failed, insert
         emit beginInsertRows(QModelIndex(), 0, 0);
         query.prepare("INSERT INTO history "
-                      "(path, display_name, last_view_time, preview, cursor_position) "
-                      "VALUES (?, ?, ?, ?, ?)");
+                      "(path, display_name, last_view_time, preview, cursor_position, scroll_position) "
+                      "VALUES (?, ?, ?, ?, ?, ?)");
         query.addBindValue(fileUrl.path());
         query.addBindValue(name);
         query.addBindValue(currentTime);
         query.addBindValue(preview);
         query.addBindValue(cursorPosition);
+        query.addBindValue(scrollPosition);
         query.exec();
 
         emit endInsertRows();
@@ -207,7 +210,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, Q
         } else
             emit countChanged();
     } else {
-        emit dataChanged(index(row), index(row), {NameRole, LastViewTimeRole, PreviewRole, CursorPositionRole});
+        emit dataChanged(index(row), index(row), {NameRole, LastViewTimeRole, PreviewRole, CursorPositionRole, ScrollPositionRole});
         if(row > 0) {
             emit beginMoveRows(QModelIndex(), row, row, QModelIndex(), 0);
             emit endMoveRows();
@@ -221,7 +224,8 @@ QHash<int, QByteArray> HistoryManager::roleNames() const {
                                     {FilePathRole, "filePath"},
                                     {LastViewTimeRole, "lastViewTime"},
                                     {PreviewRole, "previewText"},
-                                    {CursorPositionRole, "cursorPosition"}
+                                    {CursorPositionRole, "cursorPosition"},
+                                    {ScrollPositionRole, "scrollPosition"}
                                   });
 }
 
@@ -242,6 +246,9 @@ QString HistoryManager::dbColumnFromRole(int role) const {
         break;
     case CursorPositionRole:
         return "cursor_position";
+        break;
+    case ScrollPositionRole:
+        return "scroll_position";
         break;
     default:
         return "";

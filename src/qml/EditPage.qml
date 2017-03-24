@@ -51,7 +51,7 @@ FluidControls.Page {
     }
 
     function touchFileOnCursorPosition() {
-        History.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
+        History.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition, flickable.contentY,
                           document.textFragment(mainArea.cursorPosition, 7))
     }
 
@@ -61,6 +61,7 @@ FluidControls.Page {
         if(document.setFileUrl(documentUrl)) {
             var editingInfo = History.getFileEditingInfo(documentUrl)
             mainArea.cursorPosition = editingInfo.cursorPosition ? editingInfo.cursorPosition : 0
+            flickable.contentY      = editingInfo.scrollPosition ? editingInfo.scrollPosition : 0
             if(!anonymous) {
                 touchFileOnCursorPosition()
             }

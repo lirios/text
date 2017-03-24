@@ -36,7 +36,8 @@ public:
         FilePathRole,
         LastViewTimeRole,
         PreviewRole,
-        CursorPositionRole
+        CursorPositionRole,
+        ScrollPositionRole
     };
 
     static HistoryManager *getInstance();
@@ -57,7 +58,7 @@ signals:
     void countChanged();
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QString preview);
+    void touchFile(QString name, QUrl fileUrl, int cursorPosition, float scrollPosition, QString preview);
 
 protected:
     QHash<int, QByteArray> roleNames() const;
