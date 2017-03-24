@@ -260,12 +260,14 @@ FluidControls.Page {
 
         onAccepted: {
             var cp = mainArea.cursorPosition
+            var sp = flickable.contentY
             if(document.reloadText())
                 ioSuccess()
             else
                 ioFailure()
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
+            flickable.contentY = sp
         }
 
         Label {
