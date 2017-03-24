@@ -74,8 +74,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    HistoryManager *history = HistoryManager::getInstance();
-    engine.rootContext()->setContextProperty("history", history);
+    qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History", (QObject *(*)(QQmlEngine*, QJSEngine*))(HistoryManager::getInstance));
 
     engine.rootContext()->setContextProperty("newDoc", nf);
     if(args.length() > 0)
@@ -91,7 +90,6 @@ int main(int argc, char *argv[])
 
     // Clean up on exiting application
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager, &LanguageManager::deleteLater);
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed, history, &HistoryManager::deleteLater);
 
     // Start with main.qml
     engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));

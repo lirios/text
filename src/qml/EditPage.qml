@@ -52,7 +52,7 @@ FluidControls.Page {
     }
 
     function touchFileOnCursorPosition() {
-        history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
+        History.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
                           document.textFragment(mainArea.cursorPosition, 7))
     }
 

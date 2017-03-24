@@ -21,6 +21,7 @@ import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import Fluid.Controls 1.0 as FluidControls
+import io.liri.text 1.0
 
 FluidControls.FluidWindow {
     id: app
@@ -43,8 +44,8 @@ FluidControls.FluidWindow {
         console.log("app completed")
         if(givenPath) {
             var cp = 0
-            if(history.getFileInfo(givenPath))
-                cp = history.getFileInfo(givenPath).cursorPosition
+            if(History.getFileInfo(givenPath))
+                cp = History.getFileInfo(givenPath).cursorPosition
             pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: givenPath, cursorPos: cp })
         }
         if(newDoc) {

@@ -24,6 +24,7 @@ import QtQuick.Dialogs 1.2
 import Fluid.Controls 1.0 as FluidControls
 import Fluid.Material 1.0 as FluidMaterial
 import Fluid.Core 1.0 as FluidCore
+import io.liri.text 1.0
 
 FluidControls.Page {
     id: page
@@ -53,10 +54,10 @@ FluidControls.Page {
 
     FileGridView {
         id: recentFilesView
-        model: history
+        model: History
 
         FluidControls.Placeholder {
-            visible: history.count === 0
+            visible: recentFilesView.model.count === 0
             anchors.fill: parent
             text: qsTr("You don't have recently open files")
         }
