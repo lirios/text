@@ -126,7 +126,7 @@ Flickable {
                 FluidMaterial.Ripple {
                     id: animation
                     anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    acceptedButtons: Qt.LeftButton
 
                     onClicked: {
                         if(mouse.button === Qt.LeftButton) {
