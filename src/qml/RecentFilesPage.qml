@@ -53,7 +53,7 @@ FluidControls.Page {
 
     FileGridView {
         id: recentFilesView
-        model: sortedHistory
+        model: history
 
         FluidControls.Placeholder {
             visible: history.count === 0

@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QHash>
-#include <QSettings>
 #include <QUrl>
 #include <QDateTime>
 
@@ -34,6 +33,7 @@ public:
     enum HistoryRoles {
         NameRole = Qt::UserRole + 1,
         FileUrlRole,
+        FilePathRole,
         LastViewTimeRole,
         PreviewRole,
         CursorPositionRole
@@ -43,16 +43,13 @@ public:
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
-    inline int count() { return rowCount(); }
+    inline int count() const { return rowCount(); }
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length) const;
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl) const;
-    Q_INVOKABLE QVariantMap getFileInfo(QUrl fileUrl) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 signals:
@@ -69,19 +66,11 @@ private:
     ~HistoryManager();
     static HistoryManager *m_instance;
 
-    QSettings *historyStorage;
+    QString m_connId;
 
-    struct FileData {
-        QString name;
-        QUrl url;
-        QDateTime viewTime;
-        QString preview;
-        int cursorPosition;
-    };
-    QList<FileData> history;
-
-    void loadHistory();
-    void saveHistory();
+    QString dbColumnFromRole(int role) const;
+    QString dbIdForIndex(int index) const;
+    int dbIndexForId(QString id) const;
 };
 
 #endif // HISTORYMANAGER_H

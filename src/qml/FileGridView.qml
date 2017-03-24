@@ -116,7 +116,7 @@ Flickable {
                     anchors.leftMargin: 16
                     anchors.rightMargin: 16
 
-                    text: history.prettifyPath(fileUrl)
+                    text: filePath
                     color: "white"
                     font.pixelSize: 12
                     font.weight: Font.Normal

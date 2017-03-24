@@ -75,12 +75,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     HistoryManager *history = HistoryManager::getInstance();
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();
-    proxyModel->setSourceModel(history);
-    proxyModel->setSortRole(HistoryManager::LastViewTimeRole);
-    proxyModel->sort(0, Qt::DescendingOrder);
     engine.rootContext()->setContextProperty("history", history);
-    engine.rootContext()->setContextProperty("sortedHistory", proxyModel);
 
     engine.rootContext()->setContextProperty("newDoc", nf);
     if(args.length() > 0)
@@ -96,7 +91,6 @@ int main(int argc, char *argv[])
 
     // Clean up on exiting application
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager, &LanguageManager::deleteLater);
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed, proxyModel, &QSortFilterProxyModel::deleteLater);
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, history, &HistoryManager::deleteLater);
 
     // Start with main.qml
