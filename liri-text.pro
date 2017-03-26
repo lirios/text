@@ -51,11 +51,24 @@ HEADERS += \
     src/languagecontextbase.h
 
 TRANSLATIONS = \
-    src/translations/ru_RU.ts
+    src/translations/ar.ts \
+    src/translations/da.ts \
+    src/translations/de.ts \
+    src/translations/es.ts \
+    src/translations/es_419.ts \
+    src/translations/fr.ts \
+    src/translations/it.ts \
+    src/translations/ja.ts \
+    src/translations/nl.ts \
+    src/translations/pt_BR.ts \
+    src/translations/pt_PT.ts \
+    src/translations/ru.ts \
+    src/translations/zh_HK.ts
 
 lupdate_only{
     SOURCES = \
-        src/qml/*
+        src/qml/* \
+        src/*
 }
 
 unix:!android {
