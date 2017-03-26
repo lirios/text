@@ -27,7 +27,7 @@ FluidControls.FluidWindow {
     id: app
 
     visible: true
-    title: qsTr("Liri Text")
+    title: "Liri Text"
 
     minimumWidth: 384
     minimumHeight: 256

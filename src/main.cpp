@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
     // Parse command line options
     QCommandLineParser parser;
-    parser.setApplicationDescription("Material Designed text editor");
+    parser.setApplicationDescription(app.translate("main", "Material Designed text editor"));
     parser.addHelpOption();
     QCommandLineOption newFileOption("new-document", app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
