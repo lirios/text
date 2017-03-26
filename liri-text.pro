@@ -64,12 +64,15 @@ unix:!android {
 }
 
 unix:!android:!mac {
-    ICONS_SIZES = 16 32 64 128 192 256
+    ICONS_SIZES = 16 22 24 32 48 64 128 192 256
     for(size, ICONS_SIZES) {
         eval(icon$${size}.files = data/icons/$${size}x$${size}/io.liri.Text.png)
         eval(icon$${size}.path = $$LIRI_INSTALL_PREFIX/share/icons/hicolor/$${size}x$${size}/apps)
         INSTALLS += icon$${size}
     }
+    iconSVG.files = data/icons/io.liri.Text.svg
+    iconSVG.path = $$LIRI_INSTALL_PREFIX/share/icons/hicolor/scalable/apps
+    INSTALLS += iconSVG
 
     desktop.files = data/io.liri.Text.desktop
     desktop.path = $$LIRI_INSTALL_APPLICATIONSDIR
