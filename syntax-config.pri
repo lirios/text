@@ -7,11 +7,15 @@ win32|macx {
         DEFINES += GTKSOURCEVIEW_LANGUAGE_PATH=\\\"/usr/share/gtksourceview-3.0/language-specs/\\\"
         message(Using GtkSourceView language specifications.)
     }
+    
+    DATA_INSTALL_PREFIX = $$LIRI_INSTALL_DATADIR/liri-text
+    isEmpty(DATA_RUNTIME_PREFIX) {
+        DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_INSTALL_PREFIX/language-specs/\\\"
+    } else {
+        DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_RUNTIME_PREFIX/language-specs/\\\"
+    }
 
-    DATA_PREFIX = $$LIRI_INSTALL_DATADIR/liri-text
-    DEFINES += ABSOLUTE_LANGUAGE_PATH=\\\"$$DATA_PREFIX/language-specs/\\\"
-
-    syntax.path = $$DATA_PREFIX/language-specs
+    syntax.path = $$DATA_INSTALL_PREFIX/language-specs
     syntax.files = data/language-specs/*.lang
     INSTALLS += syntax
 } else {
