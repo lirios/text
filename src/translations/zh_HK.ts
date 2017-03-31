@@ -135,7 +135,7 @@
     </message>
     <message>
         <location filename="../main.cpp" line="62"/>
-        <source>Material Designed text editor</source>
+        <source>Advanced text editor made in accordance with Material Design.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
