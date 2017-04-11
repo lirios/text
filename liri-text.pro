@@ -76,6 +76,9 @@ unix:!android {
     INSTALLS += target
 }
 
+ICON    = data/icons/io.liri.Text.icns
+ICON_RC = data/icons/io.liri.Text.ico
+
 unix:!android:!mac {
     ICONS_SIZES = 16 22 24 32 48 64 128 192 256
     for(size, ICONS_SIZES) {
