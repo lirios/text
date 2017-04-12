@@ -18,6 +18,7 @@ install:
   - ./.travis/install.sh
 
 script:
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then source /opt/qt58/bin/qt58-env.sh ; which qmake ; fi
   - mkdir -p ./appdir
   - git clone -b develop https://github.com/lirios/fluid
   - cd fluid
