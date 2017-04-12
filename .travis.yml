@@ -18,7 +18,7 @@ install:
   - ./.travis/install.sh
 
 script:
-  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then source /opt/qt58/bin/qt58-env.sh ; which qmake ; fi
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then source /opt/qt58/bin/qt58-env.sh ; fi
   - mkdir -p ./appdir
   - git clone -b develop https://github.com/lirios/fluid
   - cd fluid
@@ -32,6 +32,7 @@ script:
   - cd ../../
   - mkdir build
   - cd build
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then mkdir -p data/language-specs ; cp ../data/language-specs/*.lang data/language-specs/ ; fi
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then qmake LIRI_INSTALL_PREFIX=/usr ../liri-text.pro ; else qmake ../liri-text.pro ; fi
   - make -j4
   - ../.travis/package.sh
