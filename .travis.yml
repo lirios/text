@@ -1,0 +1,36 @@
+language: cpp
+
+matrix:
+    include:
+        - os: linux
+          cache:
+            directories:
+              - /var/cache/apt/archives/*.deb
+          compiler: gcc
+          sudo: require
+          dist: trusty
+        - os: osx
+
+before_install:
+  - ./.travis/update.sh
+
+install:
+  - ./.travis/install.sh
+
+script:
+  - mkdir -p ./appdir
+  - git clone -b develop https://github.com/lirios/fluid
+  - cd fluid
+  - git submodule update --init
+  - ./scripts/fetch_icons.sh
+  - mkdir build
+  - cd build
+  - qmake CONFIG+=use_qt_paths ..
+  - make -j4
+  - sudo make install
+  - cd ../../
+  - mkdir build
+  - cd build
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then qmake LIRI_INSTALL_PREFIX=/usr .. ; else qmake .. ; fi
+  - make -j4
+  - ../.travis/package.sh
