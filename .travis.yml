@@ -57,8 +57,7 @@ before_deploy:
 deploy:
   provider: bintray
   file: .travis/bintray.json
-  on: 
-    all_branches: true
+  on: master
   user:
     secure: FWt1S82VflWSOzU+WyytyIOwsxwQouQ7H9l/JnO33Jx4NMgM5Rr6/Sp1E960FucB9+MYK73R1Le+7iRbVqyB7CuaYV6YZnD66zE6DTwDnb4sOmfGBa1D+5ldxxWx65HMBK5yzkwX+eU6+akH1VoLIpF8xSpWcdU8wFl3TJ2fBtlZnC+1FpEI93TiF0YDLnkR/3m542KMYDY8sV9ocMk8HSTGZrtc89QUb4e+J9OPgiuu3BfKPeh/H9hya1ArG9kuzp9n+Qrck/aYBApRyAi3JN6nQdTQuUkadvtBnA/8cQxBFsZvw81LIuhQI5c/IXhbFS/4xaGQcqiGFv837MYbs8V7s18d8TX8AF5aRDR1Zd6YZ1qxtEu8B4tQhGhSsiOuQaVr+bHjZgtMmaN7eCtCSeSK2QIbVSfKSnuxTspz0w8ZZmUI5YG4H8E4/eBa9fQdgl27PJL6q42DbhrpwFguxgnkRVJOtQbFuSH9j3duHSCA6J4A3aPBD2lcVhFFtZGaMySpXqjU8XG3FwKZzHBPNYg+n+vvXtWf4ZPthjfX9j9SGo2r6FOELk4iPzmNAxh7Rv9HQErVTtrODQ+HBmUhMAetCy15CYImJeJKINp66TCbHDSMnQe8ZeBO9oQwZ/XA7KLN85rrKg4ixpTT2bqud9UOWB0BMRDFSyD+QR7zh0I=
   key:

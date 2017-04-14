@@ -6,7 +6,7 @@
   },
   "version": {
     "name": "@PKGVER@",
-    "desc": "Experimental CI build",
+    "desc": "Automatic CI build of the release",
     "released": "@TODAY@",
     "vcs_tag": "@GITTAG@",
     "attributes": [
