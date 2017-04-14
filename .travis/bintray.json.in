@@ -16,7 +16,7 @@
     "gpgSign": false
   },
   "files": [
-    {"includePattern": "build/(*.AppImage)|(*.dmg)", "uploadPattern": "$1", "matrixParams": {"override": 1}}
+    {"includePattern": "build/(.*\.AppImage)|(.*\.dmg)", "uploadPattern": "$1", "matrixParams": {"override": 1}}
   ],
   "publish": true
 }

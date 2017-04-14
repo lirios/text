@@ -18,7 +18,6 @@ install:
 
 script:
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then source /opt/qt58/bin/qt58-env.sh ; fi
-  - mkdir -p ./appdir
   - git clone -b develop https://github.com/lirios/fluid
   - cd fluid
   - git submodule update --init
@@ -39,6 +38,7 @@ script:
   - ../.travis/package.sh
 
 before_deploy:
+  - git fetch --unshallow
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then packagetype=appimage ; fi
   - if [[ $TRAVIS_OS_NAME == 'osx'   ]]; then packagetype=macos ; fi
   - gittag=$(git describe --tags --abbrev=0)
