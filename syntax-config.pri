@@ -6,7 +6,7 @@ win32 {
     DEFINES += RELATIVE_LANGUAGE_PATH=\\\"../Resources/language-specs/\\\"
 
     syntax.path = Contents/Resources
-    syntax.files = data/language-specs/*.lang
+    syntax.files = data/language-specs
     QMAKE_BUNDLE_DATA += syntax
 } else: unix:!android {
     use_gtksourceview_language_specs {
