@@ -45,13 +45,13 @@ before_deploy:
   - today=$(date +"%Y-%m-%d")
   - gitrev=$(git log -1 --format="%h")
   - gitdate=$(date -d @$(git log -1 --format="%at") +%Y-%m-%dT%H:%M:%S%z)
-  - cat .travis/bintray.json.in | \
-    sed -e "s,@BINTRAY_REPO@,$packagetype,g" \
-        -e "s,@PKGVER@,$gittag,g" \
-        -e "s,@GITTAG@,$gittag,g" \
-        -e "s,@TODAY@,$today,g" \
-        -e "s,@GITREV@,$gitrev,g" \
-        -e "s,@GITDATE@,$gitdate,g" \
+  - cat .travis/bintray.json.in |
+    sed -e "s,@BINTRAY_REPO@,$packagetype,g"
+        -e "s,@PKGVER@,$gittag,g"
+        -e "s,@GITTAG@,$gittag,g"
+        -e "s,@TODAY@,$today,g"
+        -e "s,@GITREV@,$gitrev,g"
+        -e "s,@GITDATE@,$gitdate,g"
         > .travis/bintray.json
 deploy:
   provider: bintray
