@@ -2,7 +2,8 @@
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     macdeployqt liri-text.app -dmg -qmldir=../src/qml -verbose=2
-    curl --upload-file ./liri-text.dmg https://transfer.sh/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD).dmg
+    mv liri-text.dmg Liri_Text.dmg
+    curl --upload-file ./Liri_Text*.dmg https://transfer.sh/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD).dmg
 else
     mkdir appdir
     sudo make INSTALL_ROOT=./appdir install ; sudo chown -R $USER ./appdir ; find ./appdir/
