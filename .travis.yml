@@ -36,6 +36,7 @@ script:
     ; else qmake ../liri-text.pro ; fi
   - make -j4
   - ../.travis/package.sh
+  - cd ..
 
 before_deploy:
   - git fetch --unshallow
@@ -45,14 +46,14 @@ before_deploy:
   - today=$(date +"%Y-%m-%d")
   - gitrev=$(git log -1 --format="%h")
   - gitdate=$(git log -1 --format="%aI")
-  - cat $TRAVIS_BUILD_DIR/.travis/bintray.json.in |
+  - cat .travis/bintray.json.in |
     sed -e "s,@BINTRAY_REPO@,$packagetype,g"
         -e "s,@PKGVER@,$gittag,g"
         -e "s,@GITTAG@,$gittag,g"
         -e "s,@TODAY@,$today,g"
         -e "s,@GITREV@,$gitrev,g"
         -e "s,@GITDATE@,$gitdate,g"
-        > $TRAVIS_BUILD_DIR/.travis/bintray.json
+        > .travis/bintray.json
 deploy:
   provider: bintray
   file: .travis/bintray.json
