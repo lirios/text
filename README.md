@@ -1,10 +1,11 @@
 Liri Text
 =========
 
-[![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
+[![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
+[![Build Status](https://img.shields.io/travis/lirios/text/master.svg)](https://travis-ci.org/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
-[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/develop)
+[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/master)
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.
 
@@ -13,7 +14,7 @@ Liri Text is a cross-platform text editor made in accordance with Material Desig
  * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
  * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
  * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
-* [Fluid](https://github.com/lirios/fluid) from develop branch
+* [Fluid](https://github.com/lirios/fluid) >= 0.10.0
 * [SQLite](https://www.sqlite.org/) >= 3.7.15
 
 ## Build
