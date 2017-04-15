@@ -23,3 +23,5 @@ a .mailmap file is maintained if committer names and email addresses
 change over time.
 
  * Andrew Penkrat <contact.aldrog@gmail.com>
+ * Pier Luigi Fiorini <pierluigi.fiorini@liri.io>
+ * Tim Süberkrüb <dev@timsueberkrueb.io>
