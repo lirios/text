@@ -54,8 +54,14 @@ void LiriSyntaxHighlighter::setDefaultStyles(QSharedPointer<LanguageDefaultStyle
 
 QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount, QFont font) {
     QTextCursor cursor(document()->findBlock(position));
-    cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, blockCount / 2);
-    cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, blockCount);
+    int blockNumber = cursor.blockNumber();
+    for (int i = 1; i < blockCount - std::min(blockNumber, blockCount / 2); ++i)
+        cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
+    for (int i = 1; i < blockCount; ++i)
+        cursor.movePosition(QTextCursor::Up, QTextCursor::KeepAnchor);
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+
     QTextDocument *tempDocument(new QTextDocument);
     Q_ASSERT(tempDocument);
     QTextCursor tempCursor(tempDocument);

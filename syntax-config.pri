@@ -1,7 +1,13 @@
 #CONFIG += use_gtksourceview_language_specs
 
-win32|macx {
+win32 {
     DEFINES += RELATIVE_LANGUAGE_PATH=\\\"/language-specs/\\\"
+} else: macx {
+    DEFINES += RELATIVE_LANGUAGE_PATH=\\\"../Resources/language-specs/\\\"
+
+    syntax.path = Contents/Resources
+    syntax.files = data/language-specs
+    QMAKE_BUNDLE_DATA += syntax
 } else: unix:!android {
     use_gtksourceview_language_specs {
         DEFINES += GTKSOURCEVIEW_LANGUAGE_PATH=\\\"/usr/share/gtksourceview-3.0/language-specs/\\\"
