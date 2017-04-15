@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -21,17 +21,27 @@
 
 #include <QTextDocument>
 #include <QFileInfo>
+#include <QMimeDatabase>
+#include <QTextDocumentFragment>
 #include <QDebug>
+#include "languageloader.h"
+#include "languagemanager.h"
 
 DocumentHandler::DocumentHandler() :
     m_target(0),
-    m_document(0) {
+    m_document(0),
+    m_highlighter(0) {
 
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
+
+    m_defStyles = QSharedPointer<LanguageDefaultStyles>::create();
 }
 
-DocumentHandler::~DocumentHandler() { }
+DocumentHandler::~DocumentHandler() {
+    delete m_watcher;
+    delete m_highlighter;
+}
 
 void DocumentHandler::setTarget(QQuickItem *target) {
     m_document = nullptr;
@@ -45,6 +55,10 @@ void DocumentHandler::setTarget(QQuickItem *target) {
         if(qqdoc) {
             m_document = qqdoc->textDocument();
             connect(m_document, SIGNAL(modificationChanged(bool)), this, SIGNAL(modifiedChanged()));
+            if(m_highlighter != nullptr)
+                delete m_highlighter;
+            m_highlighter = new LiriSyntaxHighlighter(m_document);
+            m_highlighter->setDefaultStyles(m_defStyles);
         }
     }
     emit targetChanged();
@@ -71,8 +85,16 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
         }
         QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
         setText(codec->toUnicode(data));
-        if(m_document)
+        if(m_document) {
             m_document->setModified(false);
+
+            // Enable syntax highlighting
+            QMimeDatabase db;
+            QMimeType mimeType = db.mimeTypeForFileNameAndData(m_fileUrl.toString(), data);
+            LanguageLoader ll(m_defStyles);
+            auto language = ll.loadMainContextByMimeType(mimeType, m_fileUrl.fileName());
+            m_highlighter->setLanguage(language, ll.styleMap());
+        }
         if(m_fileUrl.isEmpty())
             m_documentTitle = "New Document";
         else
@@ -88,6 +110,24 @@ void DocumentHandler::setDocumentTitle(QString title) {
     if(title != m_documentTitle) {
         m_documentTitle = title;
         emit documentTitleChanged();
+    }
+}
+
+QString DocumentHandler::textFragment(int position, int blockCount) {
+    if(m_highlighter) {
+        return m_highlighter->highlightedFragment(position, blockCount, m_document->defaultFont());
+    } else {
+        QTextCursor cursor(m_document->findBlock(position));
+        int blockNumber = cursor.blockNumber();
+        for (int i = 1; i < blockCount - std::min(blockNumber, blockCount / 2); ++i)
+            cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
+        for (int i = 1; i < blockCount; ++i)
+            cursor.movePosition(QTextCursor::Up, QTextCursor::KeepAnchor);
+        cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+
+        QTextDocumentFragment fragment = cursor.selection();
+        return fragment.toHtml();
     }
 }
 

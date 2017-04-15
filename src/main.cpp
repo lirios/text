@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -21,25 +21,31 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickView>
+#include <QtQuickControls2/QQuickStyle>
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QSortFilterProxyModel>
 #include <QCommandLineParser>
 #include <QFontDatabase>
+#include <QDir>
 #include <QDebug>
 
-#include "material/src/plugin.h"
 #include "documenthandler.h"
 #include "historymanager.h"
+#include "languagemanager.h"
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Material");
     QGuiApplication app(argc, argv);
 
     // Set app info
-    app.setOrganizationName("liri-project");
-    app.setOrganizationDomain("liriproject.me");
-    app.setApplicationName("liri-text");
+    app.setOrganizationName("Liri");
+    app.setOrganizationDomain("liri.io");
+    app.setApplicationName("Text");
+    app.setDesktopFileName("io.liri.Text.desktop");
+    app.setWindowIcon(QIcon(":/resources/icon.png"));
 
     // Load Translations
     QTranslator qtTranslator;
@@ -53,7 +59,7 @@ int main(int argc, char *argv[])
 
     // Parse command line options
     QCommandLineParser parser;
-    parser.setApplicationDescription("Material Designed text editor");
+    parser.setApplicationDescription(app.translate("main", "Advanced text editor made in accordance with Material Design."));
     parser.addHelpOption();
     QCommandLineOption newFileOption("new-document", app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
@@ -64,33 +70,28 @@ int main(int argc, char *argv[])
     bool nf = parser.isSet(newFileOption);
 
     // Register types and singletons
-    qmlRegisterType<DocumentHandler>("me.liriproject.text", 1, 0, "DocumentHandler");
+    qmlRegisterType<DocumentHandler>("io.liri.text", 1, 0, "DocumentHandler");
 
     QQmlApplicationEngine engine;
 
-    // Material for QtQuick
-    MaterialPlugin material;
-    material.registerTypes("Material");
-    engine.addImportPath("qrc:/");
-
-    HistoryManager *history = new HistoryManager();
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel();
-    proxyModel->setSourceModel(history);
-    proxyModel->setSortRole(HistoryManager::LastViewTimeRole);
-    proxyModel->sort(0, Qt::DescendingOrder);
-    engine.rootContext()->setContextProperty("history", history);
-    engine.rootContext()->setContextProperty("sortedHistory", proxyModel);
+    qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History", (QObject *(*)(QQmlEngine*, QJSEngine*))(HistoryManager::getInstance));
 
     engine.rootContext()->setContextProperty("newDoc", nf);
     if(args.length() > 0)
-        engine.rootContext()->setContextProperty("givenPath", QUrl::fromLocalFile(args[0]));
+        engine.rootContext()->setContextProperty("givenPath", QUrl::fromUserInput(args[0], QDir::currentPath()));
     else
         engine.rootContext()->setContextProperty("givenPath", nullptr);
 
     // Temporary solution untill we have font customization
     engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
+    // Init languages database
+    LanguageManager *lManager = LanguageManager::getInstance();
+
+    // Clean up on exiting application
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager, &LanguageManager::deleteLater);
+
     // Start with main.qml
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-	return app.exec();
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
+    return app.exec();
 }

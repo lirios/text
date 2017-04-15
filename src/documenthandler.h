@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -25,6 +25,8 @@
 #include <QTextCodec>
 #include <QFile>
 #include <QFileSystemWatcher>
+
+#include "lirisyntaxhighlighter.h"
 
 class DocumentHandler : public QObject
 {
@@ -53,6 +55,8 @@ public:
 
     inline bool modified() { return m_document->isModified(); }
 
+    Q_INVOKABLE QString textFragment(int position, int blockCount);
+
 signals:
     void targetChanged();
     void fileUrlChanged();
@@ -73,6 +77,8 @@ private:
     QQuickItem *m_target;
     QTextDocument *m_document;
     QFileSystemWatcher *m_watcher;
+    LiriSyntaxHighlighter *m_highlighter;
+    QSharedPointer<LanguageDefaultStyles> m_defStyles;
 
     QUrl m_fileUrl;
     QString m_text;

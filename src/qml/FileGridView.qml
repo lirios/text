@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -17,65 +17,61 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
-import Material 0.3
+import QtQuick 2.8
+import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.0
+import Fluid.Controls 1.0 as FluidControls
+import Fluid.Material 1.0 as FluidMaterial
 
 Flickable {
     id: rootFlickable
 
-    property alias model: fileGrid.model
-    property int margins: dp(24)
-    property int spacing: dp(8)
-    property int cardWidth: dp(240)
-    property int cardHeight: dp(194)
+    property alias model: fileGridContents.model
+    property int cardWidth: 240
+    property int cardHeight: 122 + 68
 
     anchors.fill: parent
-    contentHeight: fileGrid.height + spacing
+    contentHeight: fileGrid.height
 
-    GridView {
+    ScrollBar.vertical: ScrollBar { }
+
+    Grid {
         id: fileGrid
 
-        y: spacing/2
-        width: ~~((parent.width - 2*margins + spacing) / (cardWidth+spacing)) * (cardWidth+spacing)
+        padding: 24
+        spacing: 4
+        columns: ~~((parent.width - 2*padding + spacing) / (cardWidth + spacing))
+        width: columns * (cardWidth + spacing) - spacing + 2*padding
         anchors.horizontalCenter: parent.horizontalCenter
-        height: childrenRect.height
-        cellWidth: cardWidth + spacing
-        cellHeight: cardHeight + spacing
 
-        delegate: Item {
-            width: fileGrid.cellWidth
-            height: fileGrid.cellHeight
+        Repeater {
+            id: fileGridContents
 
-            Card {
+            delegate: FluidControls.Card {
                 id: fileCard
-                anchors.fill: parent
-                anchors.margins: spacing / 2
+
+                contentWidth: cardWidth
+                contentHeight: cardHeight
 
                 Rectangle {
                     color: "white"
                     clip: true
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: nameBackground.top
+                    anchors.fill: parent
 
                     Text {
                         id: filePreview
                         anchors.fill: parent
-                        anchors.margins: dp(8)
-                        anchors.rightMargin: dp(4)
+                        anchors.margins: 8
+                        anchors.rightMargin: 4
                         clip: true
-                        font.family: "Roboto"
-                        font.pixelSize: dp(13)
-                        font.weight: Font.Medium
-                        textFormat: Text.PlainText
-                        text: previewText.join("\n")
+                        font.pixelSize: 13
+                        textFormat: Text.RichText
+                        text: previewText
                     }
 
                     LinearGradient {
                         anchors.fill: parent
-                        start: Qt.point(parent.width - dp(28), 0)
+                        start: Qt.point(parent.width - 28, 0)
                         end: Qt.point(filePreview.width + filePreview.x, 0)
                         gradient: Gradient {
                             GradientStop {position: 0.0; color: "transparent"}
@@ -87,10 +83,10 @@ Flickable {
                 Rectangle {
                     id: nameBackground
                     color: "black"
-                    opacity: 0.7
+                    opacity: 0.5
                     anchors.bottom: parent.bottom
                     width: parent.width
-                    height: dp(72)
+                    height: 68
                 }
 
                 Label {
@@ -99,49 +95,42 @@ Flickable {
                     anchors.top: nameBackground.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: dp(8)
-                    anchors.leftMargin: dp(16)
-                    anchors.rightMargin: dp(16)
+                    anchors.topMargin: 16
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
 
                     text: name
                     color: "white"
-                    font.pixelSize: dp(20)
+                    font.pixelSize: 16
                     font.weight: Font.Medium
-                    horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                 }
 
                 Label {
                     id: docUrl
 
-                    property int symbolCount: (parent.width - dp(16)) / dp(8)
-
-                    anchors.top: docName.bottom
+                    anchors.bottom: nameBackground.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.topMargin: dp(4)
-                    anchors.leftMargin: dp(16)
-                    anchors.rightMargin: dp(16)
+                    anchors.bottomMargin: 16
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
 
-                    text: history.prettifyPath(fileUrl)
+                    text: filePath
                     color: "white"
-                    font.pixelSize: dp(16)
+                    font.pixelSize: 12
                     font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideMiddle
                 }
 
-                Ink {
+                FluidMaterial.Ripple {
                     id: animation
                     anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    acceptedButtons: Qt.LeftButton
 
                     onClicked: {
                         if(mouse.button === Qt.LeftButton) {
-                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl, cursorPos: cursorPosition})
-                        } else {
-                            // Rightclicking deletes item for debugging
-                            //history.removeFile(fileUrl)
+                            pageStack.push(Qt.resolvedUrl("EditPage.qml"), {documentUrl: fileUrl})
                         }
                     }
                 }

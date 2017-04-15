@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -17,20 +17,18 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.5
-import Material 0.3
-import Material.ListItems 0.1 as ListItems
-import QtQuick.Controls 1.4 as Controls
+import QtQuick 2.8
+import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2 as Dialogs
-import me.liriproject.text 1.0
+import Fluid.Controls 1.0 as FluidControls
+import io.liri.text 1.0
 
-Page {
+FluidControls.Page {
     id: page
 
     property url documentUrl
     property bool anonymous: false
     property alias document: document
-    property int cursorPos: 0
 
     signal ioSuccess
     signal ioFailure
@@ -52,63 +50,74 @@ Page {
         saveAsDialog.open()
     }
 
-    function getTextAroundLine(lineNum, height) {
-        var lines = mainArea.text.split('\n')
-        var start = lineNum - Math.floor(height/2)
-        if(start < 0)
-            start = 0
-        var end = start + height - 1
-        if(end >= lines.length) {
-            start -= end - lines.length + 1
-            if(start < 0)
-                start = 0
-            end = lines.length - 1
-        }
-        var res = []
-        for(var i = start; i <= end; i++) {
-            res.push(lines[i])
-        }
-        return res
-    }
-
     function touchFileOnCursorPosition() {
-        history.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition,
-                          getTextAroundLine(mainArea.text.slice(0, mainArea.cursorPosition).split('\n').length - 1, 7))
+        History.touchFile(document.documentTitle, documentUrl, mainArea.cursorPosition, flickable.contentY,
+                          document.textFragment(mainArea.cursorPosition, 7))
     }
 
     Component.onCompleted: {
         console.log("edit page completed")
 
         if(document.setFileUrl(documentUrl)) {
-            mainArea.cursorPosition = cursorPos
+            var editingInfo = History.getFileEditingInfo(documentUrl)
+            mainArea.cursorPosition = editingInfo.cursorPosition ? editingInfo.cursorPosition : 0
+            flickable.contentY      = editingInfo.scrollPosition ? editingInfo.scrollPosition : 0
             if(!anonymous) {
                 touchFileOnCursorPosition()
             }
         }
     }
 
-    actionBar.title: anonymous ? qsTr("New Document") : document.documentTitle
-    actionBar.maxActionCount: 2
+    title: anonymous ? qsTr("New Document") : document.documentTitle
+    appBar.maxActionCount: 2
+
     actions: [
-        Action {
+        FluidControls.Action {
             id: saveAction
             iconName: "content/save"
-            name: qsTr("Save")
+            tooltip: qsTr("Save")
+            shortcut: StandardKey.Save
             onTriggered: save()
         },
 
-        Action {
+        FluidControls.Action {
+            id: findAction
+            iconName: "action/search"
+            tooltip: qsTr("Find")
+            shortcut: StandardKey.Find
+            onTriggered: searchOverlay.open()
+        },
+
+        FluidControls.Action {
             id: saveAsAction
-            name: qsTr("Save As")
+            iconName: "content/save"
+            text: qsTr("Save As")
+            shortcut: StandardKey.SaveAs
             onTriggered: saveAs()
         },
 
-        Action {
+        FluidControls.Action {
             id: closeAction
-            name: qsTr("Close")
-            onTriggered: page.backAction.trigger()
+            iconName: "navigation/close"
+            text: qsTr("Close")
+            shortcut: StandardKey.Close
+            onTriggered: page.pop()
         }
     ]
+
+    SearchOverlay {
+        id: searchOverlay
+        anchors.right: parent.right
+        z: 1
+
+        onActivated: {
+            var start = mainArea.text.indexOf(query, mainArea.cursorPosition)
+            if(start < 0)
+                start = mainArea.text.indexOf(query, 0)
+            mainArea.select(start, start + query.length)
+        }
+        onClosed: mainArea.forceActiveFocus()
+    }
 
     onGoBack: {
         function forcedClose() {
@@ -121,31 +130,30 @@ Page {
                 ioSuccess.disconnect(forcedClose)
                 ioFailure.disconnect(disc)
             })
-            saveAction.trigger()
+            save()
         }
 
         function onRejected() {
-            forcedClose()
+            disconnectAll()
         }
 
-        function onClosed() {
-            disconnectAll()
+        function onRefused() {
+            forcedClose()
         }
 
         function disconnectAll() {
             exitDialog.accepted.disconnect(onAccepted)
             exitDialog.rejected.disconnect(onRejected)
-            exitDialog.closed.disconnect(onClosed)
+            exitDialog.refused.disconnect(onRefused)
         }
 
         if(page.document.modified) {
             event.accepted = true
-            if(exitDialog.showing)
-                exitDialog.close()
+            exitDialog.close()
             exitDialog.accepted.connect(onAccepted)
             exitDialog.rejected.connect(onRejected)
-            exitDialog.closed.connect(onClosed)
-            exitDialog.show()
+            exitDialog.refused.connect(onRefused)
+            exitDialog.open()
         } else {
             touchFileOnCursorPosition()
         }
@@ -168,31 +176,30 @@ Page {
                         ioSuccess.disconnect(forcedClose)
                         ioFailure.disconnect(disc)
                     })
-                    saveAction.trigger()
+                    save()
                 }
 
                 function onRejected() {
-                    forcedClose()
+                    disconnectAll()
                 }
 
-                function onClosed() {
-                    disconnectAll()
+                function onRefused() {
+                    forcedClose()
                 }
 
                 function disconnectAll() {
                     exitDialog.accepted.disconnect(onAccepted)
                     exitDialog.rejected.disconnect(onRejected)
-                    exitDialog.closed.disconnect(onClosed)
+                    exitDialog.refused.disconnect(onRefused)
                 }
 
                 if(page.document.modified) {
                     close.accepted = false
-                    if(exitDialog.showing)
-                        exitDialog.close()
+                    exitDialog.close()
                     exitDialog.accepted.connect(onAccepted)
                     exitDialog.rejected.connect(onRejected)
-                    exitDialog.closed.connect(onClosed)
-                    exitDialog.show()
+                    exitDialog.refused.connect(onRefused)
+                    exitDialog.open()
                 } else {
                     touchFileOnCursorPosition()
                 }
@@ -200,14 +207,30 @@ Page {
         }
     }
 
-    ThreeButtonDialog {
+    Dialog {
         id: exitDialog
-        title: qsTr("Save changes before closing?")
-        text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+        signal refused
 
-        positiveButtonText: qsTr("YES")
-        negativeButtonText: qsTr("NO")
-        cancelButtonText: qsTr("CANCEL")
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        title: qsTr("Save changes before closing?")
+
+        Label {
+            text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
+        }
+
+        footer: DialogButtonBox {
+            standardButtons: DialogButtonBox.Yes | DialogButtonBox.No | DialogButtonBox.Cancel
+            onClicked: {
+                if(button === standardButton(DialogButtonBox.Yes))
+                    exitDialog.accept()
+                if(button === standardButton(DialogButtonBox.No))
+                    exitDialog.refused()
+                if(button === standardButton(DialogButtonBox.Cancel))
+                    exitDialog.reject()
+            }
+        }
     }
 
     Dialogs.FileDialog {
@@ -228,53 +251,129 @@ Page {
         }
     }
 
-    Shortcut {
-        sequence: "Ctrl+S"
-        onActivated: saveAction.trigger()
-    }
-
-    Shortcut {
-        sequence: "Ctrl+Shift+S"
-        onActivated: saveAsAction.trigger()
-    }
-
-    Shortcut {
-        sequence: "Ctrl+W"
-        onActivated: closeAction.trigger()
-    }
-
     Dialog {
         id: askForReloadDialog
 
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
         title: qsTr("Reload file content?")
-        text: qsTr("The file was changed from outside. Do you wish to reload its content?")
-
-        positiveButtonText: qsTr("RELOAD")
-        negativeButtonText: qsTr("IGNORE")
 
         onAccepted: {
             var cp = mainArea.cursorPosition
+            var sp = flickable.contentY
             if(document.reloadText())
                 ioSuccess()
             else
                 ioFailure()
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
+            flickable.contentY = sp
+        }
+
+        Label {
+            text: qsTr("The file was changed from outside. Do you wish to reload its content?")
+        }
+
+        footer: DialogButtonBox {
+            Button {
+                flat: true
+                text: qsTr("Reload")
+                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+                onClicked: askForReloadDialog.accept()
+            }
+            Button {
+                flat: true
+                text: qsTr("Ignore")
+                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
+                onClicked: askForReloadDialog.reject()
+            }
         }
     }
 
-    Controls.TextArea {
-        id: mainArea
-
+    Flickable {
+        id: flickable
         anchors.fill: parent
-        textMargin: dp(8)
-        focus: true
-        font: defaultFont
-//        font.family: "Roboto"
-//        font.pixelSize: dp(16)
-//        font.weight: Font.Normal
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        text: document.text
+
+        TextArea.flickable: TextArea {
+            id: mainArea
+
+            focus: true
+            persistentSelection: true
+            selectByMouse: true
+            textMargin: 8
+            font: defaultFont
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            text: document.text
+
+            Keys.onPressed: {
+                if(event.key === Qt.Key_PageUp)
+                    // Scrolls by approximately page height
+                    flickable.flick(0,  60*Math.sqrt(flickable.height))
+                if(event.key === Qt.Key_PageDown)
+                    flickable.flick(0, -60*Math.sqrt(flickable.height))
+                // TODO: Move cursor
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+                onClicked: contextMenu.openAt(mouse.x, mouse.y)
+            }
+        }
+
+        ScrollBar.vertical: ScrollBar { }
+    }
+
+    Menu {
+        id: contextMenu
+
+        function openAt(x, y) {
+            contextMenu.x = x
+            contextMenu.y = y
+            contextMenu.open()
+        }
+
+        MenuItem {
+            text: qsTr("Undo")
+            enabled: mainArea.canUndo
+            onTriggered: mainArea.undo()
+        }
+        MenuItem {
+            text: qsTr("Redo")
+            enabled: mainArea.canRedo
+            onTriggered: mainArea.redo()
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: qsTr("Copy")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.copy()
+        }
+        MenuItem {
+            text: qsTr("Cut")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.cut()
+        }
+        MenuItem {
+            text: qsTr("Paste")
+            enabled: mainArea.canPaste
+            onTriggered: mainArea.paste()
+        }
+        MenuItem {
+            text: qsTr("Delete")
+            enabled: mainArea.selectedText
+            onTriggered: mainArea.remove(mainArea.selectionStart, mainArea.selectionEnd)
+        }
+
+        MenuSeparator { }
+
+        MenuItem {
+            text: qsTr("Select All")
+            onTriggered: mainArea.selectAll()
+        }
     }
 
     DocumentHandler {
@@ -283,21 +382,27 @@ Page {
 
         onFileChangedOnDisk: {
             console.log("file changed on disk")
-            askForReloadDialog.show()
+            askForReloadDialog.open()
         }
 
         onError: {
             //app.showError(qsTr("File operation error"), description)
-            errDiag.text = description
-            errDiag.show()
+            errDiag.description = description
+            errDiag.open()
         }
     }
 
     Dialog {
         id: errDiag
-        title: qsTr("File operation error")
 
-        positiveButtonText: qsTr("OK")
-        negativeButton.visible: false
+        property alias description: descLabel.text
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        title: qsTr("File operation error")
+        standardButtons: Dialog.Ok
+        Label {
+            id: descLabel
+        }
     }
 }

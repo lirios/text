@@ -1,30 +1,31 @@
-# Liri Text
-This is Liri Text, crossplatform text editor made in accordance with Material Design.  
-For now it only provides very basic functionality, but will evolve into a very powerful tool some time.
+Liri Text
+=========
 
-## Installation
-You may find a prebuilt binary for your platform on [releases page](https://github.com/liri-project/liri-text/releases).
-If your platform is not yet supported or you wish to contribute to this project's development, you can compile Liri Text from source following the instructions below:
+[![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
+[![Build Status](https://img.shields.io/travis/lirios/text/master.svg)](https://travis-ci.org/lirios/text)
+[![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
+[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/master)
+
+Liri Text is a cross-platform text editor made in accordance with Material Design.
+
+## Dependencies
+* Qt >= 5.8.0 with at least the following modules is required:
+ * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
+ * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
+ * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
+* [Fluid](https://github.com/lirios/fluid) >= 0.10.0
+* [SQLite](https://www.sqlite.org/) >= 3.7.15
 
 ## Build
-1. Install dependencies
-  - [Qt 5.5 or higher](http://qt.io)
-
-2. Build Liri Text
-  ```
-  git clone --recursive https://github.com/liri-project/liri-text.git
-  cd liri-text
+  ```sh
+  git clone --recursive https://github.com/lirios/text.git
+  cd text
   mkdir build; cd build
   qmake ..
   make
-  ```
-
-3. Optionally install  
-  ```
-  sudo make install
+  make install   # optional; use sudo if needed
   ```
 
 ## License
 This application is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-See LICENSE for more information.

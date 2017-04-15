@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Andrew Penkrat
+ * Copyright © 2016-2017 Andrew Penkrat
  *
  * This file is part of Liri Text.
  *
@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QHash>
-#include <QSettings>
 #include <QUrl>
 #include <QDateTime>
 
@@ -34,47 +33,46 @@ public:
     enum HistoryRoles {
         NameRole = Qt::UserRole + 1,
         FileUrlRole,
+        FilePathRole,
         LastViewTimeRole,
         PreviewRole,
-        CursorPositionRole
+        CursorPositionRole,
+        ScrollPositionRole
     };
 
-    HistoryManager();
-    ~HistoryManager();
+    static HistoryManager *getInstance();
 
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+
+    inline int count() const { return rowCount(); }
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     Q_INVOKABLE bool removeFile(QUrl fileUrl);
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl, int length) const;
-    Q_INVOKABLE QString prettifyPath(QUrl fileUrl) const;
-    Q_INVOKABLE QVariantMap getFileInfo(QUrl fileUrl) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    Q_INVOKABLE QVariantMap getFileEditingInfo(QUrl fileUrl) const;
 
 signals:
+    void countChanged();
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, int cursorPosition, QStringList previewLines);
+    void touchFile(QString name, QUrl fileUrl, int cursorPosition, float scrollPosition, QString preview);
 
 protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    QSettings *historyStorage;
+    HistoryManager();
+    ~HistoryManager();
+    static HistoryManager *m_instance;
 
-    struct FileData {
-        QString name;
-        QUrl url;
-        QDateTime viewTime;
-        QStringList preview;
-        int cursorPosition;
-    };
-    QList<FileData> history;
+    QString m_connId;
 
-    void loadHistory();
-    void saveHistory();
+    QString dbColumnFromRole(int role) const;
+    QString dbIdForIndex(int index) const;
+    int dbIndexForId(QString id) const;
 };
 
 #endif // HISTORYMANAGER_H
