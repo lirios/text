@@ -11,9 +11,9 @@ Liri Text is a cross-platform text editor made in accordance with Material Desig
 
 ## Dependencies
 * Qt >= 5.8.0 with at least the following modules is required:
- * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
- * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
- * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
+  * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
+  * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
+  * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
 * [Fluid](https://github.com/lirios/fluid) built from develop branch
 * [SQLite](https://www.sqlite.org/) >= 3.7.15
 
