@@ -44,7 +44,7 @@ void LanguageContextContainer::markAsInUse() {
     if(m_inUse)
         return;
     LanguageContextBase::markAsInUse();
-    for (auto inc : includes)
+    for (const auto &inc : qAsConst(includes))
         inc->base->markAsInUse();
 }
 

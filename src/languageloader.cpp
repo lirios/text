@@ -29,14 +29,14 @@
 LanguageLoader::LanguageLoader() { }
 
 LanguageLoader::LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles) {
-    for (auto styleId : defaultStyles->styles.keys()) {
-        m_themeStyles += styleId;
-        m_styleMap[styleId] = styleId;
+    for (auto styleId = defaultStyles->styles.keyBegin(), end = defaultStyles->styles.keyEnd(); styleId != end; ++styleId) {
+        m_themeStyles += *styleId;
+        m_styleMap[*styleId] = *styleId;
     }
 }
 
 LanguageLoader::~LanguageLoader() {
-    for (auto contextRef : m_originalContexts) {
+    for (const auto &contextRef : qAsConst(m_originalContexts)) {
         if(contextRef->context->base) {
             contextRef->context->base->prepareForRemoval();
         }
@@ -80,7 +80,7 @@ QSharedPointer<LanguageContext> LanguageLoader::loadMainContext(QString path) {
     }
     file.close();
     QString contextId = langId + ":" + langId;
-    if(m_knownContexts.keys().contains(contextId)) {
+    if(m_knownContexts.contains(contextId)) {
         auto mainContext = buildContextTree(m_knownContexts[contextId]);
         mainContext->base->markAsInUse();
         return mainContext;
@@ -189,7 +189,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
     if(contextAttributes.hasAttribute("ref")) {
         QString refId = contextAttributes.value("ref").toString();
-        if(refId.contains(':') && !m_knownContexts.keys().contains(refId))
+        if(refId.contains(':') && !m_knownContexts.contains(refId))
             loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')));
         if(!refId.contains(':'))
             refId = langId + ":" + refId;
@@ -203,7 +203,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
 
     if(contextAttributes.hasAttribute("style-ref")) {
         QString styleId = xml.attributes().value("style-ref").toString();
-        if(styleId.contains(':') && !m_styleMap.keys().contains(styleId))
+        if(styleId.contains(':') && !m_styleMap.contains(styleId))
             loadDefinitionsAndStylesById(styleId.left(styleId.indexOf(':')));
         if(!styleId.contains(':'))
             styleId = langId + ":" + styleId;
@@ -223,7 +223,7 @@ QSharedPointer<LanguageContextReference> LanguageLoader::parseContext(QXmlStream
     if(contextAttributes.hasAttribute("id")) {
         QString id = langId + ":" + contextAttributes.value("id").toString();
         // Known context could've already been set by replace tag
-        if(!m_knownContexts.keys().contains(id))
+        if(!m_knownContexts.contains(id))
             m_knownContexts[id] = result;
         m_originalContexts [id] = result;
     }
@@ -325,21 +325,22 @@ void LanguageLoader::parseStyle(QXmlStreamReader &xml, QString langId) {
     QString mapId;
     if(!m_themeStyles.contains(id) && xml.attributes().hasAttribute("map-to")) {
         QString refId = xml.attributes().value("map-to").toString();
-        if(refId.contains(':') && !m_styleMap.keys().contains(refId)) {
+        if(refId.contains(':') && !m_styleMap.contains(refId)) {
             loadDefinitionsAndStylesById(refId.left(refId.indexOf(':')));
         }
         if(!refId.contains(':'))
             refId = langId + ":" + refId;
-        if(m_styleMap.keys().contains(refId))
+        if(m_styleMap.contains(refId))
             mapId = m_styleMap[refId];
         else
             mapId = refId;
     } else
         mapId = id;
 
-    for (QString key : m_styleMap.keys())
-        if(m_styleMap[key] == id)
-            m_styleMap[key] = mapId;
+    for (auto key = m_styleMap.keyBegin(), end = m_styleMap.keyEnd(); key != end; ++key) {
+        if(m_styleMap[*key] == id)
+            m_styleMap[*key] = mapId;
+    }
     m_styleMap[id] = mapId;
 
     xml.skipCurrentElement();
@@ -401,8 +402,8 @@ void LanguageLoader::parseReplace(QXmlStreamReader &xml, QString langId) {
 QRegularExpression LanguageLoader::resolveRegex(QString pattern, QRegularExpression::PatternOptions options, QString langId) {
     QString resultPattern = pattern;
 
-    for (QString id : m_knownRegexes.keys()) {
-        resultPattern = resultPattern.replace("\\%{" + id + "}", m_knownRegexes[id]);
+    for (auto id = m_knownRegexes.keyBegin(), end = m_knownRegexes.keyEnd(); id != end; ++id) {
+        resultPattern = resultPattern.replace("\\%{" + *id + "}", m_knownRegexes[*id]);
     }
     resultPattern = resultPattern.replace("\\%[", m_languageLeftWordBoundary [langId]);
     resultPattern = resultPattern.replace("\\%]", m_languageRightWordBoundary[langId]);

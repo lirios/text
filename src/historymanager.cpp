@@ -110,7 +110,7 @@ bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
     Q_UNUSED(parent)
     if(row < 0 || row >= rowCount())
         return false;
-    emit beginRemoveRows(QModelIndex(), row, row);
+    beginRemoveRows(QModelIndex(), row, row);
 
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare("DELETE FROM history "
@@ -118,14 +118,14 @@ bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
     query.addBindValue(dbIdForIndex(row));
     query.exec();
 
-    emit endRemoveRows();
+    endRemoveRows();
     emit countChanged();
     return true;
 }
 
 bool HistoryManager::removeFile(QUrl fileUrl) {
     int row = dbIndexForId(fileUrl.path());
-    emit beginRemoveRows(QModelIndex(), row, row);
+    beginRemoveRows(QModelIndex(), row, row);
 
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare("DELETE FROM history "
@@ -133,7 +133,7 @@ bool HistoryManager::removeFile(QUrl fileUrl) {
     query.addBindValue(fileUrl.path());
     query.exec();
 
-    emit endRemoveRows();
+    endRemoveRows();
     emit countChanged();
     return true;
 }
@@ -177,7 +177,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, f
     query.exec("SELECT Changes() FROM history");
     if(!query.first() || query.value(0) == 0) {
         // If update failed, insert
-        emit beginInsertRows(QModelIndex(), 0, 0);
+        beginInsertRows(QModelIndex(), 0, 0);
         query.prepare("INSERT INTO history "
                       "(path, display_name, last_view_time, preview, cursor_position, scroll_position) "
                       "VALUES (?, ?, ?, ?, ?, ?)");
@@ -189,7 +189,7 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, f
         query.addBindValue(scrollPosition);
         query.exec();
 
-        emit endInsertRows();
+        endInsertRows();
 
         int entryCount = rowCount();
         if(entryCount > MAX_HISTORY_SIZE) {
@@ -212,8 +212,8 @@ void HistoryManager::touchFile(QString name, QUrl fileUrl, int cursorPosition, f
     } else {
         emit dataChanged(index(row), index(row), {NameRole, LastViewTimeRole, PreviewRole, CursorPositionRole, ScrollPositionRole});
         if(row > 0) {
-            emit beginMoveRows(QModelIndex(), row, row, QModelIndex(), 0);
-            emit endMoveRows();
+            beginMoveRows(QModelIndex(), row, row, QModelIndex(), 0);
+            endMoveRows();
         }
     }
 }

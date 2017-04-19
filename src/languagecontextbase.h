@@ -20,6 +20,7 @@
 #ifndef LANGUAGECONTEXTBASE_H
 #define LANGUAGECONTEXTBASE_H
 
+#include <qglobal.h>
 
 class LanguageContextBase
 {
@@ -29,7 +30,7 @@ public:
 
     virtual void markAsInUse();
     inline bool inUse() { return m_inUse; }
-    virtual void prepareForRemoval(bool ignoreUsage = false) { }
+    virtual void prepareForRemoval(bool ignoreUsage = false) { Q_UNUSED(ignoreUsage) }
 protected:
     bool m_inUse;
 };

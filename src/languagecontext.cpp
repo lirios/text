@@ -23,7 +23,7 @@
 #include "languagecontextkeyword.h"
 #include "languagecontextsimple.h"
 #include "languagecontextsubpattern.h"
-
+#include <QDebug>
 
 LanguageContext::LanguageContext() :
     type(Undefined) { }
@@ -53,6 +53,10 @@ void LanguageContext::init(ElementType t) {
     case Keyword:
         base = QSharedPointer<LanguageContextBase>(new LanguageContextKeyword());
         break;
+    case Undefined:
+        qDebug() << "Internal error in language loader";
+        qDebug() << "Requested context of undefined type";
+        Q_ASSERT(false);
     }
 }
 
@@ -71,6 +75,10 @@ void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
     case Keyword:
         base = QSharedPointer<LanguageContextBase>(new LanguageContextKeyword(attributes));
         break;
+    case Undefined:
+        qDebug() << "Internal error in language loader";
+        qDebug() << "Requested context of undefined type";
+        Q_ASSERT(false);
     }
 }
 

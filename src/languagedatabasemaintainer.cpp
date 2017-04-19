@@ -27,8 +27,8 @@
 #include "languageloader.h"
 
 LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QString connId, QObject *parent) :
-    m_connId(connId),
-    QObject(parent) {
+    QObject(parent),
+    m_connId(connId) {
     // List of language specification directories, ascending by priority
 #ifdef GTKSOURCEVIEW_LANGUAGE_PATH
     specsDirs.append(QString(GTKSOURCEVIEW_LANGUAGE_PATH));
@@ -70,8 +70,9 @@ void LanguageDatabaseMaintainer::initDB() {
 
 void LanguageDatabaseMaintainer::updateDB() {
     LanguageLoader ll;
-    for (QDir dir : specsDirs) {
-        for (QFileInfo file : dir.entryInfoList()) {
+    for (const QDir &dir : qAsConst(specsDirs)) {
+        const QFileInfoList &filesList = dir.entryInfoList();
+        for (const QFileInfo &file : filesList) {
             if(file.isFile()) {
                 LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
                 QSqlQuery(QStringLiteral("UPDATE languages SET "
