@@ -27,13 +27,14 @@
 #include "languageloader.h"
 #include "languagemanager.h"
 
-DocumentHandler::DocumentHandler() :
+DocumentHandler::DocumentHandler(QObject *parent) :
+    QObject(parent),
     m_target(0),
     m_document(0),
     m_highlighter(0) {
 
     m_watcher = new QFileSystemWatcher(this);
-    connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &DocumentHandler::fileChanged);
 
     m_defStyles = QSharedPointer<LanguageDefaultStyles>::create();
 }
@@ -54,7 +55,7 @@ void DocumentHandler::setTarget(QQuickItem *target) {
         QQuickTextDocument *qqdoc = doc.value<QQuickTextDocument*>();
         if(qqdoc) {
             m_document = qqdoc->textDocument();
-            connect(m_document, SIGNAL(modificationChanged(bool)), this, SIGNAL(modifiedChanged()));
+            connect(m_document, &QTextDocument::modificationChanged, this, &DocumentHandler::modifiedChanged);
             if(m_highlighter != nullptr)
                 delete m_highlighter;
             m_highlighter = new LiriSyntaxHighlighter(m_document);
@@ -64,7 +65,7 @@ void DocumentHandler::setTarget(QQuickItem *target) {
     emit targetChanged();
 }
 
-bool DocumentHandler::setFileUrl(QUrl fileUrl) {
+bool DocumentHandler::setFileUrl(const QUrl &fileUrl) {
     if(fileUrl != m_fileUrl) {
         if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
             m_watcher->removePath(m_fileUrl.toLocalFile());
@@ -96,7 +97,7 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
             m_highlighter->setLanguage(language, ll.styleMap());
         }
         if(m_fileUrl.isEmpty())
-            m_documentTitle = "New Document";
+            m_documentTitle = QStringLiteral("New Document");
         else
             m_documentTitle = QFileInfo(filename).fileName();
 
@@ -106,7 +107,7 @@ bool DocumentHandler::setFileUrl(QUrl fileUrl) {
     return true;
 }
 
-void DocumentHandler::setDocumentTitle(QString title) {
+void DocumentHandler::setDocumentTitle(const QString &title) {
     if(title != m_documentTitle) {
         m_documentTitle = title;
         emit documentTitleChanged();
@@ -131,14 +132,14 @@ QString DocumentHandler::textFragment(int position, int blockCount) {
     }
 }
 
-void DocumentHandler::setText(QString text) {
+void DocumentHandler::setText(const QString &text) {
     if(text != m_text) {
         m_text = text;
         emit textChanged();
     }
 }
 
-bool DocumentHandler::saveAs(QUrl filename) {
+bool DocumentHandler::saveAs(const QUrl &filename) {
     // Stop monitoring file while saving
     if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
         m_watcher->removePath(m_fileUrl.toLocalFile());
@@ -188,7 +189,7 @@ bool DocumentHandler::reloadText() {
     }
 }
 
-void DocumentHandler::fileChanged(QString file) {
+void DocumentHandler::fileChanged(const QString &file) {
     emit fileChangedOnDisk();
     if(!m_watcher->files().contains(file))
         m_watcher->addPath(file);

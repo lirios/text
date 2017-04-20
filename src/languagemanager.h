@@ -31,8 +31,8 @@ class LanguageManager : public QObject
     Q_OBJECT
 public:
     static LanguageManager *getInstance();
-    QString pathForId(QString id);
-    QString pathForMimeType(QMimeType mimeType, QString filename);
+    QString pathForId(const QString &id);
+    QString pathForMimeType(const QMimeType &mimeType, const QString &filename);
 private:
     explicit LanguageManager(QObject *parent = 0);
     ~LanguageManager();

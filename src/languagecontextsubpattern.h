@@ -29,7 +29,7 @@ class LanguageContextSubPattern : public LanguageContextBase
 {
 public:
     LanguageContextSubPattern();
-    LanguageContextSubPattern(QXmlStreamAttributes attributes);
+    LanguageContextSubPattern(const QXmlStreamAttributes &attributes);
 
     int groupId = 0;
     QString groupName = QString();

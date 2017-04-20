@@ -24,6 +24,7 @@
 
 class LanguageContextBase
 {
+    Q_DISABLE_COPY(LanguageContextBase)
 public:
     LanguageContextBase();
     virtual ~LanguageContextBase();

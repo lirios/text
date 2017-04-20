@@ -23,14 +23,14 @@
 
 LanguageContextSubPattern::LanguageContextSubPattern() { }
 
-LanguageContextSubPattern::LanguageContextSubPattern(QXmlStreamAttributes attributes) {
+LanguageContextSubPattern::LanguageContextSubPattern(const QXmlStreamAttributes &attributes) {
     bool isId;
-    groupId = attributes.value("sub-pattern").toInt(&isId);
+    groupId = attributes.value(QStringLiteral("sub-pattern")).toInt(&isId);
     if(!isId)
-        groupName = attributes.value("sub-pattern").toString();
+        groupName = attributes.value(QStringLiteral("sub-pattern")).toString();
 
-    if(attributes.value("where") == "start")
+    if(attributes.value(QStringLiteral("where")) == "start")
         where = Start;
-    if(attributes.value("where") == "end")
+    if(attributes.value(QStringLiteral("where")) == "end")
         where = End;
 }

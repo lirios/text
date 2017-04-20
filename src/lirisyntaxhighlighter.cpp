@@ -27,6 +27,11 @@
 #include "languagecontextsimple.h"
 #include "languagecontextsubpattern.h"
 
+LiriSyntaxHighlighter::LiriSyntaxHighlighter(QObject *parent)
+    : QSyntaxHighlighter (parent),
+      m_lang(),
+      m_defStyles() { }
+
 LiriSyntaxHighlighter::LiriSyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter (parent),
       m_lang(),
@@ -52,7 +57,7 @@ void LiriSyntaxHighlighter::setDefaultStyles(QSharedPointer<LanguageDefaultStyle
         rehighlight();
 }
 
-QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount, QFont font) {
+QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount, const QFont &font) {
     QTextCursor cursor(document()->findBlock(position));
     int blockNumber = cursor.blockNumber();
     for (int i = 1; i < blockCount - std::min(blockNumber, blockCount / 2); ++i)
@@ -140,10 +145,10 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
         QRegularExpressionMatch containerEndMatch;
         for (int i = 0; i < containerStack.size(); ++i) {
             QRegularExpressionMatch tmp;
-            if(containerStack[i].endRegex.pattern() != "")
+            if(containerStack[i].endRegex.pattern() != QLatin1String(""))
                 tmp = containerStack[i].endRegex.match(text, start);
             if(!tmp.hasMatch() && containerStack[i].containerRef->base.staticCast<LanguageContextContainer>()->endAtLineEnd)
-                tmp = QRegularExpression("$").match(text, start);
+                tmp = QRegularExpression(QStringLiteral("$")).match(text, start);
             if(tmp.hasMatch() && (!containerEndMatch.hasMatch() || tmp.capturedStart() <= containerEndMatch.capturedStart())) {
                 containerIdx = i;
                 containerEndMatch = tmp;
@@ -242,7 +247,7 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
 }
 
 void LiriSyntaxHighlighter::endNthContainer(QList<HighlightData::ContainerInfo> &containers,
-                                            int n, int offset, int length, QRegularExpressionMatch endMatch) {
+                                            int n, int offset, int length, const QRegularExpressionMatch &endMatch) {
     for (int i = 0; i < n; ++i)
         containers.removeFirst();
 
@@ -272,7 +277,7 @@ void LiriSyntaxHighlighter::endNthContainer(QList<HighlightData::ContainerInfo> 
 }
 
 void LiriSyntaxHighlighter::startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContext> container,
-                                           int offset, int length, QRegularExpressionMatch startMatch) {
+                                           int offset, int length, const QRegularExpressionMatch &startMatch) {
     int start = startMatch.hasMatch() ? startMatch.capturedStart() : offset;
     // Highlight the whole text
     QTextCharFormat containerFormat;
@@ -292,7 +297,7 @@ void LiriSyntaxHighlighter::startContainer(QList<HighlightData::ContainerInfo> &
         // Resolve references to start subpatterns from end regex
         QRegularExpression endRegex = container->base.staticCast<LanguageContextContainer>()->end;
         QString endPattern = endRegex.pattern();
-        QRegularExpression startRefRegex = QRegularExpression("\\\\%{(.+?)@start}");
+        QRegularExpression startRefRegex = QRegularExpression(QStringLiteral("\\\\%{(.+?)@start}"));
         QRegularExpressionMatch startRefMatch;
         while((startRefMatch = startRefRegex.match(endPattern)).hasMatch()) {
             QString groupName = startRefMatch.captured(1);

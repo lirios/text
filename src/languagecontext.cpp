@@ -60,7 +60,7 @@ void LanguageContext::init(ElementType t) {
     }
 }
 
-void LanguageContext::init(ElementType t, QXmlStreamAttributes attributes) {
+void LanguageContext::init(ElementType t, const QXmlStreamAttributes &attributes) {
     type = t;
     switch (type) {
     case Simple:

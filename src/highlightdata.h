@@ -27,6 +27,7 @@
 
 class HighlightData : public QTextBlockUserData
 {
+    Q_DISABLE_COPY(HighlightData)
 public:
     HighlightData();
     ~HighlightData();

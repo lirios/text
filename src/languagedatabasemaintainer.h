@@ -28,7 +28,7 @@ class LanguageDatabaseMaintainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit LanguageDatabaseMaintainer(QString connId, QObject *parent = 0);
+    explicit LanguageDatabaseMaintainer(const QString &connId, QObject *parent = nullptr);
     ~LanguageDatabaseMaintainer();
 
 signals:

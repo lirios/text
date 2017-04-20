@@ -41,9 +41,9 @@ public:
 
     LanguageContext();
     LanguageContext(const LanguageContext &other);
-    virtual ~LanguageContext();
+    ~LanguageContext();
     void init(ElementType t);
-    void init(ElementType t, QXmlStreamAttributes attributes);
+    void init(ElementType t, const QXmlStreamAttributes &attributes);
     LanguageContext& operator =(const LanguageContext &other);
 
     QString styleId;

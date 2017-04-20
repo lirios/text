@@ -37,14 +37,14 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QQuickStyle::setStyle("Material");
+    QQuickStyle::setStyle(QStringLiteral("Material"));
     QGuiApplication app(argc, argv);
 
     // Set app info
-    app.setOrganizationName("Liri");
-    app.setOrganizationDomain("liri.io");
-    app.setApplicationName("Text");
-    app.setDesktopFileName("io.liri.Text.desktop");
+    app.setOrganizationName(QStringLiteral("Liri"));
+    app.setOrganizationDomain(QStringLiteral("liri.io"));
+    app.setApplicationName(QStringLiteral("Text"));
+    app.setDesktopFileName(QStringLiteral("io.liri.Text.desktop"));
     app.setWindowIcon(QIcon(":/resources/icon.png"));
 
     // Load Translations
@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.setApplicationDescription(app.translate("main", "Advanced text editor made in accordance with Material Design."));
     parser.addHelpOption();
-    QCommandLineOption newFileOption("new-document", app.translate("main", "Start the editor with a new document."));
+    QCommandLineOption newFileOption(QStringLiteral("new-document"), app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
-    parser.addPositionalArgument("[file]", app.translate("main", "Path to a file to open for editing."));
+    parser.addPositionalArgument(QStringLiteral("[file]"), app.translate("main", "Path to a file to open for editing."));
 
     parser.process(app);
     QStringList args = parser.positionalArguments();
@@ -76,14 +76,14 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History", (QObject *(*)(QQmlEngine*, QJSEngine*))(HistoryManager::getInstance));
 
-    engine.rootContext()->setContextProperty("newDoc", nf);
+    engine.rootContext()->setContextProperty(QStringLiteral("newDoc"), nf);
     if(args.length() > 0)
-        engine.rootContext()->setContextProperty("givenPath", QUrl::fromUserInput(args[0], QDir::currentPath()));
+        engine.rootContext()->setContextProperty(QStringLiteral("givenPath"), QUrl::fromUserInput(args[0], QDir::currentPath()));
     else
-        engine.rootContext()->setContextProperty("givenPath", nullptr);
+        engine.rootContext()->setContextProperty(QStringLiteral("givenPath"), nullptr);
 
     // Temporary solution untill we have font customization
-    engine.rootContext()->setContextProperty("defaultFont", QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    engine.rootContext()->setContextProperty(QStringLiteral("defaultFont"), QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     // Init languages database
     LanguageManager *lManager = LanguageManager::getInstance();
