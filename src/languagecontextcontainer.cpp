@@ -58,8 +58,8 @@ void LanguageContextContainer::prepareForRemoval(bool ignoreUsage) {
         return;
 
     while (!includes.isEmpty()) {
-        auto inc = includes.back();
-        includes.pop_back();
+        auto inc = includes.constFirst();
+        includes.removeFirst();
         inc->base->prepareForRemoval(ignoreUsage);
     }
 }

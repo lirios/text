@@ -468,7 +468,7 @@ QSharedPointer<LanguageContext> LanguageLoader::buildContextTree(QSharedPointer<
     }
 
     while (reference->includes.size() > 0) {
-        auto inc = reference->includes.first();
+        auto inc = reference->includes.constFirst();
         reference->includes.removeFirst();
 
         if(result->type == LanguageContext::Container)

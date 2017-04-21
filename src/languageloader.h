@@ -32,6 +32,7 @@
 
 class LanguageLoader
 {
+    Q_DISABLE_COPY(LanguageLoader)
 public:
     LanguageLoader();
     LanguageLoader(QSharedPointer<LanguageDefaultStyles> defaultStyles);
