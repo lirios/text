@@ -377,7 +377,7 @@ void LanguageLoader::parseDefaultRegexOptions(QXmlStreamReader &xml, const QStri
 void LanguageLoader::parseDefineRegex(QXmlStreamReader &xml, const QString &langId) {
     QString id = xml.attributes().value(QStringLiteral("id")).toString();
     auto options = parseRegexOptions(xml, langId);
-    m_knownRegexes[id] = applyOptionsToSubRegex(xml.readElementText(), options);
+    m_knownRegexes[langId + ":" + id] = applyOptionsToSubRegex(xml.readElementText(), options);
 }
 
 void LanguageLoader::parseWordCharClass(QXmlStreamReader &xml, const QString &langId) {
@@ -405,6 +405,9 @@ QRegularExpression LanguageLoader::resolveRegex(const QString &pattern, QRegular
 
     for (auto id = m_knownRegexes.keyBegin(), end = m_knownRegexes.keyEnd(); id != end; ++id) {
         resultPattern = resultPattern.replace("\\%{" + *id + "}", m_knownRegexes[*id]);
+        if(id->startsWith(langId)) {
+            resultPattern = resultPattern.replace("\\%{" + id->right(id->indexOf(':')) + "}", m_knownRegexes[*id]);
+        }
     }
     resultPattern = resultPattern.replace(QLatin1String("\\%["), m_languageLeftWordBoundary [langId]);
     resultPattern = resultPattern.replace(QLatin1String("\\%]"), m_languageRightWordBoundary[langId]);
