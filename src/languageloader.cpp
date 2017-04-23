@@ -404,13 +404,13 @@ QRegularExpression LanguageLoader::resolveRegex(const QString &pattern, QRegular
     QString resultPattern = pattern;
 
     for (auto id = m_knownRegexes.keyBegin(), end = m_knownRegexes.keyEnd(); id != end; ++id) {
-        resultPattern = resultPattern.replace("\\%{" + *id + "}", m_knownRegexes[*id]);
-        if(id->startsWith(langId)) {
-            resultPattern = resultPattern.replace("\\%{" + id->right(id->indexOf(':')) + "}", m_knownRegexes[*id]);
+        resultPattern.replace("\\%{" + *id + "}", m_knownRegexes[*id]);
+        if(id->startsWith(langId + ":")) {
+            resultPattern.replace("\\%{" + id->right(id->length() - (id->indexOf(':') + 1)) + "}", m_knownRegexes[*id]);
         }
     }
-    resultPattern = resultPattern.replace(QLatin1String("\\%["), m_languageLeftWordBoundary [langId]);
-    resultPattern = resultPattern.replace(QLatin1String("\\%]"), m_languageRightWordBoundary[langId]);
+    resultPattern.replace(QLatin1String("\\%["), m_languageLeftWordBoundary [langId]);
+    resultPattern.replace(QLatin1String("\\%]"), m_languageRightWordBoundary[langId]);
     return QRegularExpression(resultPattern, options);
 }
 
