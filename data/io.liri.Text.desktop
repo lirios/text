@@ -1,9 +1,12 @@
 [Desktop Entry]
 Name=Liri Text
+GenericName=Text Editor
 Comment=Edit text files
-Exec=liri-text %U
+Exec=liri-text %f
 Terminal=false
 Type=Application
+StartupWMClass=liri-text
+MimeType=text/plain;
 Categories=Qt;Utility;TextEditor;
 Keywords=Text;Editor;
 Icon=io.liri.Text
