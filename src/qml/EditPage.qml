@@ -313,16 +313,16 @@ FluidControls.Page {
                     flickable.flick(0, -60*Math.sqrt(flickable.height))
                 // TODO: Move cursor
             }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.IBeamCursor
-                acceptedButtons: Qt.RightButton
-                onClicked: contextMenu.openAt(mouse.x, mouse.y)
-            }
         }
 
         ScrollBar.vertical: ScrollBar { }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        acceptedButtons: Qt.RightButton
+        onClicked: contextMenu.openAt(mouse.x, mouse.y)
     }
 
     Menu {
