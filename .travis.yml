@@ -20,10 +20,9 @@ script:
   - git clone -b develop https://github.com/lirios/fluid
   - cd fluid
   - git submodule update --init
-  - ./scripts/fetch_icons.sh
   - mkdir build
   - cd build
-  - qmake CONFIG+=use_qt_paths ../fluid.pro
+  - qmake CONFIG+=install_under_qt ../fluid.pro
   - make -j4
   - sudo make install
   - cd ../../
@@ -31,7 +30,7 @@ script:
   - cd build
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then mkdir -p data/language-specs ;
     cp ../data/language-specs/*.lang data/language-specs/ ; fi
-  - qmake LIRI_INSTALL_PREFIX=/usr ../liri-text.pro
+  - qmake LIRI_INSTALL_PREFIX=/usr CONFIG+=use_qt_paths ../liri-text.pro
   - make -j4
   - ../.travis/package.sh
   - cd ..
