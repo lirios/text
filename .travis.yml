@@ -23,7 +23,8 @@ script:
   - mkdir build
   - cd build
   - qmake CONFIG+=install_under_qt ../fluid.pro
-  - make -j4
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make -j$(nproc) ; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx'   ]]; then make -j$(sysctl -n hw.ncpu) ; fi
   - sudo make install
   - cd ../../
   - mkdir build
@@ -31,7 +32,8 @@ script:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then mkdir -p data/language-specs ;
     cp ../data/language-specs/*.lang data/language-specs/ ; fi
   - qmake LIRI_INSTALL_PREFIX=/usr CONFIG+=use_qt_paths ../liri-text.pro
-  - make -j4
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make -j$(nproc) ; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx'   ]]; then make -j$(sysctl -n hw.ncpu) ; fi
   - ../.travis/package.sh
   - cd ..
 
