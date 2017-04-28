@@ -20,19 +20,20 @@ script:
   - git clone -b develop https://github.com/lirios/fluid
   - cd fluid
   - git submodule update --init
-  - ./scripts/fetch_icons.sh
   - mkdir build
   - cd build
-  - qmake CONFIG+=use_qt_paths ../fluid.pro
-  - make -j4
+  - qmake CONFIG+=install_under_qt ../fluid.pro
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make -j$(nproc) ; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx'   ]]; then make -j$(sysctl -n hw.ncpu) ; fi
   - sudo make install
   - cd ../../
   - mkdir build
   - cd build
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then mkdir -p data/language-specs ;
     cp ../data/language-specs/*.lang data/language-specs/ ; fi
-  - qmake LIRI_INSTALL_PREFIX=/usr ../liri-text.pro
-  - make -j4
+  - qmake LIRI_INSTALL_PREFIX=/usr CONFIG+=use_qt_paths ../liri-text.pro
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make -j$(nproc) ; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx'   ]]; then make -j$(sysctl -n hw.ncpu) ; fi
   - ../.travis/package.sh
   - cd ..
 
@@ -61,3 +62,7 @@ deploy:
     secure: FWt1S82VflWSOzU+WyytyIOwsxwQouQ7H9l/JnO33Jx4NMgM5Rr6/Sp1E960FucB9+MYK73R1Le+7iRbVqyB7CuaYV6YZnD66zE6DTwDnb4sOmfGBa1D+5ldxxWx65HMBK5yzkwX+eU6+akH1VoLIpF8xSpWcdU8wFl3TJ2fBtlZnC+1FpEI93TiF0YDLnkR/3m542KMYDY8sV9ocMk8HSTGZrtc89QUb4e+J9OPgiuu3BfKPeh/H9hya1ArG9kuzp9n+Qrck/aYBApRyAi3JN6nQdTQuUkadvtBnA/8cQxBFsZvw81LIuhQI5c/IXhbFS/4xaGQcqiGFv837MYbs8V7s18d8TX8AF5aRDR1Zd6YZ1qxtEu8B4tQhGhSsiOuQaVr+bHjZgtMmaN7eCtCSeSK2QIbVSfKSnuxTspz0w8ZZmUI5YG4H8E4/eBa9fQdgl27PJL6q42DbhrpwFguxgnkRVJOtQbFuSH9j3duHSCA6J4A3aPBD2lcVhFFtZGaMySpXqjU8XG3FwKZzHBPNYg+n+vvXtWf4ZPthjfX9j9SGo2r6FOELk4iPzmNAxh7Rv9HQErVTtrODQ+HBmUhMAetCy15CYImJeJKINp66TCbHDSMnQe8ZeBO9oQwZ/XA7KLN85rrKg4ixpTT2bqud9UOWB0BMRDFSyD+QR7zh0I=
   key:
     secure: STqNB1KzND6JIpk4QfvL/JlhPNKYvPxQYeJu4PO1RlS7z72sjuiMWhVbOjnvDaCyaGpAyRCT+0sLmI4LnJ+/v5YVkXC38y8uz2RydyEqaWalnOdLyqahjLeD+Znv6krmmvmCiUJwg5ZwnyF0m4LEyMaSfUAE1K0ozwCfCiKmuIgaAj873A/AEW0RNxYbu9gl1Q7ThMiEueSyxZH0ypkP7uHEFgyvay4L4xSezYL/bbpQ72VutpK5S17EsZh/3SJn39B7vFLy/Kin4NAl4aAoVuW6jitsXqeAqEd9gb1+5s2EoNe8+VDbE69PDn8yE6tjxA921+FnLk50D0EOqvKuxnzAGjPA2wh/ax4HgMFTC3fQEoexXb7pN2rNp4EcyRGsq/UkrZ/C3Co3lb+BLz+w5pISlUCG2jsZgcGFLmamhE6Fae2ecq4wHwpz5cNQLsxJOgjezNqqhVQ3xNhsC2OOlr1B61Z0opSXIUOf/MoZb9fHpbfHJ09EgRZUeLH0PgtOvS7SNhXEUgKZ9uoAYzrLnPtbyR4KISN7PKysa0xgiaYnkMTMSYxy5G7Jo5VW1vEBdUS/zAwPNC65XG+rcEcSmaWl4e+Qf3pQuxXm/VS+fKwfyureDPr9Qozgb2t/KyZROlJWuFFtkAaHoRVEti+0N7H03F8800AQK+9whPgxuPI=
+
+notifications:
+  email: false
+  slack: lirios:fdUqVmPzqPskEL1UBhqapZ0w
