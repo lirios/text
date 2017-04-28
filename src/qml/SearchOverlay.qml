@@ -29,6 +29,7 @@ FluidControls.Card {
         id: searchField
         width: parent.width - 2*8
         anchors.centerIn: parent
+        selectByMouse: true
         Keys.onReturnPressed: activated(text)
         Keys.onEscapePressed: close()
     }
