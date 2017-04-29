@@ -5,7 +5,7 @@ import Fluid.Controls 1.0 as FluidControls
 
 FluidControls.Card {
     id: overlay
-    signal activated(string query)
+    signal activated(string query, bool forward)
     signal closed
 
     function open() {
@@ -30,7 +30,7 @@ FluidControls.Card {
         width: parent.width - 2*8
         anchors.centerIn: parent
         selectByMouse: true
-        Keys.onReturnPressed: activated(text)
+        Keys.onReturnPressed: activated(text, event.modifiers ^ Qt.ShiftModifier)
         Keys.onEscapePressed: close()
     }
 

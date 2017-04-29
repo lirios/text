@@ -111,9 +111,17 @@ FluidControls.Page {
         z: 1
 
         onActivated: {
-            var start = mainArea.text.indexOf(query, mainArea.cursorPosition)
-            if(start < 0)
-                start = mainArea.text.indexOf(query, 0)
+            var start
+            if(forward) {
+                start = mainArea.text.indexOf(query, mainArea.cursorPosition)
+                if(start < 0)
+                    start = mainArea.text.indexOf(query, 0)
+            } else {
+                start = mainArea.text.lastIndexOf(query, mainArea.selectionStart - 1)
+                if(start < 0)
+                    start = mainArea.text.lastIndexOf(query)
+            }
+
             mainArea.select(start, start + query.length)
         }
         onClosed: mainArea.forceActiveFocus()
