@@ -224,7 +224,7 @@ FluidControls.Page {
 
         title: qsTr("Save changes before closing?")
 
-        Label {
+        FluidControls.DialogLabel {
             text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
         }
 
@@ -278,7 +278,7 @@ FluidControls.Page {
             flickable.contentY = sp
         }
 
-        Label {
+        FluidControls.DialogLabel {
             text: qsTr("The file was changed from outside. Do you wish to reload its content?")
         }
 
@@ -409,7 +409,7 @@ FluidControls.Page {
         y: (parent.height - height) / 2
         title: qsTr("File operation error")
         standardButtons: Dialog.Ok
-        Label {
+        FluidControls.DialogLabel {
             id: descLabel
         }
     }
