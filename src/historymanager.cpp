@@ -160,7 +160,7 @@ QVariantMap HistoryManager::getFileEditingInfo(const QUrl &fileUrl) const {
 }
 
 void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition, float scrollPosition, const QString &preview) {
-    int currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
+    qint64 currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
     int row = dbIndexForId(fileUrl.path());
     QSqlQuery query(QSqlDatabase::database(m_connId));

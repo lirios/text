@@ -79,12 +79,12 @@ QString LiriSyntaxHighlighter::highlightedFragment(int position, int blockCount,
     tempCursor.setCharFormat(textfmt);
 
     // Apply the formats set by the syntax highlighter
-    QTextBlock start = document()->findBlock(cursor.selectionStart());
-    QTextBlock end = document()->findBlock(cursor.selectionEnd());
-    end = end.next();
+    QTextBlock startBlock = document()->findBlock(cursor.selectionStart());
+    QTextBlock endBlock = document()->findBlock(cursor.selectionEnd());
+    endBlock = endBlock.next();
     const int selectionStart = cursor.selectionStart();
     const int endOfDocument = tempDocument->characterCount() - 1;
-    for(QTextBlock current = start; current.isValid() && current != end; current = current.next()) {
+    for(QTextBlock current = startBlock; current.isValid() && current != endBlock; current = current.next()) {
         const QTextLayout *layout(current.layout());
 
         foreach(const QTextLayout::FormatRange &range, layout->additionalFormats()) {
@@ -243,7 +243,7 @@ void LiriSyntaxHighlighter::highlightBlock(const QString &text) {
     }
 
     currentStateData->containers = containerStack;
-    setCurrentBlockState(qHash(currentStateData->containers));
+    setCurrentBlockState(static_cast<int>(qHash(currentStateData->containers)));
 }
 
 void LiriSyntaxHighlighter::endNthContainer(QList<HighlightData::ContainerInfo> &containers,
