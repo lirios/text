@@ -28,7 +28,10 @@ Flickable {
 
     property alias model: fileGridContents.model
     property int cardWidth: 240
-    property int cardHeight: 122 + 68
+    property int viewLines: 7
+    property int lineHeight: 20
+    property int descriptionRectangleHeight: 16 + 16 + 14 + 12 + 16
+    property int cardHeight: viewLines * lineHeight + 2*8 + descriptionRectangleHeight
 
     anchors.fill: parent
     contentHeight: fileGrid.height
@@ -60,17 +63,29 @@ Flickable {
 
                     Text {
                         id: filePreview
-                        anchors.fill: parent
-                        anchors.margins: 8
-                        anchors.rightMargin: 4
+
+                        anchors {
+                            top: parent.top
+                            left: parent.left
+                            right: parent.right
+                            bottom: nameBackground.top
+                            margins: 8
+                            rightMargin: 4
+                        }
                         clip: true
-                        font.pixelSize: 13
+
+                        font.pixelSize: FluidControls.FluidStyle.body1Font.pixelSize
+                        maximumLineCount: rootFlickable.viewLines
+                        lineHeightMode: Text.FixedHeight
+                        lineHeight: rootFlickable.lineHeight
+
                         textFormat: Text.RichText
                         text: previewText
                     }
 
                     LinearGradient {
                         anchors.fill: parent
+                        cached: true
                         start: Qt.point(parent.width - 28, 0)
                         end: Qt.point(filePreview.width + filePreview.x, 0)
                         gradient: Gradient {
@@ -78,49 +93,49 @@ Flickable {
                             GradientStop {position: 1.0; color: "white"}
                         }
                     }
-                }
 
-                Rectangle {
-                    id: nameBackground
-                    color: "black"
-                    opacity: 0.5
-                    anchors.bottom: parent.bottom
-                    width: parent.width
-                    height: 68
-                }
+                    Rectangle {
+                        id: nameBackground
+                        color: "black"
+                        opacity: 0.5
+                        anchors.bottom: parent.bottom
+                        width: parent.width
+                        height: rootFlickable.descriptionRectangleHeight
+                    }
 
-                Label {
-                    id: docName
+                    Label {
+                        id: docName
 
-                    anchors.top: nameBackground.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.topMargin: 16
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: 16
+                        anchors.top: nameBackground.top
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.topMargin: 16
+                        anchors.leftMargin: 16
+                        anchors.rightMargin: 16
 
-                    text: name
-                    color: "white"
-                    font.pixelSize: 16
-                    font.weight: Font.Medium
-                    elide: Text.ElideRight
-                }
+                        text: name
+                        color: "white"
+                        font.pixelSize: 16
+                        font.weight: Font.Medium
+                        elide: Text.ElideRight
+                    }
 
-                Label {
-                    id: docUrl
+                    Label {
+                        id: docUrl
 
-                    anchors.bottom: nameBackground.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottomMargin: 16
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: 16
+                        anchors.bottom: nameBackground.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottomMargin: 16
+                        anchors.leftMargin: 16
+                        anchors.rightMargin: 16
 
-                    text: filePath
-                    color: "white"
-                    font.pixelSize: 12
-                    font.weight: Font.Normal
-                    elide: Text.ElideMiddle
+                        text: filePath
+                        color: "white"
+                        font.pixelSize: 12
+                        font.weight: Font.Normal
+                        elide: Text.ElideMiddle
+                    }
                 }
 
                 FluidMaterial.Ripple {
