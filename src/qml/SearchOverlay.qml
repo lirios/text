@@ -21,17 +21,45 @@ FluidControls.Card {
     }
 
     state: "hidden"
-    width: 256
-    height: searchField.height
+    width: overlayContent.width
+    height: overlayContent.height
     Material.elevation: 2
 
-    TextField {
-        id: searchField
-        width: parent.width - 2*8
-        anchors.centerIn: parent
-        selectByMouse: true
-        Keys.onReturnPressed: activated(text, event.modifiers ^ Qt.ShiftModifier)
-        Keys.onEscapePressed: close()
+    Row {
+        id: overlayContent
+        leftPadding: 8
+        spacing: 0
+        padding: 0
+
+        TextField {
+            id: searchField
+            width: 256
+            anchors.verticalCenter: parent.verticalCenter
+            selectByMouse: true
+            Keys.onDownPressed: activated(text, true)
+            Keys.onUpPressed: activated(text, false)
+            Keys.onReturnPressed: activated(text, event.modifiers ^ Qt.ShiftModifier)
+            Keys.onEscapePressed: close()
+        }
+
+        Rectangle {
+            width: 12
+            height: 1
+        }
+
+        FluidControls.IconButton {
+            iconName: "hardware/keyboard_arrow_down"
+            iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
+            enabled: searchField.text.length > 0
+            onClicked: activated(searchField.text, true)
+        }
+
+        FluidControls.IconButton {
+            iconName: "hardware/keyboard_arrow_up"
+            iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
+            enabled: searchField.text.length > 0
+            onClicked: activated(searchField.text, false)
+        }
     }
 
     states: [
