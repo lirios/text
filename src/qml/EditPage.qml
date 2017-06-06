@@ -216,18 +216,12 @@ FluidControls.Page {
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: exitDialog
         signal refused
 
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        title: qsTr("Save changes before closing?")
-
-        FluidControls.DialogLabel {
-            text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
-        }
+        width: 400
+        text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
 
         footer: DialogButtonBox {
             standardButtons: DialogButtonBox.Yes | DialogButtonBox.No | DialogButtonBox.Cancel
@@ -260,12 +254,11 @@ FluidControls.Page {
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: askForReloadDialog
 
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        title: qsTr("Reload file content?")
+        width: 400
+        text: qsTr("The file was changed from outside. Do you wish to reload its content?")
 
         onAccepted: {
             var cp = mainArea.cursorPosition
@@ -277,10 +270,6 @@ FluidControls.Page {
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
             flickable.contentY = sp
-        }
-
-        FluidControls.DialogLabel {
-            text: qsTr("The file was changed from outside. Do you wish to reload its content?")
         }
 
         footer: DialogButtonBox {
@@ -396,22 +385,15 @@ FluidControls.Page {
 
         onError: {
             //app.showError(qsTr("File operation error"), description)
-            errDiag.description = description
+            errDiag.text = description
             errDiag.open()
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: errDiag
 
-        property alias description: descLabel.text
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
         title: qsTr("File operation error")
         standardButtons: Dialog.Ok
-        FluidControls.DialogLabel {
-            id: descLabel
-        }
     }
 }
