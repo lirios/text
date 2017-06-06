@@ -62,6 +62,13 @@ FluidControls.Card {
         }
     }
 
+    Timer {
+        id: hideTimer
+        interval: 5000
+        running: state === "exposed" && !overlay.focus
+        onTriggered: overlay.close()
+    }
+
     states: [
         State {
             name: "hidden"
