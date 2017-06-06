@@ -108,6 +108,7 @@ FluidControls.Page {
     SearchOverlay {
         id: searchOverlay
         anchors.right: parent.right
+        anchors.rightMargin: 8
         z: 1
 
         onActivated: {
