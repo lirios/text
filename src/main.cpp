@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     QCommandLineOption newFileOption(QStringLiteral("new-document"), app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
-    parser.addPositionalArgument(QStringLiteral("[file]"), app.translate("main", "Path to a file to open for editing."));
+    parser.addPositionalArgument(app.translate("main", "[file]"), app.translate("main", "Path to a file to open for editing."));
 
     parser.process(app);
     QStringList args = parser.positionalArguments();

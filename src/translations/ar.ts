@@ -29,77 +29,75 @@
         <translation>خروج</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="217"/>
         <source>Save changes before closing?</source>
-        <translation>حفظ التغييرات قبل الخروج؟</translation>
+        <translation type="vanished">حفظ التغييرات قبل الخروج؟</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="220"/>
+        <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
         <translation>لم تقم بحفظ التغييرات. هل تود أن تحفظها قبل الخروج؟</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="239"/>
+        <location filename="../qml/EditPage.qml" line="242"/>
         <source>Choose a location to save</source>
         <translation>أختر مكان الحفظ</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="259"/>
         <source>Reload file content?</source>
-        <translation>تحديث محتويات الملف؟</translation>
+        <translation type="vanished">تحديث محتويات الملف؟</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="274"/>
+        <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
         <translation>حدثت تعديلات خارجية على الملف. هل تود أن تقوم بالتحديث؟</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="280"/>
+        <location filename="../qml/EditPage.qml" line="278"/>
         <source>Reload</source>
         <translation>تحديث</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="286"/>
+        <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
         <translation>تجاهل</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="338"/>
+        <location filename="../qml/EditPage.qml" line="336"/>
         <source>Undo</source>
         <translation>تراجع</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="343"/>
+        <location filename="../qml/EditPage.qml" line="341"/>
         <source>Redo</source>
         <translation>إعادة</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="351"/>
+        <location filename="../qml/EditPage.qml" line="349"/>
         <source>Copy</source>
         <translation>نسخ</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="356"/>
+        <location filename="../qml/EditPage.qml" line="354"/>
         <source>Cut</source>
         <translation>قص</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="361"/>
+        <location filename="../qml/EditPage.qml" line="359"/>
         <source>Paste</source>
         <translation>لصق</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="366"/>
+        <location filename="../qml/EditPage.qml" line="364"/>
         <source>Delete</source>
         <translation>حذف</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="374"/>
+        <location filename="../qml/EditPage.qml" line="372"/>
         <source>Select All</source>
         <translation>تحديد الكل</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="402"/>
+        <location filename="../qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
         <translation>خطأ في معالجة الملف</translation>
     </message>
@@ -147,6 +145,11 @@
         <location filename="../main.cpp" line="66"/>
         <source>Path to a file to open for editing.</source>
         <translation>مسار الملف المراد فتحه.</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="66"/>
+        <source>[file]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

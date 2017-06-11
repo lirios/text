@@ -29,77 +29,75 @@
         <translation>Sluit</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="217"/>
         <source>Save changes before closing?</source>
-        <translation>Opslaan voor het afsluiten?</translation>
+        <translation type="vanished">Opslaan voor het afsluiten?</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="220"/>
+        <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
         <translation>Je hebt onopgeslagen wijzigingen. Wil je ze opslaan voor je het bestand aflsuit?</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="239"/>
+        <location filename="../qml/EditPage.qml" line="242"/>
         <source>Choose a location to save</source>
         <translation>Kies een locatie om op te slaan</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="259"/>
         <source>Reload file content?</source>
-        <translation>Herlaad bestand inhoud?</translation>
+        <translation type="vanished">Herlaad bestand inhoud?</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="274"/>
+        <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
         <translation>Het bestand is bewerkt van buitenaf. Wil je de inhoud herladen?</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="280"/>
+        <location filename="../qml/EditPage.qml" line="278"/>
         <source>Reload</source>
         <translation>Herlaad</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="286"/>
+        <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
         <translation>Negeer</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="338"/>
+        <location filename="../qml/EditPage.qml" line="336"/>
         <source>Undo</source>
         <translation>Ongedaan Maken</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="343"/>
+        <location filename="../qml/EditPage.qml" line="341"/>
         <source>Redo</source>
         <translation>Overdoen</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="351"/>
+        <location filename="../qml/EditPage.qml" line="349"/>
         <source>Copy</source>
         <translation>Kopieer</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="356"/>
+        <location filename="../qml/EditPage.qml" line="354"/>
         <source>Cut</source>
         <translation>Knip</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="361"/>
+        <location filename="../qml/EditPage.qml" line="359"/>
         <source>Paste</source>
         <translation>Plak</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="366"/>
+        <location filename="../qml/EditPage.qml" line="364"/>
         <source>Delete</source>
         <translation>Verwijder</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="374"/>
+        <location filename="../qml/EditPage.qml" line="372"/>
         <source>Select All</source>
         <translation>Selecteer Alle</translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="402"/>
+        <location filename="../qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
         <translation>Bestands opdracht fout</translation>
     </message>
@@ -147,6 +145,11 @@
         <location filename="../main.cpp" line="66"/>
         <source>Path to a file to open for editing.</source>
         <translation>Pad naar een bestand om te openen voor bewerking.</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="66"/>
+        <source>[file]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
