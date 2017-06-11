@@ -1,6 +1,7 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts 1.1
 import Fluid.Controls 1.0 as FluidControls
 
 FluidControls.Card {
@@ -25,16 +26,19 @@ FluidControls.Card {
     height: overlayContent.height
     Material.elevation: 2
 
-    Row {
+    RowLayout {
         id: overlayContent
-        leftPadding: 8
-        spacing: 0
-        padding: 0
+        width: 344
+        height: searchField.height + 2*4
 
         TextField {
             id: searchField
-            width: 256
-            anchors.verticalCenter: parent.verticalCenter
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 8
+            Layout.rightMargin: 8
+            Layout.fillWidth: true
+
             selectByMouse: true
             Keys.onDownPressed: activated(text, true)
             Keys.onUpPressed: activated(text, false)
@@ -42,15 +46,16 @@ FluidControls.Card {
             Keys.onEscapePressed: close()
         }
 
-        Rectangle {
-            width: 12
-            height: 1
-        }
-
         FluidControls.IconButton {
             iconName: "hardware/keyboard_arrow_down"
             iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 0
+            Layout.rightMargin: 0
+            Layout.maximumWidth: 24 + 2*4
+
             onClicked: activated(searchField.text, true)
         }
 
@@ -58,6 +63,12 @@ FluidControls.Card {
             iconName: "hardware/keyboard_arrow_up"
             iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 0
+            Layout.rightMargin: 8
+            Layout.maximumWidth: 24 + 2*4
+
             onClicked: activated(searchField.text, false)
         }
     }
