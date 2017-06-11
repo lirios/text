@@ -69,6 +69,8 @@ lupdate_only{
     SOURCES = \
         src/qml/* \
         src/*
+    TRANSLATIONS += \
+        src/translations/C.ts
 }
 
 unix:!android {

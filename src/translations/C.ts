@@ -29,77 +29,67 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="217"/>
-        <source>Save changes before closing?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/EditPage.qml" line="220"/>
+        <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="239"/>
+        <location filename="../qml/EditPage.qml" line="242"/>
         <source>Choose a location to save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="259"/>
-        <source>Reload file content?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/EditPage.qml" line="274"/>
+        <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="280"/>
+        <location filename="../qml/EditPage.qml" line="278"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="286"/>
+        <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="338"/>
+        <location filename="../qml/EditPage.qml" line="336"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="343"/>
+        <location filename="../qml/EditPage.qml" line="341"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="351"/>
+        <location filename="../qml/EditPage.qml" line="349"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="356"/>
+        <location filename="../qml/EditPage.qml" line="354"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="361"/>
+        <location filename="../qml/EditPage.qml" line="359"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="366"/>
+        <location filename="../qml/EditPage.qml" line="364"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="374"/>
+        <location filename="../qml/EditPage.qml" line="372"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/EditPage.qml" line="402"/>
+        <location filename="../qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -142,6 +132,11 @@
     <message>
         <location filename="../main.cpp" line="66"/>
         <source>Path to a file to open for editing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="66"/>
+        <source>[file]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
