@@ -21,7 +21,6 @@ import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.0
 import Fluid.Controls 1.0 as FluidControls
-import Fluid.Material 1.0 as FluidMaterial
 
 Flickable {
     id: rootFlickable
@@ -61,7 +60,7 @@ Flickable {
                     clip: true
                     anchors.fill: parent
 
-                    Text {
+                    FluidControls.BodyLabel {
                         id: filePreview
 
                         anchors {
@@ -74,7 +73,6 @@ Flickable {
                         }
                         clip: true
 
-                        font.pixelSize: FluidControls.FluidStyle.body1Font.pixelSize
                         maximumLineCount: rootFlickable.viewLines
                         lineHeightMode: Text.FixedHeight
                         lineHeight: rootFlickable.lineHeight
@@ -138,7 +136,7 @@ Flickable {
                     }
                 }
 
-                FluidMaterial.Ripple {
+                FluidControls.Ripple {
                     id: animation
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton

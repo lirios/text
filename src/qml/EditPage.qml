@@ -75,7 +75,7 @@ FluidControls.Page {
         FluidControls.Action {
             id: saveAction
             iconName: "content/save"
-            tooltip: qsTr("Save")
+            toolTip: qsTr("Save")
             shortcut: StandardKey.Save
             onTriggered: save()
         },
@@ -83,7 +83,7 @@ FluidControls.Page {
         FluidControls.Action {
             id: findAction
             iconName: "action/search"
-            tooltip: qsTr("Find")
+            toolTip: qsTr("Find")
             shortcut: StandardKey.Find
             onTriggered: searchOverlay.open()
         },
