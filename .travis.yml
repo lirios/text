@@ -13,6 +13,7 @@ matrix:
 
 before_install:
   - ./.travis/update.sh
+
 install:
   - . ./.travis/install.sh
 
