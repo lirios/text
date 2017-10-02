@@ -11,6 +11,7 @@ QtGuiApplication {
 
     bundle.identifierPrefix: "io.liri"
     bundle.identifier: "io.liri.Text"
+    bundle.infoPlist: ({"CFBundleIconFile": "io.liri.Text"})
 
     cpp.defines: {
         var defines = base.concat([
