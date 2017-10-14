@@ -32,6 +32,7 @@ QtGuiApplication {
         "*.h",
         "*.qrc",
         "../data/icons/io.liri.Text.icns",
+        "../data/io.liri.Text.rc",
     ]
 
     Group {
