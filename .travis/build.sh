@@ -10,6 +10,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     qbs config preferences.qbsSearchPaths $(pwd)/fluid/qbs/shared
 
     # Build and install Fluid
+    git clone https://github.com/lirios/fluid.git
     cd fluid
     sudo qbs -d build -j $(sysctl -n hw.ncpu) profile:travis-qt5 qbs.installRoot:/usr/local qbs.installPrefix:/opt/qt modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
     sudo rm -fr build
@@ -29,6 +30,7 @@ else
     qbs config preferences.qbsSearchPaths $(pwd)/fluid/qbs/shared
 
     # Build and install Fluid
+    git clone https://github.com/lirios/fluid.git
     cd fluid
     sudo $(which qbs) -d build -j $(nproc) profile:travis-qt5 qbs.installRoot:/opt qbs.installPrefix:qt58 modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
     sudo rm -fr build
