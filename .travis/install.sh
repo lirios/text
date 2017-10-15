@@ -10,6 +10,6 @@ else
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
     gcc --version
 
-    sudo apt-get -y install qt58base qt58declarative qt58quickcontrols2 qt58svg qt58graphicaleffects
+    sudo apt-get -y install qt58base qt58declarative qt58quickcontrols2 qt58svg qt58graphicaleffects qt58tools qt58script
     source /opt/qt58/bin/qt58-env.sh
 fi
