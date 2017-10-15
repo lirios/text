@@ -26,7 +26,6 @@ QtGuiApplication {
             defines.push('RELATIVE_LANGUAGE_PATH="../Resources/language-specs/"');
         else if (qbs.targetOS.contains("linux"))
             defines.push('ABSOLUTE_LANGUAGE_PATH="' + dataInstallDir + '/language-specs/"');
-        console.info(defines)
         return defines;
     }
 
