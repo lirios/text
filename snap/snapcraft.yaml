@@ -4,6 +4,7 @@ summary: A cross-platform material text editor
 description: A cross-platform material text editor
 grade: devel
 confinement: strict
+architectures: [amd64]
 
 plugs:
   platform:
