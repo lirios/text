@@ -32,3 +32,11 @@ Makefile*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# Snapcraft
+.snapcraft/
+parts/
+prime/
+stage/
+*.snap
+*source.tar.bz2
