@@ -2,9 +2,11 @@ import qbs 1.0
 
 QtGuiApplication {
     readonly property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
+    property string dataInstallDir: qbs.installPrefix + "/share/liri-text"
 
     name: "liri-text"
     consoleApplication: false
+    qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr" : ""
 
     Depends { name: "Qt"; submodules: ["qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
@@ -23,7 +25,8 @@ QtGuiApplication {
         else if (qbs.targetOS.contains("macos"))
             defines.push('RELATIVE_LANGUAGE_PATH="../Resources/language-specs/"');
         else if (qbs.targetOS.contains("linux"))
-            defines.push('ABSOLUTE_LANGUAGE_PATH="' + qbs.installRoot + '/share/liri-text/language-specs/"');
+            defines.push('ABSOLUTE_LANGUAGE_PATH="' + dataInstallDir + '/language-specs/"');
+        console.info(defines)
         return defines;
     }
 
