@@ -14,7 +14,7 @@ plugs:
 
 apps:
   liri-text:
-    command: liri-app-launch $SNAP/bin/liri-text
+    command: liri-app-launch $SNAP/usr/bin/liri-text
     plugs:
       - desktop
       - desktop-legacy
@@ -27,6 +27,8 @@ parts:
   liri-text:
     source: .
     plugin: qbs
+    qbs-options:
+      - products.liri-text.dataInstallDir:/snap/liri-text/current/usr/share/liri-text
     build-attributes: ["no-system-libraries"]
     stage-packages:
       - sqlite3
