@@ -29,6 +29,7 @@ parts:
     source: .
     plugin: qbs
     qbs-options:
+      - products.qbs.installPrefix:usr
       - products.liri-text.dataInstallDir:/snap/liri-text/current/usr/share/liri-text
     build-attributes: ["no-system-libraries"]
     stage-packages:
