@@ -20,7 +20,7 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.2
+import Qt.labs.platform 1.0
 import Fluid.Controls 1.0 as FluidControls
 import Fluid.Core 1.0 as FluidCore
 import io.liri.text 1.0
@@ -45,9 +45,8 @@ FluidControls.Page {
 
     FileDialog {
         id: openFileDialog
-        title: qsTr("Choose a file to open")
         onAccepted: {
-            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: openFileDialog.fileUrl })
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: openFileDialog.file })
         }
     }
 

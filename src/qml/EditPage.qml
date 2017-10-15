@@ -19,7 +19,7 @@
 
 import QtQuick 2.8
 import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.2 as Dialogs
+import Qt.labs.platform 1.0
 import Fluid.Controls 1.0 as FluidControls
 import io.liri.text 1.0
 
@@ -236,16 +236,16 @@ FluidControls.Page {
         }
     }
 
-    Dialogs.FileDialog {
+    FileDialog {
         id: saveAsDialog
 
-        title: qsTr("Choose a location to save")
-        selectExisting: false
+        fileMode: FileDialog.SaveFile
+        folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
 
         onAccepted: {
-            if(document.saveAs(saveAsDialog.fileUrl)) {
+            if(document.saveAs(saveAsDialog.file)) {
                 ioSuccess()
-                documentUrl = saveAsDialog.fileUrl
+                documentUrl = saveAsDialog.file
                 anonymous = false
                 touchFileOnCursorPosition()
             } else {
