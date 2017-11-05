@@ -16,6 +16,7 @@ plugs:
 apps:
   liri-text:
     command: liri-app-launch $SNAP/usr/bin/liri-text
+    desktop: usr/share/applications/io.liri.Text.desktop
     plugs:
       - desktop
       - desktop-legacy
@@ -28,6 +29,8 @@ parts:
   liri-text:
     source: .
     plugin: qbs
+    prepare: |
+      sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/io\.liri\.Text\.png|g' data/io.liri.Text.desktop
     qbs-options:
       - products.qbs.installPrefix:usr
       - products.liri-text.dataInstallDir:/snap/liri-text/current/usr/share/liri-text
