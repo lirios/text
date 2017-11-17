@@ -15,8 +15,8 @@ plugs:
 
 apps:
   liri-text:
-    command: liri-app-launch $SNAP/usr/bin/liri-text
-    desktop: usr/share/applications/io.liri.Text.desktop
+    command: liri-app-launch $SNAP/bin/liri-text
+    desktop: share/applications/io.liri.Text.desktop
     plugs:
       - desktop
       - desktop-legacy
@@ -30,10 +30,9 @@ parts:
     source: .
     plugin: qbs
     prepare: |
-      sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/io\.liri\.Text\.png|g' data/io.liri.Text.desktop
+      sed -i 's|Icon=.*|Icon=${SNAP}/share/icons/hicolor/256x256/apps/io\.liri\.Text\.png|g' data/io.liri.Text.desktop
     qbs-options:
-      - products.qbs.installPrefix:usr
-      - products.liri-text.dataInstallDir:/snap/liri-text/current/usr/share/liri-text
+      - products.liri-text.dataInstallDir:/snap/liri-text/current/share/liri-text
     build-attributes: ["no-system-libraries"]
     stage-packages:
       - sqlite3
