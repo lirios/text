@@ -4,6 +4,7 @@ Liri Text
 [![license](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
 [![Build Status](https://img.shields.io/travis/lirios/text/develop.svg)](https://travis-ci.org/lirios/text)
+[![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
 [![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/develop)
 
