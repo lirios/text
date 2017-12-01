@@ -7,9 +7,7 @@ QtGuiApplication {
     name: "liri-text"
     consoleApplication: false
 
-// TODO: Find a way to set default install prefix.
-// Line below overrides prefix set by user.
-//    qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr/local" : ""
+    qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr/local" : ""
 
     Depends { name: "Qt"; submodules: ["qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }

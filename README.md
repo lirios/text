@@ -37,7 +37,7 @@ Then, from the root of the repository, run:
 qbs -d build -j $(nproc) profile:qt5
 ```
 
-You may want to add `qbs.installPrefix:/install/path` option (it's set to /usr/local by default) to qbs call above.
+You may want to add `modules.qbs.installPrefix:/install/path` option (it's set to /usr/local by default) to qbs call above.
 
 Now, you can install Liri Text:
 
