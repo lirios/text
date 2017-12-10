@@ -12,7 +12,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     # Build and install Fluid
     git clone --recursive https://github.com/lirios/fluid.git
     cd fluid
-    sudo qbs -d build -j $(sysctl -n hw.ncpu) profile:travis-qt5 qbs.installRoot:/usr/local qbs.installPrefix:/opt/qt modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
+    sudo qbs -d build -j $(sysctl -n hw.ncpu) profile:travis-qt5 modules.qbs.installRoot:/usr/local modules.qbs.installPrefix:/opt/qt modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
     sudo rm -fr build
 
     # Build app
@@ -32,11 +32,11 @@ else
     # Build and install Fluid
     git clone --recursive https://github.com/lirios/fluid.git
     cd fluid
-    sudo $(which qbs) -d build -j $(nproc) profile:travis-qt5 qbs.installRoot:/opt qbs.installPrefix:qt58 modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
+    sudo $(which qbs) -d build -j $(nproc) profile:travis-qt5 modules.qbs.installRoot:/opt modules.qbs.installPrefix:qt58 modules.lirideployment.qmlDir:qml project.withDocumentation:false project.withDemo:false
     sudo rm -fr build
 
     # Build and install app
     cd ../
     mkdir -p appdir
-    qbs -d build -j $(nproc) profile:travis-qt5 qbs.installRoot:appdir qbs.installPrefix:usr
+    qbs -d build -j $(nproc) profile:travis-qt5 modules.qbs.installRoot:appdir modules.qbs.installPrefix:usr
 fi
