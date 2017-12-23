@@ -46,9 +46,9 @@ FluidControls.Card {
             Keys.onEscapePressed: close()
         }
 
-        FluidControls.IconButton {
-            iconName: "hardware/keyboard_arrow_down"
-            iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
+        ToolButton {
+            icon.name: "hardware/keyboard_arrow_down"
+            icon.color: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
@@ -59,9 +59,9 @@ FluidControls.Card {
             onClicked: activated(searchField.text, true)
         }
 
-        FluidControls.IconButton {
-            iconName: "hardware/keyboard_arrow_up"
-            iconColor: enabled ? Material.iconColor : Material.color(Material.Grey)
+        ToolButton {
+            icon.name: "hardware/keyboard_arrow_up"
+            icon.color: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
