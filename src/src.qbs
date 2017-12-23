@@ -1,13 +1,14 @@
 import qbs 1.0
+import qbs.FileInfo
 
 QtGuiApplication {
     readonly property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
-    property string dataInstallDir: qbs.installPrefix + "/share/liri-text"
+    property string dataInstallDir: FileInfo.joinPaths(qbs.installRoot, qbs.installPrefix, "share", "liri-text")
 
     name: "liri-text"
     consoleApplication: false
 
-    qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr/local" : ""
+    qbs.installRoot: qbs.targetOS.contains("linux") ? "/usr/local" : ""
 
     Depends { name: "Qt"; submodules: ["qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
