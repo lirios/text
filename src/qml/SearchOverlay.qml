@@ -48,7 +48,6 @@ FluidControls.Card {
 
         ToolButton {
             icon.name: "hardware/keyboard_arrow_down"
-            icon.color: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
@@ -61,7 +60,6 @@ FluidControls.Card {
 
         ToolButton {
             icon.name: "hardware/keyboard_arrow_up"
-            icon.color: enabled ? Material.iconColor : Material.color(Material.Grey)
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
