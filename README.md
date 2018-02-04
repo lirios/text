@@ -6,22 +6,30 @@ Liri Text
 [![Build Status](https://img.shields.io/travis/lirios/text/develop.svg)](https://travis-ci.org/lirios/text)
 [![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
-[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)](https://github.com/lirios/text/commits/develop)
+[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)](https://github.com/lirios/text/commits/develop)
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.
 
 ## Dependencies
 
-* Qt >= 5.8.0 with at least the following modules is required:
-  * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
-  * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
-  * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
-* [Fluid](https://github.com/lirios/fluid) built from develop branch
-* [SQLite](https://www.sqlite.org/) >= 3.7.15
+Qt >= 5.8.0 with at least the following modules is required:
 
-## Build
+ * [qtbase](http://code.qt.io/cgit/qt/qtbase.git)
+ * [qtdeclarative](http://code.qt.io/cgit/qt/qtdeclarative.git)
+ * [qtquickcontrols2](http://code.qt.io/cgit/qt/qtquickcontrols2.git)
 
-Liri Text uses [Qbs](http://doc.qt.io/qbs/) as build system.
+The following modules and their dependencies are required:
+
+ * [fluid](https://github.com/lirios/fluid.git)
+ * [SQLite](https://www.sqlite.org/) >= 3.7.15
+
+## Installation
+
+We use the [Qbs](http://doc.qt.io/qbs/) build system.
+
+If you want to learn more, please read the [Qbs manual](http://doc.qt.io/qbs/index.html),
+especially the [setup guide](http://doc.qt.io/qbs/configuring.html) and how to install artifacts
+from the [installation guide](http://doc.qt.io/qbs/installing-files.html).
 
 If you haven't already, start by setting up a `qt5` profile for `qbs`:
 
@@ -34,25 +42,31 @@ qbs config profiles.qt5.baseProfile gcc
 Then, from the root of the repository, run:
 
 ```sh
-qbs -d build -j $(nproc) profile:qt5
+qbs -d build -j $(nproc) profile:qt5 # use sudo if necessary
 ```
 
-You may want to add `modules.qbs.installPrefix:/install/path` option (it's set to /usr/local by default) to qbs call above.
+To the `qbs` call above you can append additional configuration parameters:
 
-Now, you can install Liri Text:
+ * `modules.lirideployment.prefix:/path/to/prefix` where most files are installed (default: `/usr/local`)
+ * `modules.lirideployment.dataDir:path/to/lib` where data files are installed (default: `/usr/local/share`)
+ * `modules.lirideployment.libDir:path/to/lib` where libraries are installed (default: `/usr/local/lib`)
+ * `modules.lirideployment.qmlDir:path/to/qml` where QML plugins are installed (default: `/usr/local/lib/qml`)
+ * `modules.lirideployment.pluginsDir:path/to/plugins` where Qt plugins are installed (default: `/usr/local/lib/plugins`)
+ * `modules.lirideployment.qbsModulesDir:path/to/qbs` where Qbs modules are installed (default: `/usr/local/share/qbs/modules`)
 
-```sh
-qbs install -d build --install-root / # use sudo if necessary
-```
+See [lirideployment.qbs](https://github.com/lirios/qbs-shared/blob/develop/modules/lirideployment/lirideployment.qbs)
+for more deployment-related parameters.
 
-If you're packaging the app, replace `/` with install root suitable for your packaging system.
+You can also append the following options to the last line:
+
+ * `projects.Text.useStaticAnalyzer:true` to enable the Clang static analyzer.
 
 ## Credits
 
 Many thanks to ...
 
-* [Corbin Crutchley](https://github.com/crutchcorn) for creating the application icon
-* Everyone who contributed to the project directly via Git, listed in [AUTHORS.md](AUTHORS.md)
+ * [Corbin Crutchley](https://github.com/crutchcorn) for creating the application icon
+ * Everyone who contributed to the project directly via Git, listed in [AUTHORS.md](AUTHORS.md)
 
 ## License
 
