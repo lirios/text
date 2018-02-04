@@ -2,13 +2,14 @@ import qbs 1.0
 
 QtGuiApplication {
     readonly property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
-    property string dataInstallDir: qbs.installPrefix + "/share/liri-text"
+    readonly property string dataInstallDir: lirideployment.dataDir + "/liri-text"
 
     name: "liri-text"
     consoleApplication: false
 
     qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr/local" : ""
 
+    Depends { name: "lirideployment" }
     Depends { name: "Qt"; submodules: ["qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
 
@@ -51,12 +52,7 @@ QtGuiApplication {
 
     Group {
         qbs.install: true
-        qbs.installDir: {
-            if (qbs.targetOS.contains("linux"))
-                return "bin";
-            else
-                return "";
-        }
+        qbs.installDir: lirideployment.binDir
         qbs.installSourceBase: destinationDirectory
         fileTagsFilter: isBundle ? ["bundle.content"] : product.type
     }
@@ -71,7 +67,7 @@ QtGuiApplication {
             else if (qbs.targetOS.contains("macos"))
                 return "Contents/Resources/data/language-specs";
             else if (qbs.targetOS.contains("linux"))
-                return "share/liri-text/language-specs";
+                return dataInstallDir + "/language-specs";
         }
     }
 
@@ -80,7 +76,7 @@ QtGuiApplication {
         name: "Desktop File"
         files: ["../data/*.desktop"]
         qbs.install: true
-        qbs.installDir: "share/applications"
+        qbs.installDir: lirideployment.applicationsDir
     }
 
     Group {
@@ -88,7 +84,7 @@ QtGuiApplication {
         name: "AppStream Metadata"
         files: ["../data/*.appdata.xml"]
         qbs.install: true
-        qbs.installDir: "share/appdata"
+        qbs.installDir: lirideployment.appDataDir
     }
 
     Group {
@@ -96,7 +92,7 @@ QtGuiApplication {
         name: "Icon 16x16"
         files: ["../data/icons/16x16/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/16x16/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/16x16/apps"
     }
 
     Group {
@@ -104,7 +100,7 @@ QtGuiApplication {
         name: "Icon 22x22"
         files: ["../data/icons/22x22/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/22x22/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/22x22/apps"
     }
 
     Group {
@@ -112,7 +108,7 @@ QtGuiApplication {
         name: "Icon 24x24"
         files: ["../data/icons/24x24/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/24x24/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/24x24/apps"
     }
 
     Group {
@@ -120,7 +116,7 @@ QtGuiApplication {
         name: "Icon 32x32"
         files: ["../data/icons/32x32/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/32x32/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/32x32/apps"
     }
 
     Group {
@@ -128,7 +124,7 @@ QtGuiApplication {
         name: "Icon 48x48"
         files: ["../data/icons/48x48/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/48x48/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/48x48/apps"
     }
 
     Group {
@@ -136,7 +132,7 @@ QtGuiApplication {
         name: "Icon 64x64"
         files: ["../data/icons/64x64/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/64x64/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/64x64/apps"
     }
 
     Group {
@@ -144,7 +140,7 @@ QtGuiApplication {
         name: "Icon 128x128"
         files: ["../data/icons/128x128/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/128x128/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/128x128/apps"
     }
 
     Group {
@@ -152,7 +148,7 @@ QtGuiApplication {
         name: "Icon 192x192"
         files: ["../data/icons/192x192/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/192x192/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/192x192/apps"
     }
 
     Group {
@@ -160,7 +156,7 @@ QtGuiApplication {
         name: "Icon 256x256"
         files: ["../data/icons/256x256/io.liri.Text.png"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/256x256/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/256x256/apps"
     }
 
     Group {
@@ -168,6 +164,6 @@ QtGuiApplication {
         name: "Icon scalable"
         files: ["../data/icons/io.liri.Text.svg"]
         qbs.install: true
-        qbs.installDir: "share/icons/hicolor/scalable/apps"
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/scalable/apps"
     }
 }
