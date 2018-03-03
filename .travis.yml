@@ -9,16 +9,12 @@ matrix:
       compiler: gcc
       sudo: require
       dist: trusty
+      services:
+        - docker
     - os: osx
 
-before_install:
-  - ./.travis/update.sh
-
-install:
-  - . ./.travis/install.sh
-
 script:
-  - ./.travis/build.sh && ./.travis/package.sh
+  - ./.travis/build.sh
 
 before_deploy:
   - git fetch --unshallow
