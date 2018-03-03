@@ -7,8 +7,6 @@ QtGuiApplication {
     name: "liri-text"
     consoleApplication: false
 
-    qbs.installPrefix: qbs.targetOS.contains("linux") ? "/usr/local" : ""
-
     Depends { name: "lirideployment" }
     Depends { name: "Qt"; submodules: ["qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
