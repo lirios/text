@@ -17,6 +17,7 @@
  * along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle(QStringLiteral("Material"));
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     // Set app info
     app.setOrganizationName(QStringLiteral("Liri"));
