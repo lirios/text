@@ -38,7 +38,7 @@ Project {
     }
 
     Product {
-        name: "Documents"
+        name: "Text Documents"
         files: [
             "AUTHORS.md",
             "README.md",
