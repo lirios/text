@@ -32,7 +32,7 @@ FluidControls.Page {
     actions: [
         FluidControls.Action {
             id: openFile
-            icon.name: "file/folder_open"
+            icon.source: FluidControls.Utils.iconUrl("file/folder_open")
             toolTip: qsTr("Open")
             shortcut: StandardKey.Open
             onTriggered: openFileDialog.open()
@@ -70,7 +70,7 @@ FluidControls.Page {
         anchors.right: parent.right
         anchors.margins: 24
 
-        icon.name: "content/create"
+        icon.source: FluidControls.Utils.iconUrl("content/create")
         Material.background: Material.accent
     }
 }

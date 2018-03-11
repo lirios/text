@@ -47,7 +47,7 @@ FluidControls.Card {
         }
 
         ToolButton {
-            icon.name: "hardware/keyboard_arrow_down"
+            icon.source: FluidControls.Utils.iconUrl("hardware/keyboard_arrow_down")
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
@@ -59,7 +59,7 @@ FluidControls.Card {
         }
 
         ToolButton {
-            icon.name: "hardware/keyboard_arrow_up"
+            icon.source: FluidControls.Utils.iconUrl("hardware/keyboard_arrow_up")
             enabled: searchField.text.length > 0
 
             Layout.alignment: Qt.AlignVCenter
