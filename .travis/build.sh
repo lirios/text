@@ -2,7 +2,7 @@
 
 set -e
 
-source .travis/library.sh
+source /usr/local/share/liri-travis/functions
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     # Update
@@ -47,8 +47,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     msg "Package..."
     srcdir=$(pwd)/src
     pushd build/default/install-root >/dev/null && macdeployqt ./liri-text.app -dmg -qmldir=$srcdir -verbose=2 && popd >/dev/null
-    mv ./build/default/install-root/liri-text.dmg Liri_Text.dmg
-    curl --upload-file ./Liri_Text.dmg https://transfer.sh/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD).dmg
+    mkdir -p travis-out
+    mv ./build/default/install-root/liri-text.dmg travis-out/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD).dmg
     travis_end "package"
 else
     image=liridev/ci-ubuntu:latest

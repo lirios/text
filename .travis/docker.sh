@@ -2,28 +2,9 @@
 
 set -e
 
-source /home/.travis/library.sh
+curl "https://raw.githubusercontent.com/lirios/infra-travis/master/installer" | bash
 
-# Install
-travis_start "package_install"
-msg "Install packages..."
-apt-get install -y \
-    g++ \
-    git \
-    curl \
-    libfuse2 \
-    qbs \
-    qt5-default \
-    qtbase5-dev qtbase5-dev-tools qtbase5-private-dev \
-    qtdeclarative5-dev qtdeclarative5-dev-tools qtdeclarative5-private-dev \
-    qtquickcontrols2-5-dev \
-    libqt5svg5-dev \
-    qttools5-dev qttools5-dev-tools qttools5-private-dev \
-    qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtquick-layouts qml-module-qttest \
-    qml-module-qtgraphicaleffects qml-module-qtqml-models2 \
-    qml-module-qtquick-controls2 qml-module-qtquick-templates2 \
-    qml-module-qt-labs-platform qml-module-qt-labs-calendar
-travis_end "package_install"
+source /usr/local/share/liri-travis/functions
 
 # Configure qbs
 travis_start "qbs_setup"
@@ -70,14 +51,7 @@ travis_end "build_app"
 # Package
 travis_start "appimage"
 msg "Create AppImage..."
-curl -L "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" > linuxdeployqt.AppImage
-chmod a+x linuxdeployqt.AppImage
-unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-./linuxdeployqt.AppImage /appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -qmldir=. -verbose=2
-rm /appdir/io.liri.Text.png # Workaround for linuxedeloyqt bug
-./linuxdeployqt.AppImage /appdir/usr/share/applications/*.desktop -appimage -qmldir=. -verbose=2
-find /appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
-appimage_url="https://transfer.sh/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)-x86_64.AppImage"
-msg "Upload $appimage_url"
-curl --upload-file ./Liri_Text*.AppImage $appimage_url
+/usr/local/bin/liri-build-appimage io.liri.Text
+mkdir -p travis-out
+mv Liri_Text*.AppImage travis-out/Liri_Text-git-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)-x86_64.AppImage
 travis_end "appimage"
