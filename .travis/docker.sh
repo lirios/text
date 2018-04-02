@@ -41,7 +41,6 @@ travis_end "build_fluid"
 # Build and install app
 travis_start "build_app"
 msg "Build and install app..."
-mkdir -p appdir
 qbs -d build -j $(nproc) profile:travis-qt5 \
     modules.qbs.installRoot:/appdir \
     modules.lirideployment.prefix:/usr \
