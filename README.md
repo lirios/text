@@ -4,6 +4,7 @@ Liri Text
 [![License](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
 [![Build Status](https://img.shields.io/travis/lirios/text/develop.svg)](https://travis-ci.org/lirios/text)
+[![Build status](https://ci.appveyor.com/api/projects/status/29p7qve6esu7ln22/branch/develop?svg=true)](https://ci.appveyor.com/project/plfiorini/text/branch/develop)
 [![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
 [![Maintained](https://img.shields.io/maintenance/yes/2018.svg)](https://github.com/lirios/text/commits/develop)
