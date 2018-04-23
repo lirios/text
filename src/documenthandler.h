@@ -24,7 +24,9 @@
 #include <QQuickTextDocument>
 #include <QTextCodec>
 #include <QFile>
-#include <QFileSystemWatcher>
+#ifndef QT_NO_FILESYSTEMWATCHER
+#  include <QFileSystemWatcher>
+#endif
 
 #include "lirisyntaxhighlighter.h"
 
@@ -76,7 +78,11 @@ private slots:
 private:
     QQuickItem *m_target;
     QTextDocument *m_document;
+#ifndef QT_NO_FILESYSTEMWATCHER
+    // QFileSystemWatcher is not supported on all platforms like WinRT:
+    // https://codereview.qt-project.org/#/c/64825/
     QFileSystemWatcher *m_watcher;
+#endif
     LiriSyntaxHighlighter *m_highlighter;
     QSharedPointer<LanguageDefaultStyles> m_defStyles;
 

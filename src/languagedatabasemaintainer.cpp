@@ -20,6 +20,7 @@
 #include "languagedatabasemaintainer.h"
 
 #include <QSqlQuery>
+#include <QDebug>
 #include <QDir>
 #include <QStandardPaths>
 #include <QCoreApplication>
@@ -45,14 +46,20 @@ LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &connId, QO
 }
 
 LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
+#ifndef QT_NO_FILESYSTEMWATCHER
     delete watcher;
+#endif
     QSqlDatabase::removeDatabase(m_connId);
 }
 
 void LanguageDatabaseMaintainer::init() {
     updateDB();
+#ifndef QT_NO_FILESYSTEMWATCHER
     watcher = new QFileSystemWatcher(specsDirs);
     connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageDatabaseMaintainer::updateDB);
+#else
+    qWarning() << "Language database file system watcher is not available on this platform";
+#endif
 }
 
 void LanguageDatabaseMaintainer::initDB() {

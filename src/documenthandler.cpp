@@ -33,14 +33,20 @@ DocumentHandler::DocumentHandler(QObject *parent) :
     m_document(0),
     m_highlighter(0) {
 
+#ifndef QT_NO_FILESYSTEMWATCHER
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &DocumentHandler::fileChanged);
+#else
+    qWarning() << "Document change notification is not available on this platform";
+#endif
 
     m_defStyles = QSharedPointer<LanguageDefaultStyles>::create();
 }
 
 DocumentHandler::~DocumentHandler() {
+#ifndef QT_NO_FILESYSTEMWATCHER
     delete m_watcher;
+#endif
     delete m_highlighter;
 }
 
@@ -67,9 +73,11 @@ void DocumentHandler::setTarget(QQuickItem *target) {
 
 bool DocumentHandler::setFileUrl(const QUrl &fileUrl) {
     if(fileUrl != m_fileUrl) {
+#ifndef QT_NO_FILESYSTEMWATCHER
         if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
             m_watcher->removePath(m_fileUrl.toLocalFile());
         m_watcher->addPath(fileUrl.toLocalFile());
+#endif
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
         qDebug() << m_fileUrl << filename;
@@ -140,9 +148,11 @@ void DocumentHandler::setText(const QString &text) {
 }
 
 bool DocumentHandler::saveAs(const QUrl &filename) {
+#ifndef QT_NO_FILESYSTEMWATCHER
     // Stop monitoring file while saving
     if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
         m_watcher->removePath(m_fileUrl.toLocalFile());
+#endif
 
     bool success = true;
     QString localPath = filename.toLocalFile();
@@ -162,9 +172,11 @@ bool DocumentHandler::saveAs(const QUrl &filename) {
         m_document->setModified(false);
     }
 
+#ifndef QT_NO_FILESYSTEMWATCHER
     // Restart file watcher back after saving completes
     if(!m_watcher->files().contains(m_fileUrl.toLocalFile()))
         m_watcher->addPath(m_fileUrl.toLocalFile());
+#endif
 
     return success;
 }
@@ -191,6 +203,8 @@ bool DocumentHandler::reloadText() {
 
 void DocumentHandler::fileChanged(const QString &file) {
     emit fileChangedOnDisk();
+#ifndef QT_NO_FILESYSTEMWATCHER
     if(!m_watcher->files().contains(file))
         m_watcher->addPath(file);
+#endif
 }
