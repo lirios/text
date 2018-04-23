@@ -15,11 +15,10 @@ environment:
     QT_PROFILE: msvc2015
     QTDIR: C:\Qt\5.10.1\msvc2015
     QBS_PROFILE: MSVC2015-x86
-#  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-#    QT_PROFILE: msvc2017_64
-#    QTDIR: C:\Qt\5.10.1\msvc2017_64
-#    QBS_PROFILE: MSVC2017-x86_x64
-
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    QT_PROFILE: msvc2017_64
+    QTDIR: C:\Qt\5.10.1\msvc2017_64
+    QBS_PROFILE: MSVC2017-x86_x64
 # FIXME: WinRT builds are disabled due to linker issues
 #  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
 #    QT_PROFILE: winrt_x86_msvc2017
