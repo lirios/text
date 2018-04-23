@@ -5,6 +5,11 @@ QtGuiApplication {
     readonly property string dataInstallDir: lirideployment.dataDir + "/liri-text"
 
     name: "liri-text"
+    targetName: {
+        if (qbs.targetOS.contains("windows"))
+            return "LiriText";
+        return name;
+    }
     consoleApplication: false
 
     Depends { name: "lirideployment" }
