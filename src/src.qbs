@@ -91,82 +91,12 @@ QtGuiApplication {
     }
 
     Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 16x16"
-        files: ["../data/icons/16x16/io.liri.Text.png"]
+        condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
+        name: "Icons"
+        prefix: "../data/icons/"
+        files: ["**/*.png", "**/*.svg"]
         qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/16x16/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 22x22"
-        files: ["../data/icons/22x22/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/22x22/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 24x24"
-        files: ["../data/icons/24x24/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/24x24/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 32x32"
-        files: ["../data/icons/32x32/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/32x32/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 48x48"
-        files: ["../data/icons/48x48/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/48x48/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 64x64"
-        files: ["../data/icons/64x64/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/64x64/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 128x128"
-        files: ["../data/icons/128x128/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/128x128/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 192x192"
-        files: ["../data/icons/192x192/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/192x192/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 256x256"
-        files: ["../data/icons/256x256/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/256x256/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon scalable"
-        files: ["../data/icons/io.liri.Text.svg"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/scalable/apps"
+        qbs.installSourceBase: prefix
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor"
     }
 }
