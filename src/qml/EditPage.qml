@@ -19,7 +19,7 @@
 
 import QtQuick 2.8
 import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.2 as Dialogs
+import Qt.labs.platform 1.0
 import Fluid.Controls 1.0 as FluidControls
 import io.liri.text 1.0
 
@@ -74,23 +74,23 @@ FluidControls.Page {
     actions: [
         FluidControls.Action {
             id: saveAction
-            iconName: "content/save"
-            tooltip: qsTr("Save")
+            icon.source: FluidControls.Utils.iconUrl("content/save")
+            toolTip: qsTr("Save")
             shortcut: StandardKey.Save
             onTriggered: save()
         },
 
         FluidControls.Action {
             id: findAction
-            iconName: "action/search"
-            tooltip: qsTr("Find")
+            icon.source: FluidControls.Utils.iconUrl("action/search")
+            toolTip: qsTr("Find")
             shortcut: StandardKey.Find
             onTriggered: searchOverlay.open()
         },
 
         FluidControls.Action {
             id: saveAsAction
-            iconName: "content/save"
+            icon.source: FluidControls.Utils.iconUrl("content/save")
             text: qsTr("Save As")
             shortcut: StandardKey.SaveAs
             onTriggered: saveAs()
@@ -98,7 +98,7 @@ FluidControls.Page {
 
         FluidControls.Action {
             id: closeAction
-            iconName: "navigation/close"
+            icon.source: FluidControls.Utils.iconUrl("navigation/close")
             text: qsTr("Close")
             shortcut: StandardKey.Close
             onTriggered: page.pop()
@@ -108,12 +108,21 @@ FluidControls.Page {
     SearchOverlay {
         id: searchOverlay
         anchors.right: parent.right
+        anchors.rightMargin: 8
         z: 1
 
         onActivated: {
-            var start = mainArea.text.indexOf(query, mainArea.cursorPosition)
-            if(start < 0)
-                start = mainArea.text.indexOf(query, 0)
+            var start
+            if(forward) {
+                start = mainArea.text.indexOf(query, mainArea.cursorPosition)
+                if(start < 0)
+                    start = mainArea.text.indexOf(query, 0)
+            } else {
+                start = mainArea.text.lastIndexOf(query, mainArea.selectionStart - 1)
+                if(start < 0)
+                    start = mainArea.text.lastIndexOf(query)
+            }
+
             mainArea.select(start, start + query.length)
         }
         onClosed: mainArea.forceActiveFocus()
@@ -207,18 +216,12 @@ FluidControls.Page {
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: exitDialog
         signal refused
 
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        title: qsTr("Save changes before closing?")
-
-        Label {
-            text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
-        }
+        width: 400
+        text: qsTr("You have unsaved changes. Do you want to save them before closing the file?")
 
         footer: DialogButtonBox {
             standardButtons: DialogButtonBox.Yes | DialogButtonBox.No | DialogButtonBox.Cancel
@@ -233,16 +236,16 @@ FluidControls.Page {
         }
     }
 
-    Dialogs.FileDialog {
+    FileDialog {
         id: saveAsDialog
 
-        title: qsTr("Choose a location to save")
-        selectExisting: false
+        fileMode: FileDialog.SaveFile
+        folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
 
         onAccepted: {
-            if(document.saveAs(saveAsDialog.fileUrl)) {
+            if(document.saveAs(saveAsDialog.file)) {
                 ioSuccess()
-                documentUrl = saveAsDialog.fileUrl
+                documentUrl = saveAsDialog.file
                 anonymous = false
                 touchFileOnCursorPosition()
             } else {
@@ -251,12 +254,11 @@ FluidControls.Page {
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: askForReloadDialog
 
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        title: qsTr("Reload file content?")
+        width: 400
+        text: qsTr("The file was changed from outside. Do you wish to reload its content?")
 
         onAccepted: {
             var cp = mainArea.cursorPosition
@@ -268,10 +270,6 @@ FluidControls.Page {
             mainArea.forceActiveFocus()
             mainArea.cursorPosition = cp
             flickable.contentY = sp
-        }
-
-        Label {
-            text: qsTr("The file was changed from outside. Do you wish to reload its content?")
         }
 
         footer: DialogButtonBox {
@@ -313,16 +311,16 @@ FluidControls.Page {
                     flickable.flick(0, -60*Math.sqrt(flickable.height))
                 // TODO: Move cursor
             }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.IBeamCursor
-                acceptedButtons: Qt.RightButton
-                onClicked: contextMenu.openAt(mouse.x, mouse.y)
-            }
         }
 
         ScrollBar.vertical: ScrollBar { }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        acceptedButtons: Qt.RightButton
+        onClicked: contextMenu.openAt(mouse.x, mouse.y)
     }
 
     Menu {
@@ -387,22 +385,15 @@ FluidControls.Page {
 
         onError: {
             //app.showError(qsTr("File operation error"), description)
-            errDiag.description = description
+            errDiag.text = description
             errDiag.open()
         }
     }
 
-    Dialog {
+    FluidControls.AlertDialog {
         id: errDiag
 
-        property alias description: descLabel.text
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
         title: qsTr("File operation error")
         standardButtons: Dialog.Ok
-        Label {
-            id: descLabel
-        }
     }
 }

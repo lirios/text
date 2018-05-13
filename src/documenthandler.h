@@ -38,20 +38,20 @@ class DocumentHandler : public QObject
     Q_PROPERTY(bool modified READ modified NOTIFY modifiedChanged)
 
 public:
-    DocumentHandler();
+    DocumentHandler(QObject *parent = nullptr);
     ~DocumentHandler();
 
     inline QQuickItem *target() { return m_target; }
     void setTarget(QQuickItem *target);
 
     inline QUrl fileUrl() { return m_fileUrl; }
-    Q_INVOKABLE bool setFileUrl(QUrl fileUrl);
+    Q_INVOKABLE bool setFileUrl(const QUrl &fileUrl);
 
     inline QString text() { return m_text; }
-    void setText(QString text);
+    void setText(const QString &text);
 
     inline QString documentTitle() { return m_documentTitle; }
-    void setDocumentTitle(QString title);
+    void setDocumentTitle(const QString &title);
 
     inline bool modified() { return m_document->isModified(); }
 
@@ -64,14 +64,14 @@ signals:
     void documentTitleChanged();
     void fileChangedOnDisk();
     void modifiedChanged();
-    void error(QString description);
+    void error(const QString &description);
 
 public slots:
-    bool saveAs(QUrl filename);
+    bool saveAs(const QUrl &filename);
     bool reloadText();
 
 private slots:
-    void fileChanged(QString file);
+    void fileChanged(const QString &file);
 
 private:
     QQuickItem *m_target;

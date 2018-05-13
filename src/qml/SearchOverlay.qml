@@ -1,11 +1,12 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts 1.1
 import Fluid.Controls 1.0 as FluidControls
 
 FluidControls.Card {
     id: overlay
-    signal activated(string query)
+    signal activated(string query, bool forward)
     signal closed
 
     function open() {
@@ -21,16 +22,60 @@ FluidControls.Card {
     }
 
     state: "hidden"
-    width: 256
-    height: searchField.height
+    width: overlayContent.width
+    height: overlayContent.height
     Material.elevation: 2
 
-    TextField {
-        id: searchField
-        width: parent.width - 2*8
-        anchors.centerIn: parent
-        Keys.onReturnPressed: activated(text)
-        Keys.onEscapePressed: close()
+    RowLayout {
+        id: overlayContent
+        width: 344
+        height: searchField.height + 2*4
+
+        TextField {
+            id: searchField
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 8
+            Layout.rightMargin: 8
+            Layout.fillWidth: true
+
+            selectByMouse: true
+            Keys.onDownPressed: activated(text, true)
+            Keys.onUpPressed: activated(text, false)
+            Keys.onReturnPressed: activated(text, event.modifiers ^ Qt.ShiftModifier)
+            Keys.onEscapePressed: close()
+        }
+
+        ToolButton {
+            icon.source: FluidControls.Utils.iconUrl("hardware/keyboard_arrow_down")
+            enabled: searchField.text.length > 0
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 0
+            Layout.rightMargin: 0
+            Layout.maximumWidth: 24 + 2*4
+
+            onClicked: activated(searchField.text, true)
+        }
+
+        ToolButton {
+            icon.source: FluidControls.Utils.iconUrl("hardware/keyboard_arrow_up")
+            enabled: searchField.text.length > 0
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 0
+            Layout.rightMargin: 8
+            Layout.maximumWidth: 24 + 2*4
+
+            onClicked: activated(searchField.text, false)
+        }
+    }
+
+    Timer {
+        id: hideTimer
+        interval: 5000
+        running: state === "exposed" && !overlay.focus
+        onTriggered: overlay.close()
     }
 
     states: [

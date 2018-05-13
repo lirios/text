@@ -37,61 +37,61 @@ LanguageDefaultStyles::LanguageDefaultStyles() {
       , {"xml:namespace", QTextCharFormat()}
     };
 
-    styles["def:comment"].setFontItalic(true);
-    styles["def:comment"].setFontWeight(QFont::Light);
-    styles["def:comment"].setForeground(palette["green"]);
+    styles[QStringLiteral("def:comment")].setFontItalic(true);
+    styles[QStringLiteral("def:comment")].setFontWeight(QFont::Light);
+    styles[QStringLiteral("def:comment")].setForeground(palette[QStringLiteral("green")]);
 
-    styles["def:shebang"].setFontItalic(false);
-    styles["def:shebang"].setFontWeight(QFont::Medium);
-    styles["def:shebang"].setForeground(palette["green"]);
+    styles[QStringLiteral("def:shebang")].setFontItalic(false);
+    styles[QStringLiteral("def:shebang")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:shebang")].setForeground(palette[QStringLiteral("green")]);
 
-    styles["def:doc-comment-element"].setFontItalic(false);
-    styles["def:doc-comment-element"].setFontWeight(QFont::Normal);
-    styles["def:doc-comment-element"].setForeground(palette["green"]);
+    styles[QStringLiteral("def:doc-comment-element")].setFontItalic(false);
+    styles[QStringLiteral("def:doc-comment-element")].setFontWeight(QFont::Normal);
+    styles[QStringLiteral("def:doc-comment-element")].setForeground(palette[QStringLiteral("green")]);
 
-    styles["def:constant"].setFontItalic(false);
-    styles["def:constant"].setFontWeight(QFont::Medium);
-    styles["def:constant"].setForeground(palette["deepOrange"]);
+    styles[QStringLiteral("def:constant")].setFontItalic(false);
+    styles[QStringLiteral("def:constant")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:constant")].setForeground(palette[QStringLiteral("deepOrange")]);
 
-    styles["def:special-char"].setFontItalic(false);
-    styles["def:special-char"].setFontWeight(QFont::Medium);
-    styles["def:special-char"].setForeground(palette["orange"]);
+    styles[QStringLiteral("def:special-char")].setFontItalic(false);
+    styles[QStringLiteral("def:special-char")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:special-char")].setForeground(palette[QStringLiteral("orange")]);
 
-    styles["def:identifier"].setFontItalic(false);
-    styles["def:identifier"].setFontWeight(QFont::Normal);
-    styles["def:identifier"].setForeground(palette["deepPurple"]);
+    styles[QStringLiteral("def:identifier")].setFontItalic(false);
+    styles[QStringLiteral("def:identifier")].setFontWeight(QFont::Normal);
+    styles[QStringLiteral("def:identifier")].setForeground(palette[QStringLiteral("deepPurple")]);
 
-    styles["def:statement"].setFontItalic(false);
-    styles["def:statement"].setFontWeight(QFont::Medium);
-    styles["def:statement"].setForeground(palette["indigo"]);
+    styles[QStringLiteral("def:statement")].setFontItalic(false);
+    styles[QStringLiteral("def:statement")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:statement")].setForeground(palette[QStringLiteral("indigo")]);
 
-    styles["def:type"].setFontItalic(false);
-    styles["def:type"].setFontWeight(QFont::Medium);
-    styles["def:type"].setForeground(palette["blue"]);
+    styles[QStringLiteral("def:type")].setFontItalic(false);
+    styles[QStringLiteral("def:type")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:type")].setForeground(palette[QStringLiteral("blue")]);
 
-    styles["def:preprocessor"].setFontItalic(false);
-    styles["def:preprocessor"].setFontWeight(QFont::Normal);
-    styles["def:preprocessor"].setForeground(palette["teal"]);
+    styles[QStringLiteral("def:preprocessor")].setFontItalic(false);
+    styles[QStringLiteral("def:preprocessor")].setFontWeight(QFont::Normal);
+    styles[QStringLiteral("def:preprocessor")].setForeground(palette[QStringLiteral("teal")]);
 
-    styles["def:error"].setFontItalic(false);
-    styles["def:error"].setFontWeight(QFont::Medium);
-    styles["def:error"].setBackground(palette["red"]);
+    styles[QStringLiteral("def:error")].setFontItalic(false);
+    styles[QStringLiteral("def:error")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:error")].setBackground(palette[QStringLiteral("red")]);
 
-    styles["def:warning"].setFontItalic(false);
-    styles["def:warning"].setFontWeight(QFont::Medium);
-    styles["def:warning"].setBackground(palette["amber"]);
+    styles[QStringLiteral("def:warning")].setFontItalic(false);
+    styles[QStringLiteral("def:warning")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("def:warning")].setBackground(palette[QStringLiteral("amber")]);
 
-    styles["def:note"].setFontItalic(false);
-    styles["def:note"].setFontWeight(QFont::Normal);
-    styles["def:note"].setBackground(palette["yellow"]);
+    styles[QStringLiteral("def:note")].setFontItalic(false);
+    styles[QStringLiteral("def:note")].setFontWeight(QFont::Normal);
+    styles[QStringLiteral("def:note")].setBackground(palette[QStringLiteral("yellow")]);
 
-    styles["def:underlined"].setFontItalic(true);
-    styles["def:underlined"].setFontWeight(QFont::Normal);
-    styles["def:underlined"].setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    styles[QStringLiteral("def:underlined")].setFontItalic(true);
+    styles[QStringLiteral("def:underlined")].setFontWeight(QFont::Normal);
+    styles[QStringLiteral("def:underlined")].setUnderlineStyle(QTextCharFormat::SingleUnderline);
 
-    styles["xml:namespace"].setFontItalic(false);
-    styles["xml:namespace"].setFontWeight(QFont::Medium);
-    styles["xml:namespace"].setForeground(palette["purple"]);
+    styles[QStringLiteral("xml:namespace")].setFontItalic(false);
+    styles[QStringLiteral("xml:namespace")].setFontWeight(QFont::Medium);
+    styles[QStringLiteral("xml:namespace")].setForeground(palette[QStringLiteral("purple")]);
 }
 
 const QHash<QString, QColor> LanguageDefaultStyles::palette = {

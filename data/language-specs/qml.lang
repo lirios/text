@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ This file is part of Liri Text
+
+ Author: Andrew Penkrat <andrew.penkrat@liri.io>
+ Copyright (C) 2017 Andrew Penkrat <andrew.penkrat@liri.io>
+
+ Liri Text is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Liri Text is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Liri Text.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<language id="qml" _name="QML" version="2.0" _section="Source">
+  <metadata>
+    <property name="mimetypes">text/x-qml</property>
+    <property name="globs">*.qml</property>
+    <property name="line-comment-start">//</property>
+    <property name="block-comment-start">/*</property>
+    <property name="block-comment-end">*/</property>
+  </metadata>
+
+  <styles>
+    <style id="keyword"         _name="Keyword"                  map-to="def:keyword"/>
+    <style id="type"            _name="Data Type"                map-to="def:type"/>
+    <style id="function"        _name="Function"                 map-to="def:function"/>
+    <style id="object"          _name="Object"                   map-to="def:identifier"/>
+    <style id="include"         _name="Include statement"        map-to="def:preprocessor"/>
+    <style id="module-version"  _name="Module version"           map-to="def:floating-point"/>
+    <style id="module-alias"    _name="Module alias"             map-to="object"/>
+    <style id="property"        _name="Property"                 map-to="def:statement"/>
+    <style id="keyword"         _name="Keyword"                  map-to="def:keyword"/>
+  </styles>
+
+  <definitions>
+    <!--this definition is not correct, thus disabled
+    <context id="object">
+      <match>\b([\w\.]+)\s*{</match>
+      <include>
+        <context sub-pattern="1" style-ref="object"/>
+      </include>
+    </context>
+    -->
+
+    <context id="import">
+      <match>^\s*(import)\s+([\w\.]+|".*?")(?:\s+([0-9]+\.[0-9]+))?(?:\s+(as)\s+([\w\.]+))?</match>
+      <include>
+        <context sub-pattern="1" style-ref="include"/>
+        <context sub-pattern="3" style-ref="module-version"/>
+        <context sub-pattern="5" style-ref="module-alias"/>
+      </include>
+    </context>
+
+    <context id="keywords" style-ref="keyword">
+      <keyword>property</keyword>
+      <keyword>default</keyword>
+      <keyword>readonly</keyword>
+      <keyword>signal</keyword>
+      <keyword>alias</keyword>
+      <keyword>on</keyword>
+    </context>
+
+    <context id="types" style-ref="type">
+      <keyword>bool</keyword>
+      <keyword>double</keyword>
+      <keyword>enumeration</keyword>
+      <keyword>int</keyword>
+      <keyword>list</keyword>
+      <keyword>real</keyword>
+      <keyword>string</keyword>
+      <keyword>url</keyword>
+      <keyword>var</keyword>
+
+      <!--QtQuick basic types-->
+      <keyword>date</keyword>
+      <keyword>point</keyword>
+      <keyword>rect</keyword>
+      <keyword>size</keyword>
+      <keyword>color</keyword>
+      <keyword>font</keyword>
+      <keyword>matrix4x4</keyword>
+      <keyword>quaternion</keyword>
+      <keyword>vector2d</keyword>
+      <keyword>vector3d</keyword>
+      <keyword>vector4d</keyword>
+    </context>
+
+    <!--main context-->
+    <context id="qml">
+      <include>
+        <context ref="import"/>
+        <context ref="keywords"/>
+        <context ref="types"/>
+        <context ref="js:js"/>
+        <!--<context ref="object"/>-->
+      </include>
+    </context>
+    <!--main context-->
+  </definitions>
+</language>

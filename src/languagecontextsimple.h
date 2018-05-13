@@ -32,7 +32,7 @@ class LanguageContextSimple : public LanguageContextBase
 {
 public:
     LanguageContextSimple();
-    LanguageContextSimple(QXmlStreamAttributes attributes);
+    LanguageContextSimple(const QXmlStreamAttributes &attributes);
 
     QRegularExpression match;
     QList<QSharedPointer<LanguageContext> > includes;

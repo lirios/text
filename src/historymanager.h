@@ -50,21 +50,21 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
-    Q_INVOKABLE bool removeFile(QUrl fileUrl);
+    Q_INVOKABLE bool removeFile(const QUrl &fileUrl);
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    Q_INVOKABLE QVariantMap getFileEditingInfo(QUrl fileUrl) const;
+    Q_INVOKABLE QVariantMap getFileEditingInfo(const QUrl &fileUrl) const;
 
 signals:
     void countChanged();
 
 public slots:
-    void touchFile(QString name, QUrl fileUrl, int cursorPosition, float scrollPosition, QString preview);
+    void touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition, float scrollPosition, const QString &preview);
 
 protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    HistoryManager();
+    HistoryManager(QObject *parent = nullptr);
     ~HistoryManager();
     static HistoryManager *m_instance;
 
@@ -72,7 +72,7 @@ private:
 
     QString dbColumnFromRole(int role) const;
     QString dbIdForIndex(int index) const;
-    int dbIndexForId(QString id) const;
+    int dbIndexForId(const QString &id) const;
 };
 
 #endif // HISTORYMANAGER_H

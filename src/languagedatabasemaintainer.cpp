@@ -26,20 +26,20 @@
 #include <QFileInfo>
 #include "languageloader.h"
 
-LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(QString connId, QObject *parent) :
-    m_connId(connId),
-    QObject(parent) {
+LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &connId, QObject *parent) :
+    QObject(parent),
+    m_connId(connId) {
     // List of language specification directories, ascending by priority
 #ifdef GTKSOURCEVIEW_LANGUAGE_PATH
-    specsDirs.append(QString(GTKSOURCEVIEW_LANGUAGE_PATH));
+    specsDirs.append(QStringLiteral(GTKSOURCEVIEW_LANGUAGE_PATH));
 #endif
 #ifdef ABSOLUTE_LANGUAGE_PATH
-    specsDirs.append(QString(ABSOLUTE_LANGUAGE_PATH));
+    specsDirs.append(QStringLiteral(ABSOLUTE_LANGUAGE_PATH));
 #endif
 #ifdef RELATIVE_LANGUAGE_PATH
-    specsDirs.append(QCoreApplication::applicationDirPath() + QString(RELATIVE_LANGUAGE_PATH));
+    specsDirs.append(QCoreApplication::applicationDirPath() + QStringLiteral(RELATIVE_LANGUAGE_PATH));
 #endif
-    specsDirs.append(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QString(USER_LANGUAGE_PATH));
+    specsDirs.append(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral(USER_LANGUAGE_PATH));
 
     initDB();
 }
@@ -58,20 +58,21 @@ void LanguageDatabaseMaintainer::init() {
 void LanguageDatabaseMaintainer::initDB() {
     QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     if(!dataDir.exists())
-        dataDir.mkpath(".");
+        dataDir.mkpath(QStringLiteral("."));
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_connId);
-    db.setDatabaseName(dataDir.filePath("languages.db"));
+    QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connId);
+    db.setDatabaseName(dataDir.filePath(QStringLiteral("languages.db")));
     db.open();
-    QSqlQuery("CREATE TABLE IF NOT EXISTS languages "
-              "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)",
+    QSqlQuery(QStringLiteral("CREATE TABLE IF NOT EXISTS languages "
+                             "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)"),
               db);
 }
 
 void LanguageDatabaseMaintainer::updateDB() {
     LanguageLoader ll;
-    for (QDir dir : specsDirs) {
-        for (QFileInfo file : dir.entryInfoList()) {
+    for (const QDir &dir : qAsConst(specsDirs)) {
+        const QFileInfoList &filesList = dir.entryInfoList();
+        for (const QFileInfo &file : filesList) {
             if(file.isFile()) {
                 LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
                 QSqlQuery(QStringLiteral("UPDATE languages SET "

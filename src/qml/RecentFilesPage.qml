@@ -20,9 +20,8 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.2
+import Qt.labs.platform 1.0
 import Fluid.Controls 1.0 as FluidControls
-import Fluid.Material 1.0 as FluidMaterial
 import Fluid.Core 1.0 as FluidCore
 import io.liri.text 1.0
 
@@ -33,8 +32,8 @@ FluidControls.Page {
     actions: [
         FluidControls.Action {
             id: openFile
-            iconName: "file/folder_open"
-            tooltip: qsTr("Open")
+            icon.source: FluidControls.Utils.iconUrl("file/folder_open")
+            toolTip: qsTr("Open")
             shortcut: StandardKey.Open
             onTriggered: openFileDialog.open()
         }
@@ -46,9 +45,8 @@ FluidControls.Page {
 
     FileDialog {
         id: openFileDialog
-        title: qsTr("Choose a file to open")
         onAccepted: {
-            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: openFileDialog.fileUrl })
+            pageStack.push(Qt.resolvedUrl("EditPage.qml"), { documentUrl: openFileDialog.file })
         }
     }
 
@@ -63,7 +61,7 @@ FluidControls.Page {
         }
     }
 
-    FluidMaterial.ActionButton {
+    FluidControls.FloatingActionButton {
         id: newFile
 
         onClicked: pageStack.push(Qt.resolvedUrl("EditPage.qml"), { anonymous: true })
@@ -72,7 +70,7 @@ FluidControls.Page {
         anchors.right: parent.right
         anchors.margins: 24
 
-        iconName: "content/create"
+        icon.source: FluidControls.Utils.iconUrl("content/create")
         Material.background: Material.accent
     }
 }

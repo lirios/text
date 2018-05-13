@@ -1,0 +1,40 @@
+name: liri-text
+version: git
+summary: A cross-platform material text editor
+description: A cross-platform material text editor
+grade: devel
+confinement: strict
+architectures: [amd64]
+
+plugs:
+  platform:
+    interface: content
+    content: liri-platform
+    target: liri-platform
+    default-provider: liri-platform-0-9
+
+apps:
+  liri-text:
+    command: liri-app-launch $SNAP/usr/bin/liri-text
+    desktop: usr/share/applications/io.liri.Text.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - wayland
+      - unity7
+      - opengl
+      - home
+
+parts:
+  liri-text:
+    source: .
+    plugin: qbs
+    prepare: |
+      sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/io\.liri\.Text\.png|g' data/io.liri.Text.desktop
+    qbs-options:
+      - modules.qbs.installPrefix:usr
+      - products.liri-text.dataInstallDir:/snap/liri-text/current/usr/share/liri-text
+    build-attributes: ["no-system-libraries"]
+    stage-packages:
+      - sqlite3
+    after: [liri-platform-0-9]

@@ -23,10 +23,10 @@
 
 LanguageContextReference::LanguageContextReference() :
     context(nullptr),
-    refId(""),
+    refId(QLatin1String("")),
     originalRef(false),
     includes(),
-    styleOverwrite(""),
+    styleOverwrite(QLatin1String("")),
     ignoreStyle(false) { }
 
 LanguageContextReference::~LanguageContextReference() { }

@@ -30,12 +30,13 @@ class LiriSyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 public:
+    LiriSyntaxHighlighter(QObject *parent = nullptr);
     LiriSyntaxHighlighter(QTextDocument *parent);
     ~LiriSyntaxHighlighter();
     void setLanguage(QSharedPointer<LanguageContext> lang, const QHash<QString, QString> &styleMap);
     void setDefaultStyles(QSharedPointer<LanguageDefaultStyles> defStyles);
 
-    QString highlightedFragment(int position, int blockCount, QFont font);
+    QString highlightedFragment(int position, int blockCount, const QFont &font);
 
 protected:
     struct Match {
@@ -48,10 +49,10 @@ protected:
     void highlightBlock(const QString &text);
 
     void endNthContainer(QList<HighlightData::ContainerInfo> &containers,
-                         int n, int offset, int length, QRegularExpressionMatch endMatch = QRegularExpressionMatch());
+                         int n, int offset, int length, const QRegularExpressionMatch &endMatch = QRegularExpressionMatch());
 
     void startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContext> container,
-                        int offset, int length, QRegularExpressionMatch startMatch = QRegularExpressionMatch());
+                        int offset, int length, const QRegularExpressionMatch &startMatch = QRegularExpressionMatch());
 
     Match findMatch(const QString &text, int offset, int potentialEnd,
                     QSharedPointer<LanguageContext> context,

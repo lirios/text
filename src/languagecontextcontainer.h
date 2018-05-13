@@ -32,7 +32,7 @@ class LanguageContextContainer : public LanguageContextBase
 {
 public:
     LanguageContextContainer();
-    LanguageContextContainer(QXmlStreamAttributes attributes);
+    LanguageContextContainer(const QXmlStreamAttributes &attributes);
 
     QRegularExpression start;
     QRegularExpression end;

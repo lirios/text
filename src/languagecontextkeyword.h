@@ -31,7 +31,7 @@ class LanguageContextKeyword : public LanguageContextBase
 {
 public:
     LanguageContextKeyword();
-    LanguageContextKeyword(QXmlStreamAttributes attributes);
+    LanguageContextKeyword(const QXmlStreamAttributes &attributes);
 
     QList<QRegularExpression> keywords;
 
