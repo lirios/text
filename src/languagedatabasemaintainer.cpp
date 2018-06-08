@@ -63,9 +63,24 @@ void LanguageDatabaseMaintainer::initDB(const QString &path) {
     db.setDatabaseName(path);
     db.open();
 
-    QSqlQuery(QStringLiteral("CREATE TABLE IF NOT EXISTS languages "
-                             "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)"),
-              db);
+    QSqlQuery query(db);
+    query.exec(QStringLiteral("BEGIN TRANSACTION"));
+
+    query.exec(QStringLiteral("PRAGMA user_version"));
+    int dbVersion = query.record().value(0).toInt();
+    if(dbVersion != LANGUAGE_DB_VERSION) {
+        // Database schema is outdated
+
+        /* Since languages db is just a cache of languages' metadata,
+         * we can won't lose anything if we drop it and create anew
+         */
+        query.exec(QStringLiteral("DROP TABLE IF EXISTS languages"));
+        query.exec(QStringLiteral("PRAGMA user_version = %1").arg(LANGUAGE_DB_VERSION));
+    }
+    query.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS languages "
+                             "(spec_path TEXT PRIMARY KEY, id TEXT, priority INTEGER, mime_types TEXT, globs TEXT, display TEXT, modification_time INTEGER)"));
+
+    query.exec(QStringLiteral("COMMIT TRANSACTION"));
 }
 
 void LanguageDatabaseMaintainer::updateDB() {

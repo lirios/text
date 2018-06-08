@@ -23,7 +23,8 @@ QtGuiApplication {
     cpp.defines: {
         var defines = base.concat([
             "TEXT_VERSION=" + project.version,
-            'USER_LANGUAGE_PATH="/language-specs/"'
+            'USER_LANGUAGE_PATH="/language-specs/"',
+            "LANGUAGE_DB_VERSION=1"
         ]);
         if (qbs.targetOS.contains("windows"))
             defines.push('RELATIVE_LANGUAGE_PATH="/language-specs/"');
