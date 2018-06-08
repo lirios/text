@@ -75,7 +75,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History", reinterpret_cast<QObject *(*)(QQmlEngine*, QJSEngine*)>(HistoryManager::getInstance));
+    qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History",
+                                             [](QQmlEngine*, QJSEngine*) -> QObject* { return HistoryManager::getInstance(); });
 
     engine.rootContext()->setContextProperty(QStringLiteral("newDoc"), nf);
     if(args.length() > 0)
