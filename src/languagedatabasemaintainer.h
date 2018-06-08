@@ -28,20 +28,20 @@ class LanguageDatabaseMaintainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit LanguageDatabaseMaintainer(const QString &connId, QObject *parent = nullptr);
+    explicit LanguageDatabaseMaintainer(const QString &path, QObject *parent = nullptr);
     ~LanguageDatabaseMaintainer();
 
 signals:
     void dbUpdated();
 protected:
-    void initDB();
+    void initDB(const QString &path);
 public slots:
     void init();
     void updateDB();
 private:
     QStringList specsDirs;
     QFileSystemWatcher *watcher;
-    QString m_connId;
+    QString m_connId, m_dbPath;
 };
 
 #endif // LANGUAGEDATABASEMAINTAINER_H

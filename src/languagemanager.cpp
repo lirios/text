@@ -23,17 +23,28 @@
 #include <QVariant>
 #include <QRegularExpression>
 #include <QThread>
+#include <QDir>
+#include <QStandardPaths>
 
 LanguageManager::LanguageManager(QObject *parent) :
     QObject(parent),
     m_connId(QStringLiteral("languages")) {
 
+    QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if(!dataDir.exists())
+        dataDir.mkpath(QStringLiteral("."));
+    QString dbPath = dataDir.filePath(QStringLiteral("languages.db"));
+
     m_thread = new QThread;
-    LanguageDatabaseMaintainer *dbMaintainer = new LanguageDatabaseMaintainer(m_connId);
+    LanguageDatabaseMaintainer *dbMaintainer = new LanguageDatabaseMaintainer(dbPath);
     dbMaintainer->moveToThread(m_thread);
     connect(m_thread, &QThread::started, dbMaintainer, &LanguageDatabaseMaintainer::init);
     connect(m_thread, &QThread::finished, dbMaintainer, &LanguageDatabaseMaintainer::deleteLater);
     m_thread->start();
+
+    QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connId);
+    db.setDatabaseName(dbPath);
+    db.open();
 }
 
 LanguageManager *LanguageManager::getInstance() {

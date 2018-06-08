@@ -20,15 +20,19 @@
 #include "languagedatabasemaintainer.h"
 
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QDir>
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QDebug>
 #include "languageloader.h"
 
-LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &connId, QObject *parent) :
+LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &path, QObject *parent) :
     QObject(parent),
-    m_connId(connId) {
+    m_connId(QStringLiteral("lang_db_maintainer")),
+    m_dbPath(path) {
+
     // List of language specification directories, ascending by priority
 #ifdef GTKSOURCEVIEW_LANGUAGE_PATH
     specsDirs.append(QStringLiteral(GTKSOURCEVIEW_LANGUAGE_PATH));
@@ -40,8 +44,6 @@ LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &connId, QO
     specsDirs.append(QCoreApplication::applicationDirPath() + QStringLiteral(RELATIVE_LANGUAGE_PATH));
 #endif
     specsDirs.append(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral(USER_LANGUAGE_PATH));
-
-    initDB();
 }
 
 LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
@@ -50,19 +52,17 @@ LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
 }
 
 void LanguageDatabaseMaintainer::init() {
+    initDB(m_dbPath);
     updateDB();
     watcher = new QFileSystemWatcher(specsDirs);
     connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageDatabaseMaintainer::updateDB);
 }
 
-void LanguageDatabaseMaintainer::initDB() {
-    QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    if(!dataDir.exists())
-        dataDir.mkpath(QStringLiteral("."));
-
+void LanguageDatabaseMaintainer::initDB(const QString &path) {
     QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connId);
-    db.setDatabaseName(dataDir.filePath(QStringLiteral("languages.db")));
+    db.setDatabaseName(path);
     db.open();
+
     QSqlQuery(QStringLiteral("CREATE TABLE IF NOT EXISTS languages "
                              "(id TEXT PRIMARY KEY, spec_path TEXT, mime_types TEXT, globs TEXT, display TEXT)"),
               db);
