@@ -25,6 +25,7 @@
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QDateTime>
 #include <QDebug>
 #include "languageloader.h"
 
@@ -67,7 +68,11 @@ void LanguageDatabaseMaintainer::initDB(const QString &path) {
     query.exec(QStringLiteral("BEGIN TRANSACTION"));
 
     query.exec(QStringLiteral("PRAGMA user_version"));
-    int dbVersion = query.record().value(0).toInt();
+
+    if(!query.first())
+        qWarning() << "Database is missing user_version pragma!!! Something is wrong with SQLite?";
+
+    int dbVersion = query.value(0).toInt();
     if(dbVersion != LANGUAGE_DB_VERSION) {
         // Database schema is outdated
 
@@ -84,37 +89,55 @@ void LanguageDatabaseMaintainer::initDB(const QString &path) {
 }
 
 void LanguageDatabaseMaintainer::updateDB() {
+    QSqlQuery query(QSqlDatabase::database(m_connId));
+    query.exec(QStringLiteral("BEGIN TRANSACTION"));
+
+    // Search for obsolete entries
+    query.exec(QStringLiteral("SELECT spec_path FROM languages"));
+    while (query.next()) {
+        QFileInfo file(query.value(0).toString());
+        if(!file.exists())
+            query.exec(QStringLiteral("DELETE FROM languages "
+                                      "WHERE spec_path='%1'").arg(query.value(0).toString()));
+    }
+
+    int priority = 0;
     LanguageLoader ll;
     for (const QDir &dir : qAsConst(specsDirs)) {
         const QFileInfoList &filesList = dir.entryInfoList();
         for (const QFileInfo &file : filesList) {
             if(file.isFile()) {
-                LanguageMetadata langData = ll.loadMetadata(file.absoluteFilePath());
-                QSqlQuery(QStringLiteral("UPDATE languages SET "
-                                         "id='%1',spec_path='%2',mime_types='%3',globs='%4',display='%5' "
-                                         "WHERE id='%1'").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimeTypes, langData.globs, langData.name),
-                          QSqlDatabase::database(m_connId));
-                // If update failed, insert
-                QSqlQuery(QStringLiteral("INSERT INTO languages (id, spec_path, mime_types, globs, display) "
-                                         "SELECT '%1','%2','%3','%4','%5' "
-                                         "WHERE (SELECT Changes() = 0)").arg(
-                              langData.id, file.absoluteFilePath(), langData.mimeTypes, langData.globs, langData.name),
-                          QSqlDatabase::database(m_connId));
+                QString filePath = file.absoluteFilePath();
+                qint64 fileTime = file.fileTime(QFile::FileModificationTime).toMSecsSinceEpoch();
+                query.exec(QStringLiteral("SELECT modification_time FROM languages "
+                                          "WHERE spec_path='%1'").arg(filePath));
+                if(query.first()) {
+                    /* Compare timestamp with file modification time
+                     */
+                    qint64 dbTime = query.value(0).toLongLong();
+                    if(dbTime < fileTime) {
+                        /* Entry is outdated, update it
+                         */
+                        LanguageMetadata langData = ll.loadMetadata(filePath);
+                        query.exec(QStringLiteral("UPDATE languages SET "
+                                                  "spec_path='%1',id='%2',priority='%3',mime_types='%4',globs='%5',display='%6',modification_time='%7' "
+                                                  "WHERE spec_path='%1'").arg(
+                                   filePath, langData.id, QString::number(priority), langData.mimeTypes, langData.globs, langData.name, QString::number(fileTime)));
+                    }
+                } else {
+                    /* There's no existing entry for this file,
+                     * parse metadata and insert
+                     */
+                    LanguageMetadata langData = ll.loadMetadata(filePath);
+                    query.exec(QStringLiteral("INSERT INTO languages (spec_path, id, priority, mime_types, globs, display, modification_time) "
+                                              "SELECT '%1','%2','%3','%4','%5','%6','%7'").arg(
+                               filePath, langData.id, QString::number(priority), langData.mimeTypes, langData.globs, langData.name, QString::number(fileTime)));
+                }
             }
         }
+        priority++;
     }
 
-    // Search for obsolete entries
-    QSqlQuery query(QStringLiteral("SELECT id, spec_path FROM languages"),
-                    QSqlDatabase::database(m_connId));
-    while (query.next()) {
-        QFileInfo file(query.value(1).toString());
-        if(!file.exists())
-            QSqlQuery(QStringLiteral("DELETE FROM languages "
-                                     "WHERE id='%1'").arg(query.value(0).toString()),
-                      QSqlDatabase::database(m_connId));
-    }
-
+    query.exec(QStringLiteral("COMMIT TRANSACTION"));
     emit dbUpdated();
 }
