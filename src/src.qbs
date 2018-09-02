@@ -35,18 +35,40 @@ QtGuiApplication {
         return defines;
     }
 
+    Qt.core.resourcePrefix: "/"
+    Qt.core.resourceSourceBase: sourceDirectory
+
     files: [
         "*.cpp",
         "*.h",
-        "*.qrc",
         "../data/icons/io.liri.Text.icns",
         "../data/io.liri.Text.rc",
     ]
 
     Group {
-        name: "QML Files"
-        files: ["*.qml"]
-        prefix: "qml/"
+        name: "Resource Data"
+        files: [
+            "qml/Main.qml",
+            "qml/RecentFilesPage.qml",
+            "qml/EditPage.qml",
+            "qml/FileGridView.qml",
+            "qml/SearchOverlay.qml",
+            "resources/icon.png",
+            "translations/ar.qm",
+            "translations/da.qm",
+            "translations/de.qm",
+            "translations/es.qm",
+            "translations/es_419.qm",
+            "translations/fr.qm",
+            "translations/it.qm",
+            "translations/ja.qm",
+            "translations/nl.qm",
+            "translations/pt_BR.qm",
+            "translations/pt_PT.qm",
+            "translations/ru.qm",
+            "translations/zh_HK.qm",
+        ]
+        fileTags: ["qt.core.resource_data"]
     }
 
     Group {
