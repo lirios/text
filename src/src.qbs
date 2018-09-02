@@ -13,7 +13,7 @@ QtGuiApplication {
     consoleApplication: false
 
     Depends { name: "lirideployment" }
-    Depends { name: "Qt"; submodules: ["widgets", "qml", "quick", "quickcontrols2", "sql"] }
+    Depends { name: "Qt"; submodules: ["core", "widgets", "qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
 
     bundle.identifierPrefix: "io.liri"
@@ -54,19 +54,6 @@ QtGuiApplication {
             "qml/FileGridView.qml",
             "qml/SearchOverlay.qml",
             "resources/icon.png",
-            "translations/ar.qm",
-            "translations/da.qm",
-            "translations/de.qm",
-            "translations/es.qm",
-            "translations/es_419.qm",
-            "translations/fr.qm",
-            "translations/it.qm",
-            "translations/ja.qm",
-            "translations/nl.qm",
-            "translations/pt_BR.qm",
-            "translations/pt_PT.qm",
-            "translations/ru.qm",
-            "translations/zh_HK.qm",
         ]
         fileTags: ["qt.core.resource_data"]
     }
@@ -80,7 +67,7 @@ QtGuiApplication {
         qbs.install: true
         qbs.installDir: lirideployment.binDir
         qbs.installSourceBase: destinationDirectory
-        fileTagsFilter: isBundle ? ["bundle.content"] : product.type
+        fileTagsFilter: isBundle ? ["bundle.content"] : ["application"]
     }
 
     Group {
@@ -121,5 +108,18 @@ QtGuiApplication {
         qbs.install: true
         qbs.installSourceBase: prefix
         qbs.installDir: lirideployment.dataDir + "/icons/hicolor"
+    }
+
+    Group {
+        fileTagsFilter: "qm"
+        qbs.install: true
+        qbs.installDir: {
+            if (qbs.targetOS.contains("windows"))
+                return "translations";
+            else if (qbs.targetOS.contains("macos"))
+                return "Contents/Resources/data/translations";
+            else
+                return dataInstallDir + "/translations";
+        }
     }
 }

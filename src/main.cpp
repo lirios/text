@@ -30,6 +30,7 @@
 #include <QFontDatabase>
 #include <QDir>
 #include <QDebug>
+#include <QStandardPaths>
 
 #include "documenthandler.h"
 #include "historymanager.h"
@@ -55,7 +56,21 @@ int main(int argc, char *argv[])
     app.installTranslator(&qtTranslator);
 
     QTranslator translator;
-    if(translator.load(":/translations/" + QLocale::system().name()))
+#if (defined Q_OS_LINUX)
+    const QString translationsPath = QStandardPaths::locate(
+                QStandardPaths::GenericDataLocation,
+                QLatin1String("liri-text/translations/"),
+                QStandardPaths::LocateDirectory);
+#elif (defined Q_OS_MACOS)
+    const QString translationsPath =
+            QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QLatin1String("../Resources/data/translations/"));
+#elif (defined Q_OS_WIN)
+    const QString translationsPath =
+            QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QLatin1String("translations/"));
+#else
+#  error "Platform not supported"
+#endif
+    if (translator.load(translationsPath + QLocale::system().name()))
         app.installTranslator(&translator);
 
     // Parse command line options
