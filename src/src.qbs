@@ -116,7 +116,7 @@ QtGuiApplication {
     Group {
         condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "Icons"
-        prefix: "../data/icons/"
+        prefix: "../data/icons/hicolor/"
         files: ["**/*.png", "**/*.svg"]
         qbs.install: true
         qbs.installSourceBase: prefix
