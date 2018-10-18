@@ -41,6 +41,7 @@
           <li>Fix icons installation.</li>
           <li>Fix translations installation.</li>
           <li>Fix build on WinRT.</li>
+          <li>Update translations.</li>
         </ul>
       </description>
     </release>
