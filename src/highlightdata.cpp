@@ -19,16 +19,15 @@
 
 #include "highlightdata.h"
 
-HighlightData::HighlightData() {  }
+HighlightData::HighlightData() {}
 
-HighlightData::~HighlightData() {  }
+HighlightData::~HighlightData() {}
 
-uint qHash(const HighlightData::ContainerInfo &t, uint seed) {
+uint qHash(const HighlightData::ContainerInfo &t, uint seed)
+{
     /* Since ContainerInfo's fields have different types
      * and their hashes are computed with different algorithms,
      * we can simply combine them with xor
      */
-    return qHash(t.containerRef, seed) ^
-           qHash(t.endRegex, seed) ^
-           qHash(t.forbiddenContexts, seed);
+    return qHash(t.containerRef, seed) ^ qHash(t.endRegex, seed) ^ qHash(t.forbiddenContexts, seed);
 }

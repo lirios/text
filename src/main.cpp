@@ -58,28 +58,32 @@ int main(int argc, char *argv[])
     QTranslator translator;
 #if (defined Q_OS_LINUX)
     const QString translationsPath = QStandardPaths::locate(
-                QStandardPaths::GenericDataLocation,
-                QLatin1String("liri-text/translations/"),
-                QStandardPaths::LocateDirectory);
+        QStandardPaths::GenericDataLocation, QLatin1String("liri-text/translations/"),
+        QStandardPaths::LocateDirectory);
 #elif (defined Q_OS_MACOS)
     const QString translationsPath =
-            QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QLatin1String("../Resources/data/translations/"));
+        QDir(QCoreApplication::applicationDirPath())
+            .absoluteFilePath(QLatin1String("../Resources/data/translations/"));
 #elif (defined Q_OS_WIN)
-    const QString translationsPath =
-            QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QLatin1String("translations/"));
+    const QString translationsPath = QDir(QCoreApplication::applicationDirPath())
+                                         .absoluteFilePath(QLatin1String("translations/"));
 #else
-#  error "Platform not supported"
+#error "Platform not supported"
 #endif
     if (translator.load(translationsPath + QLocale::system().name()))
         app.installTranslator(&translator);
 
     // Parse command line options
     QCommandLineParser parser;
-    parser.setApplicationDescription(app.translate("main", "Advanced text editor made in accordance with Material Design."));
+    parser.setApplicationDescription(
+        app.translate("main", "Advanced text editor made in accordance with Material Design."));
     parser.addHelpOption();
-    QCommandLineOption newFileOption(QStringLiteral("new-document"), app.translate("main", "Start the editor with a new document."));
+    QCommandLineOption newFileOption(
+        QStringLiteral("new-document"),
+        app.translate("main", "Start the editor with a new document."));
     parser.addOption(newFileOption);
-    parser.addPositionalArgument(app.translate("main", "[file]"), app.translate("main", "Path to a file to open for editing."));
+    parser.addPositionalArgument(app.translate("main", "[file]"),
+                                 app.translate("main", "Path to a file to open for editing."));
 
     parser.process(app);
     QStringList args = parser.positionalArguments();
@@ -90,23 +94,27 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    qmlRegisterSingletonType<HistoryManager>("io.liri.text", 1, 0, "History",
-                                             [](QQmlEngine*, QJSEngine*) -> QObject* { return HistoryManager::getInstance(); });
+    qmlRegisterSingletonType<HistoryManager>(
+        "io.liri.text", 1, 0, "History",
+        [](QQmlEngine *, QJSEngine *) -> QObject * { return HistoryManager::getInstance(); });
 
     engine.rootContext()->setContextProperty(QStringLiteral("newDoc"), nf);
-    if(args.length() > 0)
-        engine.rootContext()->setContextProperty(QStringLiteral("givenPath"), QUrl::fromUserInput(args[0], QDir::currentPath()));
+    if (args.length() > 0)
+        engine.rootContext()->setContextProperty(QStringLiteral("givenPath"),
+                                                 QUrl::fromUserInput(args[0], QDir::currentPath()));
     else
         engine.rootContext()->setContextProperty(QStringLiteral("givenPath"), nullptr);
 
     // Temporary solution untill we have font customization
-    engine.rootContext()->setContextProperty(QStringLiteral("defaultFont"), QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    engine.rootContext()->setContextProperty(QStringLiteral("defaultFont"),
+                                             QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
     // Init languages database
     LanguageManager *lManager = LanguageManager::getInstance();
 
     // Clean up on exiting application
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager, &LanguageManager::deleteLater);
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed, lManager,
+                     &LanguageManager::deleteLater);
 
     // Start with main.qml
     engine.load(QUrl(QStringLiteral("qrc:/qml/Main.qml")));

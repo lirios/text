@@ -32,10 +32,11 @@ public:
     HighlightData();
     ~HighlightData();
 
-    struct ContainerInfo {
+    struct ContainerInfo
+    {
         QSharedPointer<LanguageContext> containerRef;
         QRegularExpression endRegex;
-        QList<QSharedPointer<LanguageContext> > forbiddenContexts;
+        QList<QSharedPointer<LanguageContext>> forbiddenContexts;
     };
 
     QList<ContainerInfo> containers;

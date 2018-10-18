@@ -36,15 +36,15 @@ public:
 
     QRegularExpression start;
     QRegularExpression end;
-    QList<QSharedPointer<LanguageContext> > includes;
+    QList<QSharedPointer<LanguageContext>> includes;
 
-    bool styleInside   = false;
-    bool extendParent  = true;
-    bool endAtLineEnd  = false;
-    bool endParent     = false;
+    bool styleInside = false;
+    bool extendParent = true;
+    bool endAtLineEnd = false;
+    bool endParent = false;
     bool firstLineOnly = false;
-    bool onceOnly      = false;
-    bool includesOnly  = true;
+    bool onceOnly = false;
+    bool includesOnly = true;
 
     void markAsInUse() override;
     void prepareForRemoval(bool ignoreUsage = false) override;

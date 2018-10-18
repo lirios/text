@@ -21,16 +21,17 @@
 
 #include <QXmlStreamAttributes>
 
-LanguageContextSubPattern::LanguageContextSubPattern() { }
+LanguageContextSubPattern::LanguageContextSubPattern() {}
 
-LanguageContextSubPattern::LanguageContextSubPattern(const QXmlStreamAttributes &attributes) {
+LanguageContextSubPattern::LanguageContextSubPattern(const QXmlStreamAttributes &attributes)
+{
     bool isId;
     groupId = attributes.value(QStringLiteral("sub-pattern")).toInt(&isId);
-    if(!isId)
+    if (!isId)
         groupName = attributes.value(QStringLiteral("sub-pattern")).toString();
 
-    if(attributes.value(QStringLiteral("where")) == "start")
+    if (attributes.value(QStringLiteral("where")) == "start")
         where = Start;
-    if(attributes.value(QStringLiteral("where")) == "end")
+    if (attributes.value(QStringLiteral("where")) == "end")
         where = End;
 }

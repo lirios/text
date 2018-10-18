@@ -29,6 +29,7 @@ class LanguageDefaultStyles
 public:
     LanguageDefaultStyles();
     QHash<QString, QTextCharFormat> styles;
+
 protected:
     static const QHash<QString, QColor> palette;
 };

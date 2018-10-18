@@ -35,10 +35,10 @@ public:
 
     QList<QRegularExpression> keywords;
 
-    bool extendParent  = true;
-    bool endParent     = false;
+    bool extendParent = true;
+    bool endParent = false;
     bool firstLineOnly = false;
-    bool onceOnly      = false;
+    bool onceOnly = false;
 };
 
 #endif // LANGUAGECONTEXTKEYWORD_H
