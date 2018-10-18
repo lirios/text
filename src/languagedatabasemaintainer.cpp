@@ -48,15 +48,21 @@ LanguageDatabaseMaintainer::LanguageDatabaseMaintainer(const QString &path, QObj
 }
 
 LanguageDatabaseMaintainer::~LanguageDatabaseMaintainer() {
+#ifndef QT_NO_FILESYSTEMWATCHER
     delete watcher;
+#endif
     QSqlDatabase::removeDatabase(m_connId);
 }
 
 void LanguageDatabaseMaintainer::init() {
     initDB(m_dbPath);
     updateDB();
+#ifndef QT_NO_FILESYSTEMWATCHER
     watcher = new QFileSystemWatcher(specsDirs);
     connect(watcher, &QFileSystemWatcher::directoryChanged, this, &LanguageDatabaseMaintainer::updateDB);
+#else
+    qWarning() << "Language database file system watcher is not available on this platform";
+#endif
 }
 
 void LanguageDatabaseMaintainer::initDB(const QString &path) {

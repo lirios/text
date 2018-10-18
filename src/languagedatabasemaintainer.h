@@ -22,7 +22,9 @@
 
 #include <QObject>
 #include <QSqlDatabase>
-#include <QFileSystemWatcher>
+#ifndef QT_NO_FILESYSTEMWATCHER
+#  include <QFileSystemWatcher>
+#endif
 
 class LanguageDatabaseMaintainer : public QObject
 {
@@ -40,8 +42,13 @@ public slots:
     void updateDB();
 private:
     QStringList specsDirs;
+#ifndef QT_NO_FILESYSTEMWATCHER
+    // QFileSystemWatcher is not supported on all platforms like WinRT:
+    // https://codereview.qt-project.org/#/c/64825/
     QFileSystemWatcher *watcher;
-    QString m_connId, m_dbPath;
+#endif
+    QString m_connId;
+    QString m_dbPath;
 };
 
 #endif // LANGUAGEDATABASEMAINTAINER_H
