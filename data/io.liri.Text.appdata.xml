@@ -2,6 +2,7 @@
 <component type="desktop">
   <id>io.liri.Text.desktop</id>
   <name>Liri Text</name>
+  <summary>Edit text files</summary>
   <developer_name>Liri</developer_name>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>
@@ -34,46 +35,48 @@
   <releases>
     <release date="2018-10-18" version="0.4.0">
       <description>
+        <p>Notable changes:</p>
         <ul>
-          <li>Add versioning to the languages database.</li>
-          <li>Read language metadata only for new and changed spec files.</li>
-          <li>Generate resources with qbs.</li>
-          <li>Fix icons installation.</li>
-          <li>Fix translations installation.</li>
-          <li>Fix build on WinRT.</li>
-          <li>Update translations.</li>
+          <li>Add versioning to the languages database</li>
+          <li>Read language metadata only for new and changed spec files</li>
+          <li>Generate resources with qbs</li>
+          <li>Fix icons installation</li>
+          <li>Fix translations installation</li>
+          <li>Fix build on WinRT by disabling unsupported file system watchers</li>
+          <li>Update translations from Transifex</li>
         </ul>
       </description>
     </release>
     <release date="2018-05-13" version="0.3.0">
       <description>
+        <p>Notable changes:</p>
         <ul>
-          <li>Fix errors discovered by Clazy.</li>
-          <li>Fix memory leaks.</li>
-          <li>Follow Fluid 1.0 changes.</li>
-          <li>Allow cross-language references to define-regexes with %{lang:id}.</li>
-          <li>Experimental QML highlighting.</li>
-          <li>Update appdata file.</li>
-          <li>Update desktop file.</li>
-          <li>Fix context menu positioning.</li>
-          <li>Enable text selection by mouse in search overlay.</li>
-          <li>Backward search (Shift+Enter in search field).</li>
-          <li>Use fixed line heights for file previews.</li>
-          <li>Add Next/Prev buttons to search overlay.</li>
-          <li>Add 8dp margin to the right of search overlay.</li>
-          <li>Hide search overlay after 5 seconds without focus.</li>
+          <li>Fix errors discovered by Clazy</li>
+          <li>Fix memory leaks discovered by Clazy</li>
+          <li>Follow Fluid 1.0 changes</li>
+          <li>Allow cross-language references to define-regexes with %{lang:id}</li>
+          <li>Experimental QML highlighting</li>
+          <li>Update appdata and desktop file</li>
+          <li>Fix context menu positioning</li>
+          <li>Enable text selection by mouse in search overlay</li>
+          <li>Backward search (Shift+Enter in search field)</li>
+          <li>Use fixed line heights for file previews</li>
+          <li>Add Next/Prev buttons to search overlay</li>
+          <li>Add 8dp margin to the right of search overlay</li>
+          <li>Hide search overlay after 5 seconds without focus</li>
         </ul>
       </description>
     </release>
     <release date="2017-04-16" version="0.2.0">
       <description>
+        <p>Notable changes:</p>
         <ul>
-          <li>Transition to Qt Quick Controls 2 and Fluid framework.</li>
-          <li>New icon by Corbin Crutchley.</li>
-          <li>Syntax highlighting.</li>
-          <li>Search through file (Ctrl+F shortcut available).</li>
-          <li>Add translations.</li>
-          <li>Several minor improvements and bugfixes.</li>
+          <li>Transition to Qt Quick Controls 2 and Fluid framework</li>
+          <li>New icon by Corbin Crutchley</li>
+          <li>Syntax highlighting support</li>
+          <li>Search through file (Ctrl+F shortcut available)</li>
+          <li>Add new translations</li>
+          <li>Several minor improvements and bugfixes</li>
         </ul>
       </description>
     </release>
