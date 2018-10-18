@@ -21,12 +21,14 @@
 #include "languagecontextcontainer.h"
 #include "languagecontextsimple.h"
 
-LanguageContextReference::LanguageContextReference() :
-    context(nullptr),
-    refId(QLatin1String("")),
-    originalRef(false),
-    includes(),
-    styleOverwrite(QLatin1String("")),
-    ignoreStyle(false) { }
+LanguageContextReference::LanguageContextReference()
+    : context(nullptr)
+    , refId(QLatin1String(""))
+    , originalRef(false)
+    , includes()
+    , styleOverwrite(QLatin1String(""))
+    , ignoreStyle(false)
+{
+}
 
-LanguageContextReference::~LanguageContextReference() { }
+LanguageContextReference::~LanguageContextReference() {}

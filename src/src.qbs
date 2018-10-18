@@ -13,8 +13,9 @@ QtGuiApplication {
     consoleApplication: false
 
     Depends { name: "lirideployment" }
-    Depends { name: "Qt"; submodules: ["widgets", "qml", "quick", "quickcontrols2", "sql"] }
+    Depends { name: "Qt"; submodules: ["core", "widgets", "qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
+    Depends { name: "LiriTranslations" }
 
     bundle.identifierPrefix: "io.liri"
     bundle.identifier: "io.liri.Text"
@@ -23,7 +24,8 @@ QtGuiApplication {
     cpp.defines: {
         var defines = base.concat([
             "TEXT_VERSION=" + project.version,
-            'USER_LANGUAGE_PATH="/language-specs/"'
+            'USER_LANGUAGE_PATH="/language-specs/"',
+            "LANGUAGE_DB_VERSION=1"
         ]);
         if (qbs.targetOS.contains("windows"))
             defines.push('RELATIVE_LANGUAGE_PATH="/language-specs/"');
@@ -34,18 +36,27 @@ QtGuiApplication {
         return defines;
     }
 
+    Qt.core.resourcePrefix: "/"
+    Qt.core.resourceSourceBase: sourceDirectory
+
     files: [
         "*.cpp",
         "*.h",
-        "*.qrc",
         "../data/icons/io.liri.Text.icns",
         "../data/io.liri.Text.rc",
     ]
 
     Group {
-        name: "QML Files"
-        files: ["*.qml"]
-        prefix: "qml/"
+        name: "Resource Data"
+        files: [
+            "qml/Main.qml",
+            "qml/RecentFilesPage.qml",
+            "qml/EditPage.qml",
+            "qml/FileGridView.qml",
+            "qml/SearchOverlay.qml",
+            "resources/icon.png",
+        ]
+        fileTags: ["qt.core.resource_data"]
     }
 
     Group {
@@ -57,7 +68,7 @@ QtGuiApplication {
         qbs.install: true
         qbs.installDir: lirideployment.binDir
         qbs.installSourceBase: destinationDirectory
-        fileTagsFilter: isBundle ? ["bundle.content"] : product.type
+        fileTagsFilter: isBundle ? ["bundle.content"] : ["application"]
     }
 
     Group {
@@ -77,9 +88,20 @@ QtGuiApplication {
     Group {
         condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "Desktop File"
-        files: ["../data/*.desktop"]
+        files: ["../data/io.liri.Text.desktop.in"]
+        fileTags: ["liri.desktop.template"]
+    }
+
+    Group {
+        name: "Desktop File Translations"
+        files: ["translations/io.liri.Text_*.desktop"]
+        fileTags: ["liri.desktop.translations"]
+    }
+
+    Group {
         qbs.install: true
         qbs.installDir: lirideployment.applicationsDir
+        fileTagsFilter: "liri.desktop.file"
     }
 
     Group {
@@ -93,10 +115,23 @@ QtGuiApplication {
     Group {
         condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "Icons"
-        prefix: "../data/icons/"
+        prefix: "../data/icons/hicolor/"
         files: ["**/*.png", "**/*.svg"]
         qbs.install: true
         qbs.installSourceBase: prefix
         qbs.installDir: lirideployment.dataDir + "/icons/hicolor"
+    }
+
+    Group {
+        fileTagsFilter: "qm"
+        qbs.install: true
+        qbs.installDir: {
+            if (qbs.targetOS.contains("windows"))
+                return "translations";
+            else if (qbs.targetOS.contains("macos"))
+                return "Contents/Resources/data/translations";
+            else
+                return dataInstallDir + "/translations";
+        }
     }
 }

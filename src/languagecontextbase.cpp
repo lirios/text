@@ -20,13 +20,16 @@
 #include "languagecontextbase.h"
 #include "languagecontextcontainer.h"
 
-LanguageContextBase::LanguageContextBase() :
-    m_inUse(false) { }
+LanguageContextBase::LanguageContextBase()
+    : m_inUse(false)
+{
+}
 
-LanguageContextBase::~LanguageContextBase() { }
+LanguageContextBase::~LanguageContextBase() {}
 
-void LanguageContextBase::markAsInUse() {
-    if(m_inUse)
+void LanguageContextBase::markAsInUse()
+{
+    if (m_inUse)
         return;
 
     m_inUse = true;

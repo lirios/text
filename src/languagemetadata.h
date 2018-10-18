@@ -22,7 +22,8 @@
 
 #include <QString>
 
-struct LanguageMetadata {
+struct LanguageMetadata
+{
     QString id;
     QString name;
     QString mimeTypes;

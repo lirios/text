@@ -29,13 +29,7 @@ class QXmlStreamAttributes;
 class LanguageContext
 {
 public:
-    enum ElementType {
-        Simple
-      , Container
-      , SubPattern
-      , Keyword
-      , Undefined
-    } type;
+    enum ElementType { Simple, Container, SubPattern, Keyword, Undefined } type;
 
     QSharedPointer<LanguageContextBase> base;
 
@@ -44,7 +38,7 @@ public:
     ~LanguageContext();
     void init(ElementType t);
     void init(ElementType t, const QXmlStreamAttributes &attributes);
-    LanguageContext& operator =(const LanguageContext &other);
+    LanguageContext &operator=(const LanguageContext &other);
 
     QString styleId;
 };

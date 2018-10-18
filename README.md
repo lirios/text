@@ -11,6 +11,8 @@ Liri Text
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.
 
+![Screenshot](https://raw.githubusercontent.com/lirios/text/develop/.project/screenshots/text1.png)
+
 ## Dependencies
 
 Qt >= 5.10.0 with at least the following modules is required:

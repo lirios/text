@@ -34,11 +34,7 @@ public:
     int groupId = 0;
     QString groupName = QString();
 
-    enum {
-        Default,
-        Start,
-        End
-    } where = Default;
+    enum { Default, Start, End } where = Default;
 };
 
 #endif // LANGUAGECONTEXTSUBPATTERN_H

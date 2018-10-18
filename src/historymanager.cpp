@@ -29,12 +29,13 @@
 
 const int MAX_HISTORY_SIZE = 24;
 
-HistoryManager::HistoryManager(QObject *parent) :
-    QAbstractListModel(parent),
-    m_connId(QStringLiteral("history")) {
+HistoryManager::HistoryManager(QObject *parent)
+    : QAbstractListModel(parent)
+    , m_connId(QStringLiteral("history"))
+{
 
     QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    if(!dataDir.exists())
+    if (!dataDir.exists())
         dataDir.mkpath(QStringLiteral("."));
 
     QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connId);
@@ -46,36 +47,40 @@ HistoryManager::HistoryManager(QObject *parent) :
               db);
 }
 
-HistoryManager::~HistoryManager() {
+HistoryManager::~HistoryManager()
+{
     QSqlDatabase::removeDatabase(m_connId);
 }
 
-HistoryManager *HistoryManager::getInstance() {
-    if(!m_instance)
+HistoryManager *HistoryManager::getInstance()
+{
+    if (!m_instance)
         m_instance = new HistoryManager();
     return m_instance;
 }
 
-int HistoryManager::rowCount(const QModelIndex &parent) const {
+int HistoryManager::rowCount(const QModelIndex &parent) const
+{
     Q_UNUSED(parent)
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.exec(QStringLiteral("SELECT Count(*) FROM history"));
-    if(query.first())
+    if (query.first())
         return query.value(0).toInt();
     else
         return 0;
 }
 
-QVariant HistoryManager::data(const QModelIndex &index, int role) const {
-    if(index.row() < 0 || index.row() >= rowCount())
+QVariant HistoryManager::data(const QModelIndex &index, int role) const
+{
+    if (index.row() < 0 || index.row() >= rowCount())
         return QVariant();
 
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare(QStringLiteral("SELECT %1 FROM history "
-                                 "ORDER BY last_view_time DESC").arg(
-                      dbColumnFromRole(role)));
+                                 "ORDER BY last_view_time DESC")
+                      .arg(dbColumnFromRole(role)));
     query.exec();
-    if(query.seek(index.row())) {
+    if (query.seek(index.row())) {
         switch (role) {
         case FileUrlRole:
             return QUrl::fromLocalFile(query.value(0).toString());
@@ -92,25 +97,27 @@ QVariant HistoryManager::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
-bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(index.row() < 0 || index.row() >= rowCount())
+bool HistoryManager::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.row() < 0 || index.row() >= rowCount())
         return false;
 
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare(QStringLiteral("UPDATE history SET "
-                                 "%1=? WHERE path=?").arg(
-                      dbIdForIndex(index.row())));
+                                 "%1=? WHERE path=?")
+                      .arg(dbIdForIndex(index.row())));
     query.addBindValue(dbColumnFromRole(role));
     query.addBindValue(value.toString());
     query.exec();
 
-    emit dataChanged(index, index, {role});
+    emit dataChanged(index, index, { role });
     return true;
 }
 
-bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
+bool HistoryManager::removeRow(int row, const QModelIndex &parent)
+{
     Q_UNUSED(parent)
-    if(row < 0 || row >= rowCount())
+    if (row < 0 || row >= rowCount())
         return false;
     beginRemoveRows(QModelIndex(), row, row);
 
@@ -125,7 +132,8 @@ bool HistoryManager::removeRow(int row, const QModelIndex &parent) {
     return true;
 }
 
-bool HistoryManager::removeFile(const QUrl &fileUrl) {
+bool HistoryManager::removeFile(const QUrl &fileUrl)
+{
     int row = dbIndexForId(fileUrl.path());
     beginRemoveRows(QModelIndex(), row, row);
 
@@ -140,33 +148,38 @@ bool HistoryManager::removeFile(const QUrl &fileUrl) {
     return true;
 }
 
-Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const {
+Qt::ItemFlags HistoryManager::flags(const QModelIndex &index) const
+{
     Q_UNUSED(index)
-    return {Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable};
+    return { Qt::ItemIsEnabled, Qt::ItemIsSelectable, Qt::ItemIsEditable };
 }
 
-QVariantMap HistoryManager::getFileEditingInfo(const QUrl &fileUrl) const {
+QVariantMap HistoryManager::getFileEditingInfo(const QUrl &fileUrl) const
+{
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare(QStringLiteral("SELECT cursor_position, scroll_position FROM history "
                                  "WHERE path=?"));
     query.addBindValue(fileUrl.path());
     query.exec();
     QVariantMap result;
-    if(query.first()) {
+    if (query.first()) {
         result[QStringLiteral("cursorPosition")] = query.value(0);
         result[QStringLiteral("scrollPosition")] = query.value(1);
     }
     return result;
 }
 
-void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition, float scrollPosition, const QString &preview) {
+void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition,
+                               float scrollPosition, const QString &preview)
+{
     qint64 currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
     int row = dbIndexForId(fileUrl.path());
     QSqlQuery query(QSqlDatabase::database(m_connId));
-    query.prepare(QStringLiteral("UPDATE history SET "
-                                 "path=?, display_name=?, last_view_time=?, preview=?, cursor_position=?, scroll_position=? "
-                                 "WHERE path=?"));
+    query.prepare(QStringLiteral(
+        "UPDATE history SET "
+        "path=?, display_name=?, last_view_time=?, preview=?, cursor_position=?, scroll_position=? "
+        "WHERE path=?"));
     query.addBindValue(fileUrl.path());
     query.addBindValue(name);
     query.addBindValue(currentTime);
@@ -177,12 +190,13 @@ void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cur
     query.exec();
 
     query.exec(QStringLiteral("SELECT Changes() FROM history"));
-    if(!query.first() || query.value(0) == 0) {
+    if (!query.first() || query.value(0) == 0) {
         // If update failed, insert
         beginInsertRows(QModelIndex(), 0, 0);
-        query.prepare(QStringLiteral("INSERT INTO history "
-                                     "(path, display_name, last_view_time, preview, cursor_position, scroll_position) "
-                                     "VALUES (?, ?, ?, ?, ?, ?)"));
+        query.prepare(QStringLiteral(
+            "INSERT INTO history "
+            "(path, display_name, last_view_time, preview, cursor_position, scroll_position) "
+            "VALUES (?, ?, ?, ?, ?, ?)"));
         query.addBindValue(fileUrl.path());
         query.addBindValue(name);
         query.addBindValue(currentTime);
@@ -194,7 +208,7 @@ void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cur
         endInsertRows();
 
         int entryCount = rowCount();
-        if(entryCount > MAX_HISTORY_SIZE) {
+        if (entryCount > MAX_HISTORY_SIZE) {
             removeRow(entryCount - 1);
             /*
             query.exec("SELECT path FROM history "
@@ -212,26 +226,29 @@ void HistoryManager::touchFile(const QString &name, const QUrl &fileUrl, int cur
         } else
             emit countChanged();
     } else {
-        emit dataChanged(index(row), index(row), {NameRole, LastViewTimeRole, PreviewRole, CursorPositionRole, ScrollPositionRole});
-        if(row > 0) {
+        emit dataChanged(
+            index(row), index(row),
+            { NameRole, LastViewTimeRole, PreviewRole, CursorPositionRole, ScrollPositionRole });
+        if (row > 0) {
             beginMoveRows(QModelIndex(), row, row, QModelIndex(), 0);
             endMoveRows();
         }
     }
 }
 
-QHash<int, QByteArray> HistoryManager::roleNames() const {
-    return QHash<int, QByteArray>({ {NameRole, "name"},
-                                    {FileUrlRole, "fileUrl"},
-                                    {FilePathRole, "filePath"},
-                                    {LastViewTimeRole, "lastViewTime"},
-                                    {PreviewRole, "previewText"},
-                                    {CursorPositionRole, "cursorPosition"},
-                                    {ScrollPositionRole, "scrollPosition"}
-                                  });
+QHash<int, QByteArray> HistoryManager::roleNames() const
+{
+    return QHash<int, QByteArray>({ { NameRole, "name" },
+                                    { FileUrlRole, "fileUrl" },
+                                    { FilePathRole, "filePath" },
+                                    { LastViewTimeRole, "lastViewTime" },
+                                    { PreviewRole, "previewText" },
+                                    { CursorPositionRole, "cursorPosition" },
+                                    { ScrollPositionRole, "scrollPosition" } });
 }
 
-QString HistoryManager::dbColumnFromRole(int role) const {
+QString HistoryManager::dbColumnFromRole(int role) const
+{
     switch (role) {
     case NameRole:
         return QStringLiteral("display_name");
@@ -257,28 +274,30 @@ QString HistoryManager::dbColumnFromRole(int role) const {
     }
 }
 
-QString HistoryManager::dbIdForIndex(int index) const {
+QString HistoryManager::dbIdForIndex(int index) const
+{
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.exec(QStringLiteral("SELECT path FROM history "
                               "ORDER BY last_view_time DESC"));
-    if(query.seek(index))
+    if (query.seek(index))
         return query.value(0).toString();
     return QLatin1String("");
 }
 
-int HistoryManager::dbIndexForId(const QString &id) const {
+int HistoryManager::dbIndexForId(const QString &id) const
+{
     QSqlQuery query(QSqlDatabase::database(m_connId));
     query.prepare(QStringLiteral("SELECT last_view_time FROM history "
                                  "WHERE path=?"));
     query.addBindValue(id);
     query.exec();
-    if(query.first()) {
+    if (query.first()) {
         int time = query.value(0).toInt();
         query.prepare(QStringLiteral("SELECT Count(*) FROM history "
                                      "WHERE last_view_time>?"));
         query.addBindValue(time);
         query.exec();
-        if(query.first())
+        if (query.first())
             return query.value(0).toInt();
     }
 

@@ -21,18 +21,19 @@
 
 #include <QXmlStreamAttributes>
 
-LanguageContextKeyword::LanguageContextKeyword() { }
+LanguageContextKeyword::LanguageContextKeyword() {}
 
-LanguageContextKeyword::LanguageContextKeyword(const QXmlStreamAttributes &attributes) {
-    if(attributes.hasAttribute(QStringLiteral("extend-parent")))
-        extendParent  = attributes.value(QStringLiteral("extend-parent"))   == "true";
+LanguageContextKeyword::LanguageContextKeyword(const QXmlStreamAttributes &attributes)
+{
+    if (attributes.hasAttribute(QStringLiteral("extend-parent")))
+        extendParent = attributes.value(QStringLiteral("extend-parent")) == "true";
 
-    if(attributes.hasAttribute(QStringLiteral("end-parent")))
-        endParent     = attributes.value(QStringLiteral("end-parent"))      == "true";
+    if (attributes.hasAttribute(QStringLiteral("end-parent")))
+        endParent = attributes.value(QStringLiteral("end-parent")) == "true";
 
-    if(attributes.hasAttribute(QStringLiteral("first-line-only")))
+    if (attributes.hasAttribute(QStringLiteral("first-line-only")))
         firstLineOnly = attributes.value(QStringLiteral("first-line-only")) == "true";
 
-    if(attributes.hasAttribute(QStringLiteral("once-only")))
-        onceOnly      = attributes.value(QStringLiteral("once-only"))       == "true";
+    if (attributes.hasAttribute(QStringLiteral("once-only")))
+        onceOnly = attributes.value(QStringLiteral("once-only")) == "true";
 }

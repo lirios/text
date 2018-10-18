@@ -25,20 +25,24 @@
 #include "languagecontextsubpattern.h"
 #include <QDebug>
 
-LanguageContext::LanguageContext() :
-    type(Undefined) { }
+LanguageContext::LanguageContext()
+    : type(Undefined)
+{
+}
 
-LanguageContext::LanguageContext(const LanguageContext &other) :
-    LanguageContext() {
+LanguageContext::LanguageContext(const LanguageContext &other)
+    : LanguageContext()
+{
 
     type = other.type;
     styleId = other.styleId;
     base = other.base;
 }
 
-LanguageContext::~LanguageContext() { }
+LanguageContext::~LanguageContext() {}
 
-void LanguageContext::init(ElementType t) {
+void LanguageContext::init(ElementType t)
+{
     type = t;
     switch (type) {
     case Simple:
@@ -60,7 +64,8 @@ void LanguageContext::init(ElementType t) {
     }
 }
 
-void LanguageContext::init(ElementType t, const QXmlStreamAttributes &attributes) {
+void LanguageContext::init(ElementType t, const QXmlStreamAttributes &attributes)
+{
     type = t;
     switch (type) {
     case Simple:
@@ -82,7 +87,8 @@ void LanguageContext::init(ElementType t, const QXmlStreamAttributes &attributes
     }
 }
 
-LanguageContext &LanguageContext::operator =(const LanguageContext &other) {
+LanguageContext &LanguageContext::operator=(const LanguageContext &other)
+{
     type = other.type;
     styleId = other.styleId;
     base = other.base;

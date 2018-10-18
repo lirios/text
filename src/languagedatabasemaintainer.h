@@ -22,26 +22,35 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#ifndef QT_NO_FILESYSTEMWATCHER
 #include <QFileSystemWatcher>
+#endif
 
 class LanguageDatabaseMaintainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit LanguageDatabaseMaintainer(const QString &connId, QObject *parent = nullptr);
+    explicit LanguageDatabaseMaintainer(const QString &path, QObject *parent = nullptr);
     ~LanguageDatabaseMaintainer();
 
 signals:
     void dbUpdated();
+
 protected:
-    void initDB();
+    void initDB(const QString &path);
 public slots:
     void init();
     void updateDB();
+
 private:
     QStringList specsDirs;
+#ifndef QT_NO_FILESYSTEMWATCHER
+    // QFileSystemWatcher is not supported on all platforms like WinRT:
+    // https://codereview.qt-project.org/#/c/64825/
     QFileSystemWatcher *watcher;
+#endif
     QString m_connId;
+    QString m_dbPath;
 };
 
 #endif // LANGUAGEDATABASEMAINTAINER_H

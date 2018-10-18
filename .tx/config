@@ -1,0 +1,14 @@
+[main]
+host = https://www.transifex.com
+
+[liri-text.app]
+type = QT
+source_lang = en
+source_file = src/translations/liri-text.ts
+file_filter = src/translations/liri-text_<lang>.ts
+
+[liri-text.desktop-file]
+type = DESKTOP
+source_lang = en
+source_file = data/io.liri.Text.desktop.in
+file_filter = src/translations/io.liri.Text_<lang>.desktop

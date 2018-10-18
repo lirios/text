@@ -27,36 +27,46 @@
 #include "languageloader.h"
 #include "languagemanager.h"
 
-DocumentHandler::DocumentHandler(QObject *parent) :
-    QObject(parent),
-    m_target(0),
-    m_document(0),
-    m_highlighter(0) {
+DocumentHandler::DocumentHandler(QObject *parent)
+    : QObject(parent)
+    , m_target(0)
+    , m_document(0)
+    , m_highlighter(0)
+{
 
+#ifndef QT_NO_FILESYSTEMWATCHER
     m_watcher = new QFileSystemWatcher(this);
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &DocumentHandler::fileChanged);
+#else
+    qWarning() << "Document change notification is not available on this platform";
+#endif
 
     m_defStyles = QSharedPointer<LanguageDefaultStyles>::create();
 }
 
-DocumentHandler::~DocumentHandler() {
+DocumentHandler::~DocumentHandler()
+{
+#ifndef QT_NO_FILESYSTEMWATCHER
     delete m_watcher;
+#endif
     delete m_highlighter;
 }
 
-void DocumentHandler::setTarget(QQuickItem *target) {
+void DocumentHandler::setTarget(QQuickItem *target)
+{
     m_document = nullptr;
     m_target = target;
-    if(!m_target)
+    if (!m_target)
         return;
 
     QVariant doc = m_target->property("textDocument");
-    if(doc.canConvert<QQuickTextDocument*>()) {
-        QQuickTextDocument *qqdoc = doc.value<QQuickTextDocument*>();
-        if(qqdoc) {
+    if (doc.canConvert<QQuickTextDocument *>()) {
+        QQuickTextDocument *qqdoc = doc.value<QQuickTextDocument *>();
+        if (qqdoc) {
             m_document = qqdoc->textDocument();
-            connect(m_document, &QTextDocument::modificationChanged, this, &DocumentHandler::modifiedChanged);
-            if(m_highlighter != nullptr)
+            connect(m_document, &QTextDocument::modificationChanged, this,
+                    &DocumentHandler::modifiedChanged);
+            if (m_highlighter != nullptr)
                 delete m_highlighter;
             m_highlighter = new LiriSyntaxHighlighter(m_document);
             m_highlighter->setDefaultStyles(m_defStyles);
@@ -65,28 +75,31 @@ void DocumentHandler::setTarget(QQuickItem *target) {
     emit targetChanged();
 }
 
-bool DocumentHandler::setFileUrl(const QUrl &fileUrl) {
-    if(fileUrl != m_fileUrl) {
-        if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
+bool DocumentHandler::setFileUrl(const QUrl &fileUrl)
+{
+    if (fileUrl != m_fileUrl) {
+#ifndef QT_NO_FILESYSTEMWATCHER
+        if (m_watcher->files().contains(m_fileUrl.toLocalFile()))
             m_watcher->removePath(m_fileUrl.toLocalFile());
         m_watcher->addPath(fileUrl.toLocalFile());
+#endif
         m_fileUrl = fileUrl;
         QString filename = m_fileUrl.toLocalFile();
         qDebug() << m_fileUrl << filename;
         QFile file(filename);
-        if(!file.open(QFile::ReadOnly)) {
+        if (!file.open(QFile::ReadOnly)) {
             emit error(file.errorString());
             return false;
         }
         QByteArray data = file.readAll();
-        if(file.error() != QFileDevice::NoError) {
+        if (file.error() != QFileDevice::NoError) {
             emit error(file.errorString());
             file.close();
             return false;
         }
         QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
         setText(codec->toUnicode(data));
-        if(m_document) {
+        if (m_document) {
             m_document->setModified(false);
 
             // Enable syntax highlighting
@@ -96,7 +109,7 @@ bool DocumentHandler::setFileUrl(const QUrl &fileUrl) {
             auto language = ll.loadMainContextByMimeType(mimeType, m_fileUrl.fileName());
             m_highlighter->setLanguage(language, ll.styleMap());
         }
-        if(m_fileUrl.isEmpty())
+        if (m_fileUrl.isEmpty())
             m_documentTitle = QStringLiteral("New Document");
         else
             m_documentTitle = QFileInfo(filename).fileName();
@@ -107,15 +120,17 @@ bool DocumentHandler::setFileUrl(const QUrl &fileUrl) {
     return true;
 }
 
-void DocumentHandler::setDocumentTitle(const QString &title) {
-    if(title != m_documentTitle) {
+void DocumentHandler::setDocumentTitle(const QString &title)
+{
+    if (title != m_documentTitle) {
         m_documentTitle = title;
         emit documentTitleChanged();
     }
 }
 
-QString DocumentHandler::textFragment(int position, int blockCount) {
-    if(m_highlighter) {
+QString DocumentHandler::textFragment(int position, int blockCount)
+{
+    if (m_highlighter) {
         return m_highlighter->highlightedFragment(position, blockCount, m_document->defaultFont());
     } else {
         QTextCursor cursor(m_document->findBlock(position));
@@ -132,26 +147,30 @@ QString DocumentHandler::textFragment(int position, int blockCount) {
     }
 }
 
-void DocumentHandler::setText(const QString &text) {
-    if(text != m_text) {
+void DocumentHandler::setText(const QString &text)
+{
+    if (text != m_text) {
         m_text = text;
         emit textChanged();
     }
 }
 
-bool DocumentHandler::saveAs(const QUrl &filename) {
+bool DocumentHandler::saveAs(const QUrl &filename)
+{
+#ifndef QT_NO_FILESYSTEMWATCHER
     // Stop monitoring file while saving
-    if(m_watcher->files().contains(m_fileUrl.toLocalFile()))
+    if (m_watcher->files().contains(m_fileUrl.toLocalFile()))
         m_watcher->removePath(m_fileUrl.toLocalFile());
+#endif
 
     bool success = true;
     QString localPath = filename.toLocalFile();
     QFile file(localPath);
-    if(!file.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
+    if (!file.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
         emit error(file.errorString());
         success = false;
     } else {
-        if(file.write(m_document->toPlainText().toLocal8Bit()) == -1) {
+        if (file.write(m_document->toPlainText().toLocal8Bit()) == -1) {
             emit error(file.errorString());
             success = false;
         }
@@ -162,24 +181,27 @@ bool DocumentHandler::saveAs(const QUrl &filename) {
         m_document->setModified(false);
     }
 
+#ifndef QT_NO_FILESYSTEMWATCHER
     // Restart file watcher back after saving completes
-    if(!m_watcher->files().contains(m_fileUrl.toLocalFile()))
+    if (!m_watcher->files().contains(m_fileUrl.toLocalFile()))
         m_watcher->addPath(m_fileUrl.toLocalFile());
+#endif
 
     return success;
 }
 
-bool DocumentHandler::reloadText() {
+bool DocumentHandler::reloadText()
+{
     QString filename = m_fileUrl.toLocalFile();
     QFile file(filename);
-    if(!file.open(QFile::ReadOnly)) {
+    if (!file.open(QFile::ReadOnly)) {
         emit error(file.errorString());
         return false;
     }
     QByteArray data = file.readAll();
     QTextCodec *codec = QTextCodec::codecForUtfText(data, QTextCodec::codecForLocale());
     setText(codec->toUnicode(data));
-    if(file.error() == QFileDevice::NoError) {
+    if (file.error() == QFileDevice::NoError) {
         file.close();
         return true;
     } else {
@@ -189,8 +211,11 @@ bool DocumentHandler::reloadText() {
     }
 }
 
-void DocumentHandler::fileChanged(const QString &file) {
+void DocumentHandler::fileChanged(const QString &file)
+{
     emit fileChangedOnDisk();
-    if(!m_watcher->files().contains(file))
+#ifndef QT_NO_FILESYSTEMWATCHER
+    if (!m_watcher->files().contains(file))
         m_watcher->addPath(file);
+#endif
 }
