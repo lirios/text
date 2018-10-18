@@ -23,17 +23,28 @@
 #include <QVariant>
 #include <QRegularExpression>
 #include <QThread>
+#include <QDir>
+#include <QStandardPaths>
 
 LanguageManager::LanguageManager(QObject *parent) :
     QObject(parent),
     m_connId(QStringLiteral("languages")) {
 
+    QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if(!dataDir.exists())
+        dataDir.mkpath(QStringLiteral("."));
+    QString dbPath = dataDir.filePath(QStringLiteral("languages.db"));
+
     m_thread = new QThread;
-    LanguageDatabaseMaintainer *dbMaintainer = new LanguageDatabaseMaintainer(m_connId);
+    LanguageDatabaseMaintainer *dbMaintainer = new LanguageDatabaseMaintainer(dbPath);
     dbMaintainer->moveToThread(m_thread);
     connect(m_thread, &QThread::started, dbMaintainer, &LanguageDatabaseMaintainer::init);
     connect(m_thread, &QThread::finished, dbMaintainer, &LanguageDatabaseMaintainer::deleteLater);
     m_thread->start();
+
+    QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), m_connId);
+    db.setDatabaseName(dbPath);
+    db.open();
 }
 
 LanguageManager *LanguageManager::getInstance() {
@@ -43,8 +54,8 @@ LanguageManager *LanguageManager::getInstance() {
 }
 
 QString LanguageManager::pathForId(const QString &id) {
-    QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
-                                   "WHERE id = '%1'").arg(id),
+    QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
+                                   "WHERE id = '%1' GROUP BY id").arg(id),
                     QSqlDatabase::database(m_connId));
     if(query.next())
         return query.value(0).toString();
@@ -55,8 +66,8 @@ QString LanguageManager::pathForId(const QString &id) {
 QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QString &filename) {
     // Original name first
     {
-        QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
-                                       "WHERE instr(mime_types, '%1') > 0").arg(mimeType.name()),
+        QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
+                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id").arg(mimeType.name()),
                         QSqlDatabase::database(m_connId));
         if(query.next())
             return query.value(0).toString();
@@ -66,8 +77,8 @@ QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QStrin
     // TODO: Check if we actually need to check all ancestors
     const QStringList &alternatives = mimeType.aliases() + mimeType.allAncestors();
     for (const QString &aType : alternatives) {
-        QSqlQuery query(QStringLiteral("SELECT spec_path FROM languages "
-                                       "WHERE instr(mime_types, '%1') > 0").arg(aType),
+        QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
+                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id").arg(aType),
                         QSqlDatabase::database(m_connId));
         if(query.next())
             return query.value(0).toString();
@@ -76,7 +87,7 @@ QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QStrin
     // MIME type lookup failed
     // Search for glob fitting the filename
     {
-        QSqlQuery query(QStringLiteral("SELECT globs, spec_path FROM languages"),
+        QSqlQuery query(QStringLiteral("SELECT globs, spec_path, MAX(priority) FROM languages GROUP BY id"),
                         QSqlDatabase::database(m_connId));
         while (query.next()) {
             const QStringList &globs = query.value(0).toString().split(';');

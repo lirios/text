@@ -5,10 +5,15 @@ QtGuiApplication {
     readonly property string dataInstallDir: lirideployment.dataDir + "/liri-text"
 
     name: "liri-text"
+    targetName: {
+        if (qbs.targetOS.contains("windows"))
+            return "LiriText";
+        return name;
+    }
     consoleApplication: false
 
     Depends { name: "lirideployment" }
-    Depends { name: "Qt"; submodules: ["widgets", "qml", "quick", "quickcontrols2", "sql"] }
+    Depends { name: "Qt"; submodules: ["core", "widgets", "qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
 
     bundle.identifierPrefix: "io.liri"
@@ -18,7 +23,8 @@ QtGuiApplication {
     cpp.defines: {
         var defines = base.concat([
             "TEXT_VERSION=" + project.version,
-            'USER_LANGUAGE_PATH="/language-specs/"'
+            'USER_LANGUAGE_PATH="/language-specs/"',
+            "LANGUAGE_DB_VERSION=1"
         ]);
         if (qbs.targetOS.contains("windows"))
             defines.push('RELATIVE_LANGUAGE_PATH="/language-specs/"');
@@ -29,18 +35,27 @@ QtGuiApplication {
         return defines;
     }
 
+    Qt.core.resourcePrefix: "/"
+    Qt.core.resourceSourceBase: sourceDirectory
+
     files: [
         "*.cpp",
         "*.h",
-        "*.qrc",
         "../data/icons/io.liri.Text.icns",
         "../data/io.liri.Text.rc",
     ]
 
     Group {
-        name: "QML Files"
-        files: ["*.qml"]
-        prefix: "qml/"
+        name: "Resource Data"
+        files: [
+            "qml/Main.qml",
+            "qml/RecentFilesPage.qml",
+            "qml/EditPage.qml",
+            "qml/FileGridView.qml",
+            "qml/SearchOverlay.qml",
+            "resources/icon.png",
+        ]
+        fileTags: ["qt.core.resource_data"]
     }
 
     Group {
@@ -52,7 +67,7 @@ QtGuiApplication {
         qbs.install: true
         qbs.installDir: lirideployment.binDir
         qbs.installSourceBase: destinationDirectory
-        fileTagsFilter: isBundle ? ["bundle.content"] : product.type
+        fileTagsFilter: isBundle ? ["bundle.content"] : ["application"]
     }
 
     Group {
@@ -70,7 +85,7 @@ QtGuiApplication {
     }
 
     Group {
-        condition: qbs.targetOS.contains("linux")
+        condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "Desktop File"
         files: ["../data/*.desktop"]
         qbs.install: true
@@ -78,7 +93,7 @@ QtGuiApplication {
     }
 
     Group {
-        condition: qbs.targetOS.contains("linux")
+        condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "AppStream Metadata"
         files: ["../data/*.appdata.xml"]
         qbs.install: true
@@ -86,82 +101,25 @@ QtGuiApplication {
     }
 
     Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 16x16"
-        files: ["../data/icons/16x16/io.liri.Text.png"]
+        condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
+        name: "Icons"
+        prefix: "../data/icons/hicolor/"
+        files: ["**/*.png", "**/*.svg"]
         qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/16x16/apps"
+        qbs.installSourceBase: prefix
+        qbs.installDir: lirideployment.dataDir + "/icons/hicolor"
     }
 
     Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 22x22"
-        files: ["../data/icons/22x22/io.liri.Text.png"]
+        fileTagsFilter: "qm"
         qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/22x22/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 24x24"
-        files: ["../data/icons/24x24/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/24x24/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 32x32"
-        files: ["../data/icons/32x32/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/32x32/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 48x48"
-        files: ["../data/icons/48x48/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/48x48/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 64x64"
-        files: ["../data/icons/64x64/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/64x64/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 128x128"
-        files: ["../data/icons/128x128/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/128x128/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 192x192"
-        files: ["../data/icons/192x192/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/192x192/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon 256x256"
-        files: ["../data/icons/256x256/io.liri.Text.png"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/256x256/apps"
-    }
-
-    Group {
-        condition: qbs.targetOS.contains("linux")
-        name: "Icon scalable"
-        files: ["../data/icons/io.liri.Text.svg"]
-        qbs.install: true
-        qbs.installDir: lirideployment.dataDir + "/icons/hicolor/scalable/apps"
+        qbs.installDir: {
+            if (qbs.targetOS.contains("windows"))
+                return "translations";
+            else if (qbs.targetOS.contains("macos"))
+                return "Contents/Resources/data/translations";
+            else
+                return dataInstallDir + "/translations";
+        }
     }
 }
