@@ -33,6 +33,11 @@
     <kudo>ModernToolkit</kudo>
   </kudos>
   <releases>
+    <release date="2018-10-18" version="0.4.1">
+      <description>
+        <p>Add missing summary to appdata file.</p>
+      </description>
+    </release>
     <release date="2018-10-18" version="0.4.0">
       <description>
         <p>Notable changes:</p>
