@@ -1,155 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_HK">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
 <context>
     <name>EditPage</name>
     <message>
         <location filename="../qml/EditPage.qml" line="71"/>
         <source>New Document</source>
-        <translation>新的文檔</translation>
+        <translation>Nouveau Document</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="78"/>
         <source>Save</source>
-        <translation>儲存</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="86"/>
         <source>Find</source>
-        <translation>搜索</translation>
+        <translation>Trouver</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="94"/>
         <source>Save As</source>
-        <translation>另存新檔</translation>
+        <translation>Enregistrer Sous</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="102"/>
         <source>Close</source>
-        <translation>關閉</translation>
-    </message>
-    <message>
-        <source>Save changes before closing?</source>
-        <translation type="vanished">關閉前先儲存?</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
-        <translation>您有未儲存的變更, 要在關閉文件之前儲存它們嗎？</translation>
-    </message>
-    <message>
-        <location filename="../qml/EditPage.qml" line="242"/>
-        <source>Choose a location to save</source>
-        <translation>選擇要儲存的位置</translation>
-    </message>
-    <message>
-        <source>Reload file content?</source>
-        <translation type="vanished">重新加載文件內容？</translation>
+        <translation>Vous avez des modifications non-enregistrées. Voulez-vous les sauvegarder avant de fermer le fichier?</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
-        <translation>文件在編輯器外被更改, 您要重新載入內容嗎？</translation>
+        <translation>Le fichier a été édité depuis l&apos;extérieur. Voulez-vous recharger son contenu?</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="278"/>
         <source>Reload</source>
-        <translation>重新載入</translation>
+        <translation>Recharger</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
-        <translation>忽略</translation>
+        <translation>Ignorer</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="336"/>
         <source>Undo</source>
-        <translation>撤消</translation>
+        <translation>Défaire</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="341"/>
         <source>Redo</source>
-        <translation>重做</translation>
+        <translation>Refaire</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="349"/>
         <source>Copy</source>
-        <translation>複製</translation>
+        <translation>Copier</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="354"/>
         <source>Cut</source>
-        <translation>剪下</translation>
+        <translation>Couper</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="359"/>
         <source>Paste</source>
-        <translation>貼上</translation>
+        <translation>Coller</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="364"/>
         <source>Delete</source>
-        <translation>刪除</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="372"/>
         <source>Select All</source>
-        <translation>全選</translation>
+        <translation>Selectionner Tout</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
-        <translation>文件操作錯誤</translation>
+        <translation>Erreur de traitement de fichier</translation>
     </message>
 </context>
 <context>
     <name>RecentFilesPage</name>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="32"/>
+        <location filename="../qml/RecentFilesPage.qml" line="31"/>
         <source>Recent Files</source>
-        <translation>最近的文件</translation>
+        <translation>Fichiers Récents</translation>
     </message>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="37"/>
+        <location filename="../qml/RecentFilesPage.qml" line="36"/>
         <source>Open</source>
-        <translation>打開</translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="49"/>
-        <source>Choose a file to open</source>
-        <translation>選擇要打開的文件</translation>
-    </message>
-    <message>
-        <location filename="../qml/RecentFilesPage.qml" line="62"/>
+        <location filename="../qml/RecentFilesPage.qml" line="60"/>
         <source>You don&apos;t have recently open files</source>
-        <translation>您沒有最近打開過的文件</translation>
+        <translation>Vous n&apos;avez pas de fichier récemment ouverts</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <source>Liri Text</source>
-        <translation type="vanished">Liri文字編輯器</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="62"/>
+        <location filename="../main.cpp" line="78"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation type="unfinished"></translation>
+        <translation>Éditeur de texte avancé réalisé conformément à Material Design.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="64"/>
+        <location filename="../main.cpp" line="80"/>
         <source>Start the editor with a new document.</source>
-        <translation>啟動編輯器並創建一個新文件</translation>
+        <translation>Démarrer l&apos;éditeur avec un nouveau document.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="66"/>
-        <source>Path to a file to open for editing.</source>
-        <translation>要編輯的文件的路徑。</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="66"/>
+        <location filename="../main.cpp" line="82"/>
         <source>[file]</source>
-        <translation type="unfinished"></translation>
+        <translation>[fichier]</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="82"/>
+        <source>Path to a file to open for editing.</source>
+        <translation>Chemin vers un fichier à ouvrir pour edition.</translation>
     </message>
 </context>
 </TS>

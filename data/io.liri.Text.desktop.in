@@ -2,6 +2,7 @@
 Name=Liri Text
 GenericName=Text Editor
 Comment=Edit text files
+#TRANSLATIONS
 Exec=liri-text %f
 Terminal=false
 Type=Application

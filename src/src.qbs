@@ -15,6 +15,7 @@ QtGuiApplication {
     Depends { name: "lirideployment" }
     Depends { name: "Qt"; submodules: ["core", "widgets", "qml", "quick", "quickcontrols2", "sql"] }
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
+    Depends { name: "LiriTranslations" }
 
     bundle.identifierPrefix: "io.liri"
     bundle.identifier: "io.liri.Text"
@@ -87,9 +88,20 @@ QtGuiApplication {
     Group {
         condition: qbs.targetOS.contains("unix") && !qbs.targetOS.contains("darwin") && !qbs.targetOS.contains("android")
         name: "Desktop File"
-        files: ["../data/*.desktop"]
+        files: ["../data/io.liri.Text.desktop.in"]
+        fileTags: ["liri.desktop.template"]
+    }
+
+    Group {
+        name: "Desktop File Translations"
+        files: ["translations/io.liri.Text_*.desktop"]
+        fileTags: ["liri.desktop.translations"]
+    }
+
+    Group {
         qbs.install: true
         qbs.installDir: lirideployment.applicationsDir
+        fileTagsFilter: "liri.desktop.file"
     }
 
     Group {

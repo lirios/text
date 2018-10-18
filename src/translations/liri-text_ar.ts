@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ar">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ar" version="2.1">
 <context>
     <name>EditPage</name>
     <message>
@@ -29,22 +27,9 @@
         <translation>خروج</translation>
     </message>
     <message>
-        <source>Save changes before closing?</source>
-        <translation type="vanished">حفظ التغييرات قبل الخروج؟</translation>
-    </message>
-    <message>
         <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
         <translation>لم تقم بحفظ التغييرات. هل تود أن تحفظها قبل الخروج؟</translation>
-    </message>
-    <message>
-        <location filename="../qml/EditPage.qml" line="242"/>
-        <source>Choose a location to save</source>
-        <translation>أختر مكان الحفظ</translation>
-    </message>
-    <message>
-        <source>Reload file content?</source>
-        <translation type="vanished">تحديث محتويات الملف؟</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="261"/>
@@ -105,22 +90,17 @@
 <context>
     <name>RecentFilesPage</name>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="32"/>
+        <location filename="../qml/RecentFilesPage.qml" line="31"/>
         <source>Recent Files</source>
         <translation>الملفات الأخيرة</translation>
     </message>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="37"/>
+        <location filename="../qml/RecentFilesPage.qml" line="36"/>
         <source>Open</source>
         <translation>فتح</translation>
     </message>
     <message>
-        <location filename="../qml/RecentFilesPage.qml" line="49"/>
-        <source>Choose a file to open</source>
-        <translation>إختر ملف لفتحه</translation>
-    </message>
-    <message>
-        <location filename="../qml/RecentFilesPage.qml" line="62"/>
+        <location filename="../qml/RecentFilesPage.qml" line="60"/>
         <source>You don&apos;t have recently open files</source>
         <translation>لا توجد ملفات مفتوحة مؤخرًا</translation>
     </message>
@@ -128,28 +108,24 @@
 <context>
     <name>main</name>
     <message>
-        <source>Liri Text</source>
-        <translation type="vanished">محرر النصوص Liri</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="62"/>
+        <location filename="../main.cpp" line="78"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../main.cpp" line="64"/>
+        <location filename="../main.cpp" line="80"/>
         <source>Start the editor with a new document.</source>
         <translation>فتح ملف جديد في المحرر.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="66"/>
-        <source>Path to a file to open for editing.</source>
-        <translation>مسار الملف المراد فتحه.</translation>
+        <location filename="../main.cpp" line="82"/>
+        <source>[file]</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../main.cpp" line="66"/>
-        <source>[file]</source>
-        <translation type="unfinished"></translation>
+        <location filename="../main.cpp" line="82"/>
+        <source>Path to a file to open for editing.</source>
+        <translation>مسار الملف المراد فتحه.</translation>
     </message>
 </context>
 </TS>
