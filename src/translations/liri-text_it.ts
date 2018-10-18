@@ -19,7 +19,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="94"/>
         <source>Save As</source>
-        <translation>Sala come</translation>
+        <translation>Salva come...</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="102"/>
@@ -34,7 +34,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
-        <translation>Il file e&apos; stato cambiato dall&apos;esterno. Vuoi ricaricare il suo contenuto?</translation>
+        <translation>Il file è stato cambiato dall&apos;esterno. Vuoi ricaricare il suo contenuto?</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="278"/>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="364"/>
         <source>Delete</source>
-        <translation>Rimuovi</translation>
+        <translation>Cancella</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="372"/>
@@ -92,7 +92,7 @@
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="31"/>
         <source>Recent Files</source>
-        <translation>Files recenti</translation>
+        <translation>File recenti</translation>
     </message>
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="36"/>
@@ -102,7 +102,7 @@
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="60"/>
         <source>You don&apos;t have recently open files</source>
-        <translation>Non hai file recenti aperto</translation>
+        <translation>Non hai file recenti aperti</translation>
     </message>
 </context>
 <context>
@@ -110,22 +110,22 @@
     <message>
         <location filename="../main.cpp" line="78"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation>Editor di testo avanzato realizzato seguendo le linee guida Material Design</translation>
+        <translation>Editor di testo avanzato realizzato seguendo le linee guida Material Design.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
         <source>Start the editor with a new document.</source>
-        <translation>Apri l&apos;editor con un nuovo documento</translation>
+        <translation>Apri l&apos;editor con un nuovo documento.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="82"/>
         <source>[file]</source>
-        <translation type="unfinished"/>
+        <translation>[file]</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="82"/>
         <source>Path to a file to open for editing.</source>
-        <translation>Percorso per aprire un file</translation>
+        <translation>Percorso per aprire un file in modifica.</translation>
     </message>
 </context>
 </TS>
