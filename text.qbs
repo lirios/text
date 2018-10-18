@@ -3,7 +3,7 @@ import qbs 1.0
 Project {
     name: "Text"
 
-    readonly property string version: "0.4.0"
+    readonly property string version: "0.4.1"
 
     property bool useStaticAnalyzer: false
 
