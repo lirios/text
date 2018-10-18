@@ -33,6 +33,7 @@ public:
     static LanguageManager *getInstance();
     QString pathForId(const QString &id);
     QString pathForMimeType(const QMimeType &mimeType, const QString &filename);
+
 private:
     explicit LanguageManager(QObject *parent = 0);
     ~LanguageManager();

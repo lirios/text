@@ -58,7 +58,8 @@ signals:
     void countChanged();
 
 public slots:
-    void touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition, float scrollPosition, const QString &preview);
+    void touchFile(const QString &name, const QUrl &fileUrl, int cursorPosition,
+                   float scrollPosition, const QString &preview);
 
 protected:
     QHash<int, QByteArray> roleNames() const;

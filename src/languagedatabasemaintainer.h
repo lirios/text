@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #ifndef QT_NO_FILESYSTEMWATCHER
-#  include <QFileSystemWatcher>
+#include <QFileSystemWatcher>
 #endif
 
 class LanguageDatabaseMaintainer : public QObject
@@ -35,11 +35,13 @@ public:
 
 signals:
     void dbUpdated();
+
 protected:
     void initDB(const QString &path);
 public slots:
     void init();
     void updateDB();
+
 private:
     QStringList specsDirs;
 #ifndef QT_NO_FILESYSTEMWATCHER

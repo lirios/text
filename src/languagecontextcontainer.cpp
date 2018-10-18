@@ -22,39 +22,44 @@
 
 #include <QXmlStreamAttributes>
 
-LanguageContextContainer::LanguageContextContainer() :
-    includes({}) { }
-
-LanguageContextContainer::LanguageContextContainer(const QXmlStreamAttributes &attributes) {
-    if(attributes.hasAttribute(QStringLiteral("style-inside")))
-        styleInside   = attributes.value(QStringLiteral("style-inside"))    == "true";
-
-    if(attributes.hasAttribute(QStringLiteral("extend-parent")))
-        extendParent  = attributes.value(QStringLiteral("extend-parent"))   == "true";
-
-    if(attributes.hasAttribute(QStringLiteral("end-at-line-end")))
-        endAtLineEnd  = attributes.value(QStringLiteral("end-at-line-end")) == "true";
-
-    if(attributes.hasAttribute(QStringLiteral("end-parent")))
-        endParent     = attributes.value(QStringLiteral("end-parent"))      == "true";
-
-    if(attributes.hasAttribute(QStringLiteral("first-line-only")))
-        firstLineOnly = attributes.value(QStringLiteral("first-line-only")) == "true";
-
-    if(attributes.hasAttribute(QStringLiteral("once-only")))
-        onceOnly      = attributes.value(QStringLiteral("once-only"))       == "true";
+LanguageContextContainer::LanguageContextContainer()
+    : includes({})
+{
 }
 
-void LanguageContextContainer::markAsInUse() {
-    if(m_inUse)
+LanguageContextContainer::LanguageContextContainer(const QXmlStreamAttributes &attributes)
+{
+    if (attributes.hasAttribute(QStringLiteral("style-inside")))
+        styleInside = attributes.value(QStringLiteral("style-inside")) == "true";
+
+    if (attributes.hasAttribute(QStringLiteral("extend-parent")))
+        extendParent = attributes.value(QStringLiteral("extend-parent")) == "true";
+
+    if (attributes.hasAttribute(QStringLiteral("end-at-line-end")))
+        endAtLineEnd = attributes.value(QStringLiteral("end-at-line-end")) == "true";
+
+    if (attributes.hasAttribute(QStringLiteral("end-parent")))
+        endParent = attributes.value(QStringLiteral("end-parent")) == "true";
+
+    if (attributes.hasAttribute(QStringLiteral("first-line-only")))
+        firstLineOnly = attributes.value(QStringLiteral("first-line-only")) == "true";
+
+    if (attributes.hasAttribute(QStringLiteral("once-only")))
+        onceOnly = attributes.value(QStringLiteral("once-only")) == "true";
+}
+
+void LanguageContextContainer::markAsInUse()
+{
+    if (m_inUse)
         return;
     LanguageContextBase::markAsInUse();
     for (const auto &inc : qAsConst(includes))
         inc->base->markAsInUse();
 }
 
-void LanguageContextContainer::prepareForRemoval(bool ignoreUsage) {
-    if(!ignoreUsage && inUse())
+void LanguageContextContainer::prepareForRemoval(bool ignoreUsage)
+{
+    if (!ignoreUsage && inUse())
         return;
 
     while (!includes.isEmpty()) {

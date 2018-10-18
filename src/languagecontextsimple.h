@@ -35,12 +35,12 @@ public:
     LanguageContextSimple(const QXmlStreamAttributes &attributes);
 
     QRegularExpression match;
-    QList<QSharedPointer<LanguageContext> > includes;
+    QList<QSharedPointer<LanguageContext>> includes;
 
-    bool extendParent  = true;
-    bool endParent     = false;
+    bool extendParent = true;
+    bool endParent = false;
     bool firstLineOnly = false;
-    bool onceOnly      = false;
+    bool onceOnly = false;
 };
 
 #endif // LANGUAGECONTEXTSIMPLE_H

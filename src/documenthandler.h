@@ -25,7 +25,7 @@
 #include <QTextCodec>
 #include <QFile>
 #ifndef QT_NO_FILESYSTEMWATCHER
-#  include <QFileSystemWatcher>
+#include <QFileSystemWatcher>
 #endif
 
 #include "lirisyntaxhighlighter.h"
@@ -36,7 +36,8 @@ class DocumentHandler : public QObject
     Q_PROPERTY(QQuickItem *target READ target WRITE setTarget NOTIFY targetChanged)
     Q_PROPERTY(QUrl fileUrl READ fileUrl WRITE setFileUrl NOTIFY fileUrlChanged)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
-    Q_PROPERTY(QString documentTitle READ documentTitle WRITE setDocumentTitle NOTIFY documentTitleChanged)
+    Q_PROPERTY(
+        QString documentTitle READ documentTitle WRITE setDocumentTitle NOTIFY documentTitleChanged)
     Q_PROPERTY(bool modified READ modified NOTIFY modifiedChanged)
 
 public:

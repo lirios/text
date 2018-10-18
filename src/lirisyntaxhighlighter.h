@@ -39,20 +39,23 @@ public:
     QString highlightedFragment(int position, int blockCount, const QFont &font);
 
 protected:
-    struct Match {
+    struct Match
+    {
         QRegularExpressionMatch match;
         QSharedPointer<LanguageContext> context;
 
-        inline bool operator <(const Match &other);
+        inline bool operator<(const Match &other);
     };
 
     void highlightBlock(const QString &text);
 
-    void endNthContainer(QList<HighlightData::ContainerInfo> &containers,
-                         int n, int offset, int length, const QRegularExpressionMatch &endMatch = QRegularExpressionMatch());
+    void endNthContainer(QList<HighlightData::ContainerInfo> &containers, int n, int offset,
+                         int length,
+                         const QRegularExpressionMatch &endMatch = QRegularExpressionMatch());
 
-    void startContainer(QList<HighlightData::ContainerInfo> &containers, QSharedPointer<LanguageContext> container,
-                        int offset, int length, const QRegularExpressionMatch &startMatch = QRegularExpressionMatch());
+    void startContainer(QList<HighlightData::ContainerInfo> &containers,
+                        QSharedPointer<LanguageContext> container, int offset, int length,
+                        const QRegularExpressionMatch &startMatch = QRegularExpressionMatch());
 
     Match findMatch(const QString &text, int offset, int potentialEnd,
                     QSharedPointer<LanguageContext> context,

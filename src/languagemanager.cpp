@@ -26,12 +26,13 @@
 #include <QDir>
 #include <QStandardPaths>
 
-LanguageManager::LanguageManager(QObject *parent) :
-    QObject(parent),
-    m_connId(QStringLiteral("languages")) {
+LanguageManager::LanguageManager(QObject *parent)
+    : QObject(parent)
+    , m_connId(QStringLiteral("languages"))
+{
 
     QDir dataDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    if(!dataDir.exists())
+    if (!dataDir.exists())
         dataDir.mkpath(QStringLiteral("."));
     QString dbPath = dataDir.filePath(QStringLiteral("languages.db"));
 
@@ -47,29 +48,34 @@ LanguageManager::LanguageManager(QObject *parent) :
     db.open();
 }
 
-LanguageManager *LanguageManager::getInstance() {
-    if(!m_instance)
+LanguageManager *LanguageManager::getInstance()
+{
+    if (!m_instance)
         m_instance = new LanguageManager;
     return m_instance;
 }
 
-QString LanguageManager::pathForId(const QString &id) {
+QString LanguageManager::pathForId(const QString &id)
+{
     QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
-                                   "WHERE id = '%1' GROUP BY id").arg(id),
+                                   "WHERE id = '%1' GROUP BY id")
+                        .arg(id),
                     QSqlDatabase::database(m_connId));
-    if(query.next())
+    if (query.next())
         return query.value(0).toString();
     else
         return QString();
 }
 
-QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QString &filename) {
+QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QString &filename)
+{
     // Original name first
     {
         QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
-                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id").arg(mimeType.name()),
+                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id")
+                            .arg(mimeType.name()),
                         QSqlDatabase::database(m_connId));
-        if(query.next())
+        if (query.next())
             return query.value(0).toString();
     }
 
@@ -78,17 +84,19 @@ QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QStrin
     const QStringList &alternatives = mimeType.aliases() + mimeType.allAncestors();
     for (const QString &aType : alternatives) {
         QSqlQuery query(QStringLiteral("SELECT spec_path, MAX(priority) FROM languages "
-                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id").arg(aType),
+                                       "WHERE instr(mime_types, '%1') > 0 GROUP BY id")
+                            .arg(aType),
                         QSqlDatabase::database(m_connId));
-        if(query.next())
+        if (query.next())
             return query.value(0).toString();
     }
 
     // MIME type lookup failed
     // Search for glob fitting the filename
     {
-        QSqlQuery query(QStringLiteral("SELECT globs, spec_path, MAX(priority) FROM languages GROUP BY id"),
-                        QSqlDatabase::database(m_connId));
+        QSqlQuery query(
+            QStringLiteral("SELECT globs, spec_path, MAX(priority) FROM languages GROUP BY id"),
+            QSqlDatabase::database(m_connId));
         while (query.next()) {
             const QStringList &globs = query.value(0).toString().split(';');
             for (QString glob : globs) {
@@ -97,14 +105,14 @@ QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QStrin
                 glob.replace('.', QLatin1String("\\."));
                 glob.replace('?', QLatin1String("."));
                 // In glob starting with *. * shouldn't match empty string
-                if(glob.startsWith(QLatin1String("*\\.")))
+                if (glob.startsWith(QLatin1String("*\\.")))
                     glob.replace(0, 1, QStringLiteral(".+"));
                 // Elsewhere it can
                 glob.replace('*', QLatin1String(".*"));
 
                 QRegularExpression regexp("^" + glob + "$");
 
-                if(regexp.match(filename, 0).hasMatch())
+                if (regexp.match(filename, 0).hasMatch())
                     return query.value(1).toString();
             }
         }
@@ -113,7 +121,8 @@ QString LanguageManager::pathForMimeType(const QMimeType &mimeType, const QStrin
     return QString();
 }
 
-LanguageManager::~LanguageManager() {
+LanguageManager::~LanguageManager()
+{
     m_thread->quit();
     m_thread->wait();
     delete m_thread;
