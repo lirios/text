@@ -23,8 +23,7 @@ script:
 
 after_success:
   - ls -lh travis-out/*
-  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash upload.sh travis-out/*
+  - for filename in travis-out/*; do curl --upload-file $filename https://transfer.sh/$(basename $filename); done
 
 notifications:
   email: false
