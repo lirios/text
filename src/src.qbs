@@ -17,9 +17,12 @@ QtGuiApplication {
     Depends { name: "ib"; condition: qbs.targetOS.contains("macos") }
     Depends { name: "LiriTranslations" }
 
-    bundle.identifierPrefix: "io.liri"
-    bundle.identifier: "io.liri.Text"
-    bundle.infoPlist: ({"CFBundleIconFile": "io.liri.Text"})
+    Properties {
+        condition: qbs.targetOS.contains("darwin")
+        bundle.identifierPrefix: "io.liri"
+        bundle.identifier: "io.liri.Text"
+        bundle.infoPlist: ({"CFBundleIconFile": "io.liri.Text"})
+    }
 
     cpp.defines: {
         var defines = base.concat([
