@@ -35,7 +35,7 @@
   <releases>
     <release date="2018-10-18" version="0.4.1">
       <description>
-        <p>Add missing summary to appdata file.</p>
+        <p>Add missing summary to appdata file in order to fix validation.</p>
       </description>
     </release>
     <release date="2018-10-18" version="0.4.0">
@@ -94,4 +94,5 @@
   <url type="homepage">https://liri.io</url>
   <url type="bugtracker">https://github.com/lirios/text/issues/new</url>
   <update_contact>info_at_liri.io</update_contact>
+  <translation type="qt">liri-text</translation>
 </component>
