@@ -33,7 +33,7 @@ else()
     set(LiriText_OUTPUT_NAME "liri-text")
 endif()
 
-liri_translate_desktop(_desktop_file SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/data/io.liri.Text.desktop.in")
+liri_translate_desktop(_desktop_file SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../data/io.liri.Text.desktop.in")
 
 liri_add_executable(LiriText
     OUTPUT_NAME
