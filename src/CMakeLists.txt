@@ -33,6 +33,8 @@ else()
     set(LiriText_OUTPUT_NAME "liri-text")
 endif()
 
+liri_translate_desktop(_desktop_file SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/data/io.liri.Text.desktop.in")
+
 liri_add_executable(LiriText
     OUTPUT_NAME
         "${LiriText_OUTPUT_NAME}"
@@ -83,6 +85,8 @@ liri_add_executable(LiriText
         ${LiriText_DEFINES}
     APPDATA
         "${CMAKE_CURRENT_SOURCE_DIR}/../data/io.liri.Text.appdata.xml"
+    DESKTOP
+        "${_desktop_file}"
     LIBRARIES
         Qt5::Core
         Qt5::Gui
