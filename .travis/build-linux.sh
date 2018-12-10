@@ -6,6 +6,14 @@ curl "https://raw.githubusercontent.com/lirios/infra-travis/master/installer" | 
 
 source /usr/local/share/liri-travis/functions
 
+# Install packages
+travis_start "install_packages"
+msg "Install packages..."
+dnf install -y \
+    desktop-file-utils \
+    libappstream-glib
+travis_end "install_packages"
+
 # Install artifacts
 travis_start "artifacts"
 msg "Install artifacts..."
