@@ -24,8 +24,7 @@ branches:
 
 script:
   - wget -c https://raw.githubusercontent.com/lirios/infra-travis/master/run
-  - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then bash run ./.travis/build-osx.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then bash run ./.travis/build-linux.sh; fi
+  - bash run ./.travis/build-${TRAVIS_OS_NAME}.sh
 
 #after_success:
 #  - ls -lh travis-out/*
