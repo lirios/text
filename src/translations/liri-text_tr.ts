@@ -44,7 +44,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
-        <translation>Gözardı Et</translation>
+        <translation>Göz Ardı Et</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="336"/>

@@ -14,7 +14,7 @@ Icon=io.liri.Text
 
 
 # Translations
-Icon[it]=io.liri.Text
-Name[it]=Liri Text
-Comment[it]=Modifica file di testo
-GenericName[it]=Editor di testo
+Icon[lt]=io.liri.Text
+Name[lt]=Liri tekstas
+Comment[lt]=Redaguoti tekstinius failus
+GenericName[lt]=Tekstų redaktorius
