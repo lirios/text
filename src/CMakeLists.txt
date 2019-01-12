@@ -24,7 +24,7 @@ if(WIN32)
 elseif(APPLE)
     set(LiriText_DEFINES -DRELATIVE_LANGUAGE_PATH="../Resources/data/language-specs/")
 else()
-    set(LiriText_DEFINES -DABSOLUTE_LANGUAGE_PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_DATADIR}/language-specs/")
+    set(LiriText_DEFINES -DABSOLUTE_LANGUAGE_PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_DATADIR}/liri-text/language-specs/")
 endif()
 
 if(APPLE OR WIN32)
