@@ -5,7 +5,7 @@
   <summary>Edit text files</summary>
   <developer_name>Liri</developer_name>
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-3.0+</project_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <description>
     <p>
       Liri Text is a cross-platform text editor made in accordance with Material Design,
@@ -93,6 +93,8 @@
   </releases>
   <url type="homepage">https://liri.io</url>
   <url type="bugtracker">https://github.com/lirios/text/issues/new</url>
+  <url type="donation">https://liri.io/get-involved/</url>
+  <url type="translate">https://www.transifex.com/lirios/liri-text/</url>
   <update_contact>info_at_liri.io</update_contact>
   <translation type="qt">liri-text</translation>
 </component>
