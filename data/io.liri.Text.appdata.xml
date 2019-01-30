@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>io.liri.Text.desktop</id>
+  <id>io.liri.Text</id>
   <name>Liri Text</name>
   <summary>Edit text files</summary>
   <developer_name>Liri</developer_name>
@@ -32,7 +32,15 @@
     <kudo>HiDpiIcon</kudo>
     <kudo>ModernToolkit</kudo>
   </kudos>
+  <content_rating type="oars-1.0" />
   <releases>
+    <release type="development" date="2019-01-01" version="0.4.2">
+      <description>
+        <p>Migrate build system from the now deprecated Qbs to CMake.</p>
+        <p>Add missing OARS information to appdata and remove deprecated .desktop suffix from component ID.</p>
+        <p>Fix the translation loading by using the correct file name.</p>
+      </description>
+    </release>
     <release date="2018-10-18" version="0.4.1">
       <description>
         <p>Add missing summary to appdata file in order to fix validation.</p>
