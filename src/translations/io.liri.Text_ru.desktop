@@ -15,6 +15,6 @@ Icon=io.liri.Text
 
 # Translations
 Icon[ru]=io.liri.Text
-Name[ru]=Текст liri
-Comment[ru]=Редактировать текстовые файлы
+Name[ru]=Liri Текст
+Comment[ru]=Редактируйте текстовые файлы
 GenericName[ru]=Текстовый редактор

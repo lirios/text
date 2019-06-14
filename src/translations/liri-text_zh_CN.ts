@@ -108,22 +108,22 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="78"/>
+        <location filename="../main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
         <translation>使用材料设计语言的先进文本编辑器</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="80"/>
+        <location filename="../main.cpp" line="83"/>
         <source>Start the editor with a new document.</source>
         <translation>启动编辑器时打开一个新文件</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="85"/>
         <source>[file]</source>
         <translation>[文件]</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
         <translation>需编辑的文件的路径</translation>
     </message>

@@ -14,7 +14,7 @@ Icon=io.liri.Text
 
 
 # Translations
-Icon[fr]=io.liri.Text
-Name[fr]=Liri Texte
-Comment[fr]=Editer des fichiers texte
-GenericName[fr]=Éditeur de texte
+Icon[pt_BR]=io.liri.Text
+Name[pt_BR]=Liri Text
+Comment[pt_BR]=Edite arquivos de texto
+GenericName[pt_BR]=Editor de texto
