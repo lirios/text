@@ -34,11 +34,14 @@
     <kudo>ModernToolkit</kudo>
   </kudos>
   <releases>
-    <release type="development" date="2019-01-01" version="0.4.2">
+    <release date="2019-08-16" version="0.5.0">
       <description>
-        <p>Migrate build system from the now deprecated Qbs to CMake.</p>
-        <p>Add missing OARS information to appdata and remove deprecated .desktop suffix from component ID.</p>
-        <p>Fix the translation loading by using the correct file name.</p>
+        <p>Notable changes:</p>
+        <ul>
+          <li>Migrate build system from the now deprecated Qbs to CMake</li>
+          <li>Add missing OARS information to appdata and remove deprecated .desktop suffix from component ID</li>
+          <li>Fix the translation loading by using the correct file name</li>
+        </ul>
       </description>
     </release>
     <release date="2018-10-18" version="0.4.1">
