@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 #else
 #error "Platform not supported"
 #endif
-    if (translator.load(translationsPath + QLocale::system().name()))
+    if (translator.load(translationsPath + QLatin1String("liri-text_") + QLocale::system().name()))
         app.installTranslator(&translator);
 
     // Parse command line options

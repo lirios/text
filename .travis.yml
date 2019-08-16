@@ -13,18 +13,22 @@ matrix:
         - docker
     - os: osx
 
+env:
+  global:
+    # DEPLOY_HOST
+    - secure: "B1Gru9LAFcDrZBFhA3uZJqH7wdpYHpSW6UH+SBkA1S50naob/XP6HsMmpXuJQu0S8BCO1YA0fcTs0BuuKgPrwAjLBnR/Wt2xuZe6WRPlAD1WqKu9xd9U4AmeMi8y/mYFtxIcnVRC34k21Jpu6keC+SVQrypYxuulARvWwaB6l9KVAa34+HCkJjENkF9TbLyGBW3BRGmPiexRTkP/+Ez7PPv8orY9o3fxi3yDQFQYn1/mgwDDjJZPYyM/rWptHbm1uEZ87fxLtYdrYqHsRJ0iJ5+ZWLTLC2bqdgBmgKLcqfHpFnIm65qNgbLDotYHEEn/FOZB8TOmAoL/oC++EN1Vmb4bBTqga16w85wmT1VfyA3UkBcuFb9/sXrrBWkVTcfdYIU/QdPcCa5r63UzV7KUuNGrxMEV+zc7wIS1Ly2oeuuVM0kyFiBU8OU2Rrt6mShXsnWACvUIzQlEAShD2Hf3CMdjcTIv32+5AV2mxnATUIRBi92rh7XMfCB0/cn/opbeHWdc1qHskKRo1LuvRlzB4lIQAI0vLEMtb/BMl7WZQRpSjKf3EQ5iWvxq8fRst0Ey5rMdQ3N/eqWpwlQBI1LZK0ZlbIR2IsNLQ9Eqq9dn7oEO0KTqPCOB2zQdKt8pqPEX6yu6F35S56dr3N4C8gMLj/sI3l1hdNXOUK6ZXcKcwIc="
+
 branches:
   except:
     - /^(?i:continuous)$/
 
 script:
-  - curl "https://raw.githubusercontent.com/lirios/infra-travis/master/installer" | bash
-  - ./.travis/build.sh
+  - wget -c https://raw.githubusercontent.com/lirios/infra-travis/master/run
+  - bash run ./.travis/build-${TRAVIS_OS_NAME}.sh
 
-after_success:
-  - ls -lh travis-out/*
-  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash upload.sh travis-out/*
+#after_success:
+#  - ls -lh travis-out/*
+#  - for filename in travis-out/*; do curl --upload-file $filename https://transfer.sh/$(basename $filename); done
 
 notifications:
   email: false

@@ -4,7 +4,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="71"/>
         <source>New Document</source>
-        <translation>Nouveau Document</translation>
+        <translation>Nouveau document</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="78"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="94"/>
         <source>Save As</source>
-        <translation>Enregistrer Sous</translation>
+        <translation>Enregistrer sous</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="102"/>
@@ -29,12 +29,12 @@
     <message>
         <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
-        <translation>Vous avez des modifications non-enregistrées. Voulez-vous les sauvegarder avant de fermer le fichier?</translation>
+        <translation>Vous avez des modifications non-enregistrées. Voulez-vous les sauvegarder avant de fermer le fichier ?</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
-        <translation>Le fichier a été édité depuis l&apos;extérieur. Voulez-vous recharger son contenu?</translation>
+        <translation>Le fichier a été édité depuis l&apos;extérieur. Voulez-vous recharger son contenu ?</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="278"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="372"/>
         <source>Select All</source>
-        <translation>Selectionner Tout</translation>
+        <translation>Tout sélectionner</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="396"/>
@@ -92,7 +92,7 @@
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="31"/>
         <source>Recent Files</source>
-        <translation>Fichiers Récents</translation>
+        <translation>Fichiers récents</translation>
     </message>
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="36"/>
@@ -102,28 +102,28 @@
     <message>
         <location filename="../qml/RecentFilesPage.qml" line="60"/>
         <source>You don&apos;t have recently open files</source>
-        <translation>Vous n&apos;avez pas de fichier récemment ouverts</translation>
+        <translation>Vous n&apos;avez pas de fichier récemment ouvert</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="78"/>
+        <location filename="../main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
         <translation>Éditeur de texte avancé réalisé conformément à Material Design.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="80"/>
+        <location filename="../main.cpp" line="83"/>
         <source>Start the editor with a new document.</source>
         <translation>Démarrer l&apos;éditeur avec un nouveau document.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="85"/>
         <source>[file]</source>
         <translation>[fichier]</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
         <translation>Chemin vers un fichier à ouvrir pour edition.</translation>
     </message>

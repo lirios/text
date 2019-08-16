@@ -14,7 +14,7 @@ Icon=io.liri.Text
 
 
 # Translations
-Icon[it]=io.liri.Text
-Name[it]=Liri Text
-Comment[it]=Modifica file di testo
-GenericName[it]=Editor di testo
+Icon[tr]=io.liri.Text
+Name[tr]=Liri Metin
+Comment[tr]=Metin dosyalarını düzenle
+GenericName[tr]=Metin Düzenleyici

@@ -44,7 +44,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
-        <translation>Gözardı Et</translation>
+        <translation>Göz Ardı Et</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="336"/>
@@ -108,22 +108,22 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="78"/>
+        <location filename="../main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
         <translation>Malzeme Tasarımı ile uygun biçimde yapılmış gelişmiş metin düzenleyici.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="80"/>
+        <location filename="../main.cpp" line="83"/>
         <source>Start the editor with a new document.</source>
         <translation>Düzenleyiciyi yeni bir belge ile başlat.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="85"/>
         <source>[file]</source>
         <translation>[dosya]</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="82"/>
+        <location filename="../main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
         <translation>Düzenleme için açılacak dosyanın yolu.</translation>
     </message>

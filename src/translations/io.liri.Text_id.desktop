@@ -14,7 +14,7 @@ Icon=io.liri.Text
 
 
 # Translations
-Icon[it]=io.liri.Text
-Name[it]=Liri Text
-Comment[it]=Modifica file di testo
-GenericName[it]=Editor di testo
+Icon[id]=io.liri.Text
+Name[id]=Liri Text
+Comment[id]=Sunting berkas teks
+GenericName[id]=Penyunting teks
