@@ -4,7 +4,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="71"/>
         <source>New Document</source>
-        <translation>新文件</translation>
+        <translation>新文档</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="78"/>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../qml/EditPage.qml" line="86"/>
         <source>Find</source>
-        <translation>寻找</translation>
+        <translation>查找</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="94"/>
@@ -29,12 +29,12 @@
     <message>
         <location filename="../qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
-        <translation>你没有保存修改。是否在关闭前保存对他们的修改？</translation>
+        <translation>你没有保存修改，是否在关闭前保存对他们的修改？</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
-        <translation>文件已被外部改变。是否重新载入？</translation>
+        <translation>文件已被外部改变，是否重新载入？</translation>
     </message>
     <message>
         <location filename="../qml/EditPage.qml" line="278"/>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation>使用材料设计语言的先进文本编辑器</translation>
+        <translation>依据Material Design设计语言制作的高级文本编辑器。</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="83"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
-        <translation>需编辑的文件的路径</translation>
+        <translation>通过路径打开一个文件进行编辑。</translation>
     </message>
 </context>
 </TS>
