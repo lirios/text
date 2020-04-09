@@ -5,12 +5,12 @@ host = https://www.transifex.com
 type = QT
 source_lang = en
 liri_source_directory = src
-source_file = src/translations/liri-text.ts
-file_filter = src/translations/liri-text_<lang>.ts
+source_file = translations/app/liri-text.ts
+file_filter = translations/app/liri-text_<lang>.ts
 
 [liri-text.desktop-file]
 type = DESKTOP
 source_lang = en
 source_file = data/io.liri.Text.desktop.in
 liri_dest_file = data/io.liri.Text.desktop
-file_filter = src/translations/io.liri.Text_<lang>.desktop
+file_filter = translations/data/io.liri.Text_<lang>.desktop
