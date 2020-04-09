@@ -1,0 +1,27 @@
+name: Translations Sync
+
+on:
+  schedule:
+    - cron: '0 15 * * 0'
+
+jobs:
+  update-translations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout
+      - name: Pull translations
+        with:
+            tx_token: ${{ secrets.TX_TOKEN }}
+            git_flow: true
+            master_branch: develop
+            translations_folder: translations
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            committer_name: Liri CI
+            committer_email: ci@liri.io
+            push_sources: false
+            push_translations: false
+            pull_sources: false
+            pull_translations: true
+            minimum_perc: 5
+        uses: docker://sergioisidoro/github-transifex-action:latest
