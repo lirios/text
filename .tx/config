@@ -4,7 +4,6 @@ host = https://www.transifex.com
 [liri-text.app]
 type = QT
 source_lang = en
-liri_source_directory = src
 source_file = translations/app/liri-text.ts
 file_filter = translations/app/liri-text_<lang>.ts
 

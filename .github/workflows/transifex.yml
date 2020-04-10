@@ -2,26 +2,26 @@ name: Translations Sync
 
 on:
   schedule:
-    - cron: '0 15 * * 0'
+    - cron: '0 21 * * *'
 
 jobs:
   update-translations:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout
-      - name: Pull translations
+        uses: actions/checkout@v2
         with:
+          ssh-key: ${{ secrets.CI_SSH_KEY }}
+          ssh-strict: false
+          persist-credentials: true
+      - name: Run lupdate
+        uses: liri-infra/lupdate-action@master
+      - name: Push sources and pull translations
+        uses: liri-infra/transifex-action@master
             tx_token: ${{ secrets.TX_TOKEN }}
-            git_flow: true
-            master_branch: develop
-            translations_folder: translations
-            github_token: ${{ secrets.GITHUB_TOKEN }}
             committer_name: Liri CI
             committer_email: ci@liri.io
-            push_sources: false
-            push_translations: false
-            pull_sources: false
+            master_branch: develop
+            translations_folder: translations
             pull_translations: true
-            minimum_perc: 5
-        uses: docker://sergioisidoro/github-transifex-action:latest
+            push_sources: true
