@@ -1,0 +1,225 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  linux:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      matrix:
+        compiler:
+          - gcc
+          - clang
+        qt:
+          - 5.12.7
+          - 5.14.1
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            echo "##[set-output name=branch;]${{ github.base_ref }}"
+          else
+            github_ref=${{ github.ref }}
+            echo "##[set-output name=branch;]${github_ref##*/}"
+          fi
+      - name: Qt version identifier
+        id: qt_version
+        shell: bash
+        run: |
+          qtverid=`echo "${{ matrix.qt }}" | awk -F. '{ print $1$2 }'`
+          echo "##[set-output name=id;]${qtverid}"
+      - name: Install dependencies
+        run: |
+          QTPFX=qt${{ steps.qt_version.outputs.id }}
+          set -x
+          wget -qO - 'http://archive.neon.kde.org/public.key' | sudo apt-key add -
+          sudo apt-add-repository http://archive.neon.kde.org/user
+          sudo add-apt-repository ppa:beineri/opt-qt-${{ matrix.qt }}-bionic
+          sudo apt-get update
+          sudo apt-get install -y \
+            extra-cmake-modules \
+            libsqlite3-dev \
+            dbus-x11 \
+            xvfb \
+            ${QTPFX}base \
+            ${QTPFX}declarative \
+            ${QTPFX}quickcontrols2 \
+            ${QTPFX}graphicaleffects \
+            ${QTPFX}svg \
+            ${QTPFX}tools
+          if [ "${{ matrix.compiler }}" == "clang" ]; then
+            sudo apt-get install -y clang
+          fi
+      - name: Fetch cmake-shared artifact
+        uses: liri-infra/fetch-artifact@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lirios/cmake-shared
+          workflow_path: .github/workflows/build.yml
+          artifact_name: artifacts-${{ steps.extract_branch.outputs.branch }}
+          save_as: cmake-shared.zip
+      - name: Fetch fluid artifact
+        uses: liri-infra/fetch-artifact@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lirios/fluid
+          workflow_path: .github/workflows/build.yml
+          artifact_name: artifacts-${{ matrix.compiler }}-${{ steps.qt_version.outputs.id }}-${{ steps.extract_branch.outputs.branch }}
+          save_as: fluid.zip
+      - name: Uncompress artifacts
+        run: |
+          set -x
+          for what in cmake-shared fluid; do
+              sudo tar xf ${what}.tar.gz -C /
+              rm -f ${what}.zip ${what}.tar.gz
+          done
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          QTPFX=qt${{ steps.qt_version.outputs.id }}
+          set -x
+          export QT_PATH=/opt/${QTPFX}
+          export PATH=$QT_PATH/bin:$PATH
+          export LD_LIBRARY_PATH=$QT_PATH/lib/x86_64-linux-gnu:$QT_PATH/lib:$LD_LIBRARY_PATH
+          export PKG_CONFIG_PATH=$QT_PATH/lib/pkgconfig:$PKG_CONFIG_PATH
+          if [ "${{ matrix.compiler }}" == "clang" ]; then
+            export CC=clang
+            export CXX=clang++
+          fi
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+          make -j $(getconf _NPROCESSORS_ONLN)
+          sudo make install
+
+  windows:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      matrix:
+        compiler:
+          - win32_msvc2017
+        qt:
+          - 5.12.8
+    runs-on: windows-2016
+    steps:
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache-${{ matrix.qt }}
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt }}
+          arch: ${{ matrix.compiler }}
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          # Fluid
+          git clone -b develop git://github.com/lirios/fluid.git
+          cd fluid
+          git submodule update --init --recursive
+          cd ..
+          # Text
+          mkdir build
+          cd build
+          cmake .. -DLIRI_LOCAL_ECM:BOOL=ON
+          cmake --build .
+
+  osx:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    runs-on: macos-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install qt5
+          brew link qt5 --force
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          set -x
+          export PATH="/usr/local/opt/qt/bin:$PATH"
+          export LDFLAGS="-L/usr/local/opt/qt/lib"
+          export CPPFLAGS="-I/usr/local/opt/qt/include"
+          export PKG_CONFIG_PATH="/usr/local/opt/qt/lib/pkgconfig"
+          # Fluid
+          git clone -b develop git://github.com/lirios/fluid.git
+          cd fluid
+          git submodule update --init --recursive
+          mkdir build
+          cd build
+          cmake .. \
+              -DFLUID_WITH_DOCUMENTATION:BOOL=OFF \
+              -DFLUID_WITH_DEMO:BOOL=OFF \
+              -DCMAKE_INSTALL_PREFIX=/usr/local/opt/qt \
+              -DINSTALL_LIBDIR=/usr/local/opt/qt/lib \
+              -DINSTALL_QMLDIR=/usr/local/opt/qt/qml \
+              -DINSTALL_PLUGINSDIR=/usr/local/opt/qt/lib/plugins
+          make -j $(sysctl -n hw.ncpu)
+          sudo make install
+          cd ../..
+          # Text
+          mkdir build
+          cd build
+          cmake .. \
+              -DLIRI_LOCAL_ECM:BOOL=ON \
+              -DCMAKE_INSTALL_PREFIX=/opt/liri \
+              -DINSTALL_LIBDIR=/opt/liri/lib \
+              -DINSTALL_QMLDIR=/opt/liri/lib/qml \
+              -DINSTALL_PLUGINSDIR=/opt/liri/lib/plugins
+          make -j $(sysctl -n hw.ncpu)
+      - name: Package
+        run: |
+          set -x
+          cd build
+          srcdir=$(pwd)/../src
+          macdeployqt src/LiriText.app -dmg -qmldir=$srcdir -verbose=2
+          mkdir -p github-out
+          mv src/LiriText.dmg github-out
+
+  release:
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
+    runs-on: ubuntu-latest
+    needs:
+      - linux
+      - windows
+      - osx
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: Fill the release notes
+          draft: true
+          prerelease: false
+      - name: Upload release asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./github-out/LiriText.dmg
+          asset_name: LiriText-${{ github.ref }}.dmg
+          asset_content_type: application/octet-stream
