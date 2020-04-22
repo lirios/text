@@ -3,8 +3,7 @@ Liri Text
 
 [![License](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
-[![Build Status](https://img.shields.io/travis/lirios/text/develop.svg)](https://travis-ci.org/lirios/text)
-[![CI](https://github.com/lirios/fluid/workflows/CI/badge.svg?branch=develop)](https://github.com/lirios/fluid/actions?query=workflow%3ACI)
+[![CI](https://github.com/lirios/text/workflows/CI/badge.svg?branch=develop&event=push)](https://github.com/lirios/text/actions?query=workflow%3ACI)
 [![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
 
