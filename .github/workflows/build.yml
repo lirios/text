@@ -12,6 +12,9 @@ on:
       - master
       - develop
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   linux:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
@@ -128,6 +131,7 @@ jobs:
           outdir=$(pwd)/github-release-artifacts
           mkdir $outdir
           pushd dist/flatpak
+          # We are not using YAML for the manifest because Ubuntu 18.04 has an older flatpak that only supports JSON
           sudo flatpak-builder --repo=flatpak-repo --force-clean --subject="Build of io.liri.Text at $(LC_ALL=C date +'%Y-%m-%d %H:%M:%S')" flatpak-build io.liri.Text.json
           flatpak build-bundle flatpak-repo $outdir/io.liri.Text.flatpak io.liri.Text
           popd
@@ -246,8 +250,6 @@ jobs:
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
@@ -260,8 +262,6 @@ jobs:
           name: macOS
       - name: Upload macOS artifact to release
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: github-release-artifacts/LiriText.dmg
@@ -273,8 +273,6 @@ jobs:
           name: Flatpak
       - name: Upload Flatpak artifact to release
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: github-release-artifacts/io.liri.Text.flatpak
