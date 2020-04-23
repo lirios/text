@@ -9,15 +9,11 @@ on:
       - edited
 
 jobs:
-  wip:
+  checks:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: wip/action@master
-  xdg:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: liri-infra/xdg-validator-action@master
