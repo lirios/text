@@ -105,6 +105,39 @@ jobs:
           make -j $(getconf _NPROCESSORS_ONLN)
           sudo make install
 
+  flatpak:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install flatpak flatpak-builder
+      - name: Install Flatpak KDE SDK
+        run: |
+          set -x
+          sudo flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install --system -y flathub org.kde.Platform//5.14
+          sudo flatpak install --system -y flathub org.kde.Sdk//5.14
+      - name: Build the Flatpak package
+        run: |
+          set -x
+          outdir=$(pwd)/github-release-artifacts
+          mkdir $outdir
+          pushd dist/flatpak
+          sudo flatpak-builder --repo=flatpak-repo --force-clean --subject="Build of io.liri.Text at $(LC_ALL=C date +'%Y-%m-%d %H:%M:%S')" flatpak-build io.liri.Text.json
+          flatpak build-bundle flatpak-repo $outdir/io.liri.Text.flatpak io.liri.Text
+          popd
+      - name: Archive result
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v1
+        with:
+          name: Flatpak
+          path: github-release-artifacts/
+
   windows:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     strategy:
@@ -204,6 +237,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linux
+      - flatpak
       - windows
       - osx
     steps:
@@ -228,4 +262,17 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: build/github-out/LiriText.dmg
           asset_name: LiriText-${{ github.ref }}.dmg
+          asset_content_type: application/octet-stream
+      - name: Download Flatpak artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: Flatpak
+      - name: Upload Flatpak artifact to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: github-release-artifacts/io.liri.Text.flatpak
+          asset_name: io.liri.Text.flatpak
           asset_content_type: application/octet-stream
