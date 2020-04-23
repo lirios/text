@@ -192,6 +192,12 @@ jobs:
           macdeployqt src/LiriText.app -dmg -qmldir=$srcdir -verbose=2
           mkdir -p github-out
           mv src/LiriText.dmg github-out
+      - name: Archive result
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ runner.os }}
+          path: github-out/
 
   release:
     if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
