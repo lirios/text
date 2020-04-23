@@ -220,17 +220,18 @@ jobs:
       - name: Package
         run: |
           set -x
+          outdir=$(pwd)/github-release-artifacts
+          mkdir $outdir
           cd build
           srcdir=$(pwd)/../src
           macdeployqt src/LiriText.app -dmg -qmldir=$srcdir -verbose=2
-          mkdir -p github-out
-          mv src/LiriText.dmg github-out
+          mv src/LiriText.dmg $outdir
       - name: Archive result
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ runner.os }}
-          path: build/github-out/
+          name: macOS
+          path: github-release-artifacts/
 
   release:
     if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
@@ -253,15 +254,18 @@ jobs:
           body: Fill the release notes
           draft: true
           prerelease: false
-      - name: Upload release asset
-        id: upload-release-asset 
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: macOS
+      - name: Upload macOS artifact to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/github-out/LiriText.dmg
-          asset_name: LiriText-${{ github.ref }}.dmg
+          asset_path: github-release-artifacts/LiriText.dmg
+          asset_name: LiriText.dmg
           asset_content_type: application/octet-stream
       - name: Download Flatpak artifact
         uses: actions/download-artifact@v1
