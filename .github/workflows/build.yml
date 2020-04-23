@@ -177,6 +177,17 @@ jobs:
           cd build
           cmake .. -DLIRI_LOCAL_ECM:BOOL=ON
           cmake --build .
+      - name: Package
+        run: |
+          mkdir github-release-artifacts
+          windeployqt --qmldir=src --dir=github-release-artifacts --compiler-runtime --angle -qml -quick -svg build\src\Debug\LiriText.exe
+          copy build\src\*.qm github-release-artifacts/translations
+      - name: Archive result
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v1
+        with:
+          name: Windows
+          path: github-release-artifacts/
 
   osx:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
