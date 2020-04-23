@@ -180,8 +180,11 @@ jobs:
       - name: Package
         run: |
           mkdir github-release-artifacts
-          windeployqt --qmldir=src --dir=github-release-artifacts --compiler-runtime --angle -qml -quick -svg build\src\Debug\LiriText.exe
-          copy build\src\*.qm github-release-artifacts/translations
+          mkdir out
+          windeployqt --qmldir=src --dir=out --compiler-runtime --angle -qml -quick -svg build\src\Debug\LiriText.exe
+          copy build\src\*.qm out/translations
+          copy build\src\Debug\LiriText.exe out
+          Compress-Archive -Path out\*.* -DestinationPath github-release-artifacts\LiriText.zip
       - name: Archive result
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v1
@@ -267,6 +270,17 @@ jobs:
           body: Fill the release notes
           draft: true
           prerelease: false
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: Windows
+      - name: Upload Windows artifact to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: github-release-artifacts/LiriText.zip
+          asset_name: LiriText.zip
+          asset_content_type: application/zip
       - name: Download macOS artifact
         uses: actions/download-artifact@v1
         with:
