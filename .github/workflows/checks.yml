@@ -15,5 +15,4 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: wip/action@master
-    steps:
       - uses: liri-infra/xdg-validator-action@master
