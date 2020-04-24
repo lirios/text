@@ -1,6 +1,12 @@
 name: Checks
 
 on:
+  push:
+    branches:
+      - master
+      - develop
+    tags:
+      - v*
   pull_request:
     types:
       - opened
@@ -10,9 +16,16 @@ on:
 
 jobs:
   checks:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: wip/action@master
+        if: github.event_name == 'pull_request'
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
       - uses: liri-infra/xdg-validator-action@master
+        with:
+          strict: false
