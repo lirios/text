@@ -14,15 +14,19 @@ on:
       - reopened
       - edited
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
-  checks:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+  wip:
+    if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request'"
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: wip/action@master
-        if: github.event_name == 'pull_request'
+  xdg:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
