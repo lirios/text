@@ -184,7 +184,7 @@ jobs:
           windeployqt --qmldir=src --dir=out --compiler-runtime --angle -qml -quick -svg build\src\Debug\LiriText.exe
           copy build\src\*.qm out/translations
           copy build\src\Debug\LiriText.exe out
-          Compress-Archive -Path out\*.* -DestinationPath github-release-artifacts\LiriText.zip
+          Compress-Archive -Path out\* -DestinationPath github-release-artifacts\LiriText.zip
       - name: Archive result
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v1
