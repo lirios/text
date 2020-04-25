@@ -22,7 +22,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip') && github.event_name == 'pull_request'"
     runs-on: ubuntu-latest
     steps:
-      - uses: wip/action@master
+      - name: Work in progress
+        uses: wip/action@master
   xdg:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     runs-on: ubuntu-latest
@@ -30,7 +31,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - uses: liri-infra/xdg-validator-action@master
+      - name: Validate XDG files
+        uses: liri-infra/xdg-validator-action@master
         with:
           strict: false
   qml:
