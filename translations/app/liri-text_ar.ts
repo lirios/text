@@ -110,7 +110,7 @@
     <message>
         <location filename="../../src/main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation type="unfinished"/>
+        <translation>محرر نصوص متقدم صمم وفقا لمعايير تصميم Material Design</translation>
     </message>
     <message>
         <location filename="../../src/main.cpp" line="83"/>
