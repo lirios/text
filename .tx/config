@@ -11,7 +11,6 @@ file_filter = translations/app/liri-text_<lang>.ts
 type = DESKTOP
 source_lang = en
 source_file = data/io.liri.Text.desktop.in
-liri_dest_file = data/io.liri.Text.desktop
 file_filter = translations/data/io.liri.Text_<lang>.desktop
 
 [liri-text.metainfo-file]
