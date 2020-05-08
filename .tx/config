@@ -8,10 +8,10 @@ source_file = translations/app/liri-text.ts
 file_filter = translations/app/liri-text_<lang>.ts
 
 [liri-text.desktop-file]
-type = DESKTOP
+type = PO
 source_lang = en
-source_file = data/io.liri.Text.desktop.in
-file_filter = translations/data/io.liri.Text_<lang>.desktop
+source_file = translations/data/desktop/desktop.pot
+file_filter = translations/data/desktop/<lang>.po
 
 [liri-text.metainfo-file]
 type = PO

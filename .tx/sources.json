@@ -7,8 +7,9 @@
   {
     "type": "desktop",
     "source_file": "data/io.liri.Text.desktop.in",
-    "file_filter": "translations/data/io.liri.Text_<lang>.desktop",
-    "output_path": "data/io.liri.Text.desktop"
+    "dest_file": "data/io.liri.Text.desktop",
+    "file_filter": "translations/data/desktop/<lang>.po",
+    "output_path": "translations/data/desktop/desktop.pot"
   },
   {
     "type": "metainfo",
