@@ -1,7 +1,14 @@
 [
-    {
-        "type": "ts",
-        "directory": "src",
-        "output_path": "translations/app/liri-text.ts"
-    }
+  {
+    "type": "ts",
+    "directory": "src",
+    "output_path": "translations/app/liri-text.ts"
+  },
+  {
+    "type": "metainfo",
+    "source_file": "data/io.liri.Text.appdata.xml.in",
+    "dest_file": "data/io.liri.Text.appdata.xml",
+    "file_filter": "translations/data/metainfo/<lang>.po",
+    "output_path": "translations/data/metainfo/metainfo.pot"
+  }
 ]
