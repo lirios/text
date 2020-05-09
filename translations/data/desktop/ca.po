@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 02:10+0200\n"
+"POT-Creation-Date: 2020-05-09 01:43+0000\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
 "Language-Team: Catalan (https://www.transifex.com/lirios/teams/71982/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -35,4 +35,8 @@ msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:12
 msgid "Text;Editor;"
+msgstr ""
+
+#: data/io.liri.Text.desktop.in.in:13
+msgid "io.liri.Text"
 msgstr ""
