@@ -3,35 +3,31 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# Translators:
-# Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020
-# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 02:10+0200\n"
+"POT-Creation-Date: 2020-05-09 11:33+0200\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
-"Last-Translator: Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020\n"
-"Language-Team: Italian (https://www.transifex.com/lirios/teams/71982/it/)\n"
+"Language-Team: Spanish (Latin America) (https://www.transifex.com/lirios/teams/71982/es_419/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
+"Language: es_419\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/io.liri.Text.desktop.in.in:3
 msgid "Liri Text"
-msgstr "Liri Text"
+msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:4
 msgid "Text Editor"
-msgstr "Editor di testo"
+msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:5
 msgid "Edit text files"
-msgstr "Modifica file di testo"
+msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:11
 msgid "Qt;Utility;TextEditor;"

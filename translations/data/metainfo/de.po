@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-05-08 14:01+0200\n"
+"POT-Creation-Date: 2020-05-09 11:34+0200\n"
 "PO-Revision-Date: 2020-05-09 00:27+0000\n"
 "Language-Team: German (https://www.transifex.com/lirios/teams/71982/de/)\n"
 "MIME-Version: 1.0\n"
@@ -12,29 +12,29 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. (itstool) path: component/name
-#: data/io.liri.Text.appdata.xml:5
+#: data/io.liri.Text.appdata.xml.in:5
 msgid "Liri Text"
 msgstr ""
 
 #. (itstool) path: component/summary
-#: data/io.liri.Text.appdata.xml:6
+#: data/io.liri.Text.appdata.xml.in:6
 msgid "Edit text files"
 msgstr ""
 
 #. (itstool) path: component/developer_name
-#: data/io.liri.Text.appdata.xml:7
+#: data/io.liri.Text.appdata.xml.in:7
 msgid "The Liri developers"
 msgstr ""
 
 #. (itstool) path: description/p
-#: data/io.liri.Text.appdata.xml:11
+#: data/io.liri.Text.appdata.xml.in:11
 msgid ""
 "Liri Text is a cross-platform text editor made in accordance with Material "
 "Design, aiming at simplicity and ease of use."
 msgstr ""
 
 #. (itstool) path: description/p
-#: data/io.liri.Text.appdata.xml:15
+#: data/io.liri.Text.appdata.xml.in:15
 msgid ""
 "It is best suited for taking notes, writing text documents or quick "
 "programming with its syntax highlighting feature."
