@@ -3,9 +3,9 @@ Liri Text
 
 [![License](https://img.shields.io/github/license/lirios/text.svg)](https://github.com/lirios/text/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/lirios/text.svg)](https://github.com/lirios/text/releases)
-[![CI](https://github.com/lirios/text/workflows/CI/badge.svg?branch=develop&event=push)](https://github.com/lirios/text/actions?query=workflow%3ACI)
-[![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/text.svg)](https://github.com/lirios/text/issues)
+[![Snap Status](https://build.snapcraft.io/badge/lirios/text.svg)](https://build.snapcraft.io/user/lirios/text)
+[![CI](https://github.com/lirios/text/workflows/CI/badge.svg?branch=develop&event=push)](https://github.com/lirios/text/actions?query=workflow%3ACI)
 
 Liri Text is a cross-platform text editor made in accordance with Material Design.
 
