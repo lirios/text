@@ -4,16 +4,16 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020
+# scootergrisen, 2020
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 02:10+0200\n"
+"POT-Creation-Date: 2020-05-10 00:06+0000\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
-"Last-Translator: Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020\n"
+"Last-Translator: scootergrisen, 2020\n"
 "Language-Team: Danish (https://www.transifex.com/lirios/teams/71982/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,10 +33,10 @@ msgstr "Tekstredigering"
 msgid "Edit text files"
 msgstr "Rediger tekstfiler"
 
-#: data/io.liri.Text.desktop.in.in:11
-msgid "Qt;Utility;TextEditor;"
-msgstr ""
-
 #: data/io.liri.Text.desktop.in.in:12
 msgid "Text;Editor;"
-msgstr ""
+msgstr "Tekst;Redigering;"
+
+#: data/io.liri.Text.desktop.in.in:13
+msgid "io.liri.Text"
+msgstr "io.liri.Text"

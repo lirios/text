@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 12:46+0000\n"
+"POT-Creation-Date: 2020-05-10 00:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,10 +27,6 @@ msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:5
 msgid "Edit text files"
-msgstr ""
-
-#: data/io.liri.Text.desktop.in.in:11
-msgid "Qt;Utility;TextEditor;"
 msgstr ""
 
 #: data/io.liri.Text.desktop.in.in:12

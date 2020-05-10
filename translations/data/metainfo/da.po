@@ -1,9 +1,13 @@
 # 
+# Translators:
+# scootergrisen, 2020
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-05-09 11:34+0200\n"
+"POT-Creation-Date: 2020-05-10 00:06+0000\n"
 "PO-Revision-Date: 2020-05-09 00:27+0000\n"
+"Last-Translator: scootergrisen, 2020\n"
 "Language-Team: Danish (https://www.transifex.com/lirios/teams/71982/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,17 +18,17 @@ msgstr ""
 #. (itstool) path: component/name
 #: data/io.liri.Text.appdata.xml.in:5
 msgid "Liri Text"
-msgstr ""
+msgstr "Liri Tekst"
 
 #. (itstool) path: component/summary
 #: data/io.liri.Text.appdata.xml.in:6
 msgid "Edit text files"
-msgstr ""
+msgstr "Rediger tekstfiler"
 
 #. (itstool) path: component/developer_name
 #: data/io.liri.Text.appdata.xml.in:7
 msgid "The Liri developers"
-msgstr ""
+msgstr "Liri-udviklerne"
 
 #. (itstool) path: description/p
 #: data/io.liri.Text.appdata.xml.in:11
@@ -32,6 +36,9 @@ msgid ""
 "Liri Text is a cross-platform text editor made in accordance with Material "
 "Design, aiming at simplicity and ease of use."
 msgstr ""
+"Liri Tekst er en tekstredigering på tværs af platforme som er lavet i "
+"henhold til Material Design, hvor målet er enkelthed og at være "
+"letanvendelig."
 
 #. (itstool) path: description/p
 #: data/io.liri.Text.appdata.xml.in:15
@@ -39,3 +46,5 @@ msgid ""
 "It is best suited for taking notes, writing text documents or quick "
 "programming with its syntax highlighting feature."
 msgstr ""
+"Den er bedst egnet til at tage noter, skrive tekstdokumenter eller hurtig "
+"programmering med dens syntaksfremhævningsfunktionalitet."
