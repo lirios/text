@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-10 00:06+0000\n"
+"POT-Creation-Date: 2020-05-11 00:07+0000\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
 "Last-Translator: scootergrisen, 2020\n"
 "Language-Team: Danish (https://www.transifex.com/lirios/teams/71982/da/)\n"
@@ -21,22 +21,27 @@ msgstr ""
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: data/io.liri.Text.desktop.in.in:3
+#. (desktop-to-pot) Name
+#: io.liri.Text.desktop.in:2
 msgid "Liri Text"
 msgstr "Liri Tekst"
 
-#: data/io.liri.Text.desktop.in.in:4
+#. (desktop-to-pot) GenericName
+#: io.liri.Text.desktop.in:3
 msgid "Text Editor"
 msgstr "Tekstredigering"
 
-#: data/io.liri.Text.desktop.in.in:5
+#. (desktop-to-pot) Comment
+#: io.liri.Text.desktop.in:4
 msgid "Edit text files"
 msgstr "Rediger tekstfiler"
 
-#: data/io.liri.Text.desktop.in.in:12
+#. (desktop-to-pot) Categories
+#: io.liri.Text.desktop.in:10
+msgid "Qt;Utility;TextEditor;"
+msgstr ""
+
+#. (desktop-to-pot) Keywords
+#: io.liri.Text.desktop.in:11
 msgid "Text;Editor;"
 msgstr "Tekst;Redigering;"
-
-#: data/io.liri.Text.desktop.in.in:13
-msgid "io.liri.Text"
-msgstr "io.liri.Text"
