@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-13 00:07+0000\n"
+"POT-Creation-Date: 2020-05-14 00:07+0000\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
 "Last-Translator: Luiz Fernando Ranghetti <elchevive68@gmail.com>, 2020\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/lirios/teams/71982/pt_BR/)\n"
@@ -39,7 +39,7 @@ msgstr "Edite arquivos de texto"
 #. (desktop-to-pot) Categories
 #: io.liri.Text.desktop.in:10
 msgid "Qt;Utility;TextEditor;"
-msgstr ""
+msgstr "Qt;Utilitário;Editor;Texto;"
 
 #. (desktop-to-pot) Keywords
 #: io.liri.Text.desktop.in:11
