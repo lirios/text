@@ -29,32 +29,32 @@
     <message>
         <location filename="../../src/qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
-        <translation type="unfinished"/>
+        <translation>저장하지 않은 변경사항이 있습니다. 닫기 전에 파일로 저장 할까요?</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="261"/>
         <source>The file was changed from outside. Do you wish to reload its content?</source>
-        <translation type="unfinished"/>
+        <translation>외부에서 파일이 변경되었습니다. 내용을 다시 불러오시겠습니까?</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="278"/>
         <source>Reload</source>
-        <translation type="unfinished"/>
+        <translation>다시 불러오기</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="284"/>
         <source>Ignore</source>
-        <translation type="unfinished"/>
+        <translation>무시하기</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="336"/>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>되돌리기</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="341"/>
         <source>Redo</source>
-        <translation type="unfinished"/>
+        <translation>다시하기</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="349"/>
@@ -84,7 +84,7 @@
     <message>
         <location filename="../../src/qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
-        <translation type="unfinished"/>
+        <translation>파일 명령 에러</translation>
     </message>
 </context>
 <context>
@@ -102,7 +102,7 @@
     <message>
         <location filename="../../src/qml/RecentFilesPage.qml" line="60"/>
         <source>You don&apos;t have recently open files</source>
-        <translation type="unfinished"/>
+        <translation>최근 연 파일이 없습니다</translation>
     </message>
 </context>
 <context>
@@ -110,12 +110,12 @@
     <message>
         <location filename="../../src/main.cpp" line="79"/>
         <source>Advanced text editor made in accordance with Material Design.</source>
-        <translation type="unfinished"/>
+        <translation>머티리얼 디자인에 따라 만들어진 고급 텍스트 편집기.</translation>
     </message>
     <message>
         <location filename="../../src/main.cpp" line="83"/>
         <source>Start the editor with a new document.</source>
-        <translation type="unfinished"/>
+        <translation>새 문서로 편집기 시작하기</translation>
     </message>
     <message>
         <location filename="../../src/main.cpp" line="85"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../../src/main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
-        <translation type="unfinished"/>
+        <translation>편집할 파일의 경로</translation>
     </message>
 </context>
 </TS>
