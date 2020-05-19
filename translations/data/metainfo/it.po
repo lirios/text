@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-05-18 00:07+0000\n"
+"POT-Creation-Date: 2020-05-19 00:08+0000\n"
 "PO-Revision-Date: 2020-05-09 00:27+0000\n"
 "Last-Translator: Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020\n"
 "Language-Team: Italian (https://www.transifex.com/lirios/teams/71982/it/)\n"
