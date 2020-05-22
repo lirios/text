@@ -4,16 +4,16 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020
+# Moo, 2020
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 02:10+0200\n"
+"POT-Creation-Date: 2020-05-22 00:07+0000\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
-"Last-Translator: Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>, 2020\n"
+"Last-Translator: Moo, 2020\n"
 "Language-Team: Lithuanian (https://www.transifex.com/lirios/teams/71982/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,22 +21,32 @@ msgstr ""
 "Language: lt\n"
 "Plural-Forms: nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);\n"
 
-#: data/io.liri.Text.desktop.in.in:3
+#. (desktop-to-pot) "Name" entry
+#: io.liri.Text.desktop.in:2
+msgctxt "Name entry"
 msgid "Liri Text"
 msgstr "Liri tekstas"
 
-#: data/io.liri.Text.desktop.in.in:4
+#. (desktop-to-pot) "GenericName" entry
+#: io.liri.Text.desktop.in:3
+msgctxt "GenericName entry"
 msgid "Text Editor"
 msgstr "Tekstų redaktorius"
 
-#: data/io.liri.Text.desktop.in.in:5
+#. (desktop-to-pot) "Comment" entry
+#: io.liri.Text.desktop.in:4
+msgctxt "Comment entry"
 msgid "Edit text files"
-msgstr "Redaguoti tekstinius failus"
+msgstr "Taisyti tekstinius failus"
 
-#: data/io.liri.Text.desktop.in.in:11
+#. (desktop-to-pot) "Categories" entry
+#: io.liri.Text.desktop.in:10
+msgctxt "Categories entry"
 msgid "Qt;Utility;TextEditor;"
-msgstr ""
+msgstr "Qt;Paslaugų programa;Tekstų redaktorius;"
 
-#: data/io.liri.Text.desktop.in.in:12
+#. (desktop-to-pot) "Keywords" entry
+#: io.liri.Text.desktop.in:11
+msgctxt "Keywords entry"
 msgid "Text;Editor;"
-msgstr ""
+msgstr "Tekstų;Teksto;redaktorius;rengyklė;"
