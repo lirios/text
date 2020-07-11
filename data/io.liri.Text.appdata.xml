@@ -1,10 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (C) 2019 Pier Luigi Fiorini -->
 <component type="desktop">
   <id>io.liri.Text</id>
   <name>Liri Text</name>
+  <name xml:lang="da">Liri Tekst</name>
+  <name xml:lang="it">Liri Text</name>
+  <name xml:lang="ko">Liri 텍스트</name>
+  <name xml:lang="pt-BR">Liri Text</name>
+  <name xml:lang="ru">Liri Text</name>
+  <name xml:lang="tr">Liri Metin</name>
   <summary>Edit text files</summary>
+  <summary xml:lang="da">Rediger tekstfiler</summary>
+  <summary xml:lang="ko">텍스트 파일 편집</summary>
+  <summary xml:lang="pt-BR">Edite arquivos de texto</summary>
+  <summary xml:lang="ru">Редактировать текстовые файлы</summary>
+  <summary xml:lang="tr">Metin dosyalarını düzenle</summary>
   <developer_name>The Liri developers</developer_name>
+  <developer_name xml:lang="da">Liri-udviklerne</developer_name>
+  <developer_name xml:lang="it">Gli sviluppatori di Liri</developer_name>
+  <developer_name xml:lang="ko">Liri 개발자들</developer_name>
+  <developer_name xml:lang="pt-BR">Os desenvolvedores do Liri</developer_name>
+  <developer_name xml:lang="ru">Разработчики Liri</developer_name>
+  <developer_name xml:lang="tr">Liri geliştiricileri</developer_name>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <description>
@@ -12,10 +29,19 @@
       Liri Text is a cross-platform text editor made in accordance with Material Design,
       aiming at simplicity and ease of use.
     </p>
+    <p xml:lang="da">Liri Tekst er en tekstredigering på tværs af platforme som er lavet i henhold til Material Design, hvor målet er enkelthed og at være letanvendelig.</p>
+    <p xml:lang="ko">Liri 텍스트는 머티리얼 디자인에 따라 제작된, 단순하며 쉽게 사용할 수 있도록 만들어진 다중 플랫폼 텍스트 편집기입니다.</p>
+    <p xml:lang="pt-BR">O Liri Text é um editor de texto multiplataforma feito de acordo com o Material Design, visando simplicidade e facilidade de uso.</p>
+    <p xml:lang="ru">Liri Text это кросс-платформенный текстовый редактор, следующий принципам Material Design, имеющий целью простоту и легкость в использовании.</p>
+    <p xml:lang="tr">Liri Metin; basitliği ve kolay kullanımı hedefleyen, Materyal Tasarıma uygun çapraz platformlu metin düzenleyicidir.</p>
     <p>
       It is best suited for taking notes, writing text documents or
       quick programming with its syntax highlighting feature.
     </p>
+    <p xml:lang="da">Den er bedst egnet til at tage noter, skrive tekstdokumenter eller hurtig programmering med dens syntaksfremhævningsfunktionalitet.</p>
+    <p xml:lang="ko">구문 강조 기능으로 메모 작성, 텍스트 문서 작성 또는 빠른 프로그래밍에 가장 적합합니다.</p>
+    <p xml:lang="pt-BR">É mais adequado para fazer anotações, escrever documentos de texto ou programação rápida com o recurso de realce de sintaxe.</p>
+    <p xml:lang="tr">Not alma, metin belgeleri yazma veya sözdizimi vurgulama özelliğiyle hızlı programlama yapmak için harika çözümdür.</p>
   </description>
   <launchable type="desktop-id">io.liri.Text.desktop</launchable>
   <provides>
