@@ -35,7 +35,7 @@ msgid ""
 "Liri Text is a cross-platform text editor made in accordance with Material "
 "Design, aiming at simplicity and ease of use."
 msgstr ""
-"Liri Text это кросс-платформенный текстовый редактор, следующий принципам "
+"Liri Text - это кросс-платформенный текстовый редактор, следующий принципам "
 "Material Design, имеющий целью простоту и легкость в использовании."
 
 #. (itstool) path: description/p

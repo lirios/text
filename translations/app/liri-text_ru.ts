@@ -84,7 +84,7 @@
     <message>
         <location filename="../../src/qml/EditPage.qml" line="396"/>
         <source>File operation error</source>
-        <translation>Ошибка операции над файлом</translation>
+        <translation>Ошибка работы файла</translation>
     </message>
 </context>
 <context>
