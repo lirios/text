@@ -120,7 +120,7 @@
     <message>
         <location filename="../../src/main.cpp" line="85"/>
         <source>[file]</source>
-        <translation type="unfinished"/>
+        <translation>[file]</translation>
     </message>
     <message>
         <location filename="../../src/main.cpp" line="86"/>
