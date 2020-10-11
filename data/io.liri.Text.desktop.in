@@ -7,6 +7,6 @@ Terminal=false
 Type=Application
 StartupWMClass=liri-text
 MimeType=text/plain;
-_Categories=Qt;Utility;TextEditor;
+Categories=Qt;Utility;TextEditor;
 _Keywords=Text;Editor;
 Icon=io.liri.Text
