@@ -38,12 +38,6 @@ msgctxt "Comment entry"
 msgid "Edit text files"
 msgstr "Rediger tekstfiler"
 
-#. (desktop-to-pot) "Categories" entry
-#: io.liri.Text.desktop.in:10
-msgctxt "Categories entry"
-msgid "Qt;Utility;TextEditor;"
-msgstr "Qt;Redskab;Tekstredigering;"
-
 #. (desktop-to-pot) "Keywords" entry
 #: io.liri.Text.desktop.in:11
 msgctxt "Keywords entry"
