@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Text
+Source: https://github.com/lirios/text
+
+Files: translations/*
+Copyright: 2020 Liri Translators
+License: CC0-1.0
