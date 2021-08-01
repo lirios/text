@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/qml/EditPage.qml" line="224"/>
         <source>You have unsaved changes. Do you want to save them before closing the file?</source>
-        <translation>Du hast ungespeicherte Änderungen. Vor dem Schließen des Dokumentes speichern?</translation>
+        <translation>Sie haben nicht gespeicherte Änderungen. Möchten Sie sie vor dem Schließen der Datei speichern?</translation>
     </message>
     <message>
         <location filename="../../src/qml/EditPage.qml" line="261"/>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../../src/main.cpp" line="83"/>
         <source>Start the editor with a new document.</source>
-        <translation>Den Editor mit einem leeren Dokument aufrufen</translation>
+        <translation>Den Editor mit einem neuen Dokument starten.</translation>
     </message>
     <message>
         <location filename="../../src/main.cpp" line="85"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../../src/main.cpp" line="86"/>
         <source>Path to a file to open for editing.</source>
-        <translation>Dateipfad einer zu bearbeitenden Datei</translation>
+        <translation>Pfad zu einer Datei, die zum Bearbeiten geöffnet werden soll.</translation>
     </message>
 </context>
 </TS>
