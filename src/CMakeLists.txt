@@ -100,3 +100,5 @@ set_target_properties(LiriText PROPERTIES
     MACOSX_BUNDLE_ICON_FILE "io.liri.Text"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
 )
+
+liri_finalize_executable(LiriText)
