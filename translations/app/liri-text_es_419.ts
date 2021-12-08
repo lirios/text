@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="es_419">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="es_419" version="2.1">
 <context>
     <name>EditPage</name>
     <message>
