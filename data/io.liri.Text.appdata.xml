@@ -7,6 +7,7 @@
   <name xml:lang="de">Liri Text</name>
   <name xml:lang="it">Liri Text</name>
   <name xml:lang="ko">Liri 텍스트</name>
+  <name xml:lang="nl">Liri Tekst</name>
   <name xml:lang="pt-BR">Liri Text</name>
   <name xml:lang="ru">Liri Text</name>
   <name xml:lang="tr">Liri Metin</name>
@@ -14,6 +15,7 @@
   <summary xml:lang="da">Rediger tekstfiler</summary>
   <summary xml:lang="de">Textdateien bearbeiten</summary>
   <summary xml:lang="ko">텍스트 파일 편집</summary>
+  <summary xml:lang="nl">Bewerk tekstbestanden</summary>
   <summary xml:lang="pt-BR">Edite arquivos de texto</summary>
   <summary xml:lang="ru">Редактировать текстовые файлы</summary>
   <summary xml:lang="tr">Metin dosyalarını düzenle</summary>
@@ -22,6 +24,7 @@
   <developer_name xml:lang="de">Die Liri-Entwickler</developer_name>
   <developer_name xml:lang="it">Gli sviluppatori di Liri</developer_name>
   <developer_name xml:lang="ko">Liri 개발자들</developer_name>
+  <developer_name xml:lang="nl">De Liri-ontwikkelaars</developer_name>
   <developer_name xml:lang="pt-BR">Os desenvolvedores do Liri</developer_name>
   <developer_name xml:lang="ru">Разработчики Liri</developer_name>
   <developer_name xml:lang="tr">Liri geliştiricileri</developer_name>

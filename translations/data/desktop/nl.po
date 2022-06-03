@@ -3,13 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Heimen Stoffels <vistausss@fastmail.com>, 2022
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-09 11:33+0200\n"
 "PO-Revision-Date: 2020-05-09 00:20+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2022\n"
 "Language-Team: Dutch (https://www.transifex.com/lirios/teams/71982/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,22 +20,26 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: data/io.liri.Text.desktop.in.in:3
+#. (desktop-to-pot) "Name" entry
+#: io.liri.Text.desktop.in:2
+msgctxt "Name entry"
 msgid "Liri Text"
-msgstr ""
+msgstr "Liri Tekst"
 
-#: data/io.liri.Text.desktop.in.in:4
+#. (desktop-to-pot) "GenericName" entry
+#: io.liri.Text.desktop.in:3
+msgctxt "GenericName entry"
 msgid "Text Editor"
-msgstr ""
+msgstr "Tekstbewerker"
 
-#: data/io.liri.Text.desktop.in.in:5
+#. (desktop-to-pot) "Comment" entry
+#: io.liri.Text.desktop.in:4
+msgctxt "Comment entry"
 msgid "Edit text files"
-msgstr ""
+msgstr "Bewerk tekstbestanden"
 
-#: data/io.liri.Text.desktop.in.in:11
-msgid "Qt;Utility;TextEditor;"
-msgstr ""
-
-#: data/io.liri.Text.desktop.in.in:12
+#. (desktop-to-pot) "Keywords" entry
+#: io.liri.Text.desktop.in:11
+msgctxt "Keywords entry"
 msgid "Text;Editor;"
-msgstr ""
+msgstr "Tekst;Bewerker;"
