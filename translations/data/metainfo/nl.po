@@ -35,6 +35,9 @@ msgid ""
 "Liri Text is a cross-platform text editor made in accordance with Material "
 "Design, aiming at simplicity and ease of use."
 msgstr ""
+"Liri Tekst is een platform-onafhankelijke tekstbewerker, gemaakt met de "
+"ontwerptaal Material Design, waarbij de focus ligt op eenvoud(ig in het "
+"gebruik)."
 
 #. (itstool) path: description/p
 #: data/io.liri.Text.appdata.xml.in:15
@@ -42,3 +45,6 @@ msgid ""
 "It is best suited for taking notes, writing text documents or quick "
 "programming with its syntax highlighting feature."
 msgstr ""
+"Liri Tekst is vooral geschikt voor het maken van notities en aantekeningen, "
+"het schrijven van korte documenten en korte programmeropdrachten met "
+"syntaxismarkering."
